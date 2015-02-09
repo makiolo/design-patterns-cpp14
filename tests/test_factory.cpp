@@ -44,19 +44,25 @@ int main()
 {
 	// factory only is a simple creator from type or from string
 	{
+		// equivalent ways of create A
 		std::shared_ptr<Base> a1 = Base::Factory::instance().create<A>("product1");
 		std::shared_ptr<A> a2 = Base::Factory::instance().create<A>("product1");
 		std::shared_ptr<Base> a3 = Base::Factory::instance().create(A::KEY(), "product1");
+		std::shared_ptr<Base> a4 = Base::Factory::instance().create("A", "product1");
 
+		// equivalent ways of create B
 		std::shared_ptr<Base> b1 = Base::Factory::instance().create<B>("product2");
 		std::shared_ptr<B> b2 = Base::Factory::instance().create<B>("product2");
 		std::shared_ptr<Base> b3 = Base::Factory::instance().create(B::KEY(), "product2");
+		std::shared_ptr<Base> b4 = Base::Factory::instance().create("B", "product2");
 
 		assert(a1 != a2);
 		assert(a2 != a3);
-		assert(a3 != b1);
+		assert(a3 != a4);
+		assert(a4 != b1);
 		assert(b1 != b2);
 		assert(b2 != b3);
+		assert(b3 != b4);
 	}
 
 	/*
@@ -68,6 +74,10 @@ int main()
 	constructor
 	constructor
 	constructor
+	constructor
+	constructor
+	destruction
+	destruction
 	destruction
 	destruction
 	destruction

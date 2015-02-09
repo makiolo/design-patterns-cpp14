@@ -52,19 +52,25 @@ int main()
 {
 	// Builder is a factory with cache
 	{
+		// equivalent ways of build (or use cache) A
 		std::shared_ptr<Base> a1 = Base::Builder::instance().get<A>("product1");
 		std::shared_ptr<A> a2 = Base::Builder::instance().get<A>("product1");
 		std::shared_ptr<Base> a3 = Base::Builder::instance().get(A::KEY(), "product1");
+		std::shared_ptr<Base> a4 = Base::Builder::instance().get("A", "product1");
 
+		// equivalent ways of build (or use cache) B
 		std::shared_ptr<Base> b1 = Base::Builder::instance().get<B>("product2");
 		std::shared_ptr<B> b2 = Base::Builder::instance().get<B>("product2");
 		std::shared_ptr<Base> b3 = Base::Builder::instance().get(B::KEY(), "product2");
+		std::shared_ptr<Base> b4 = Base::Builder::instance().get("B", "product2");
 
 		assert(a1 == a2);
 		assert(a2 == a3);
+		assert(a3 == a4);
 
 		assert(b1 == b2);
 		assert(b2 == b3);
+		assert(b3 == b4);
 
 		assert(a1 != b1);
 	}
