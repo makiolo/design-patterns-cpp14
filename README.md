@@ -82,16 +82,16 @@ int main()
 	// factory only is a simple creator from type or from string
 	{
 		// equivalent ways of create A
-		std::shared_ptr<Base> a1 = Base::Factory::instance().create<A>("product1");
-		std::shared_ptr<A> a2 = Base::Factory::instance().create<A>("product1");
-		std::shared_ptr<Base> a3 = Base::Factory::instance().create(A::KEY(), "product1");
-		std::shared_ptr<Base> a4 = Base::Factory::instance().create("A", "product1");
+		std::shared_ptr<Base> a1 = Base::Factory::instance().create<A>("first parameter");
+		std::shared_ptr<A> a2 = Base::Factory::instance().create<A>("first parameter");
+		std::shared_ptr<Base> a3 = Base::Factory::instance().create(A::KEY(), "first parameter");
+		std::shared_ptr<Base> a4 = Base::Factory::instance().create("A", "first parameter");
     
 		// equivalent ways of create B
-		std::shared_ptr<Base> b1 = Base::Factory::instance().create<B>("product2");
-		std::shared_ptr<B> b2 = Base::Factory::instance().create<B>("product2");
-		std::shared_ptr<Base> b3 = Base::Factory::instance().create(B::KEY(), "product2");
-		std::shared_ptr<Base> b4 = Base::Factory::instance().create("B", "product2");
+		std::shared_ptr<Base> b1 = Base::Factory::instance().create<B>("first parameter");
+		std::shared_ptr<B> b2 = Base::Factory::instance().create<B>("first parameter");
+		std::shared_ptr<Base> b3 = Base::Factory::instance().create(B::KEY(), "first parameter");
+		std::shared_ptr<Base> b4 = Base::Factory::instance().create("B", "first parameter");
     
 		assert(a1 != a2);
 		assert(a2 != a3);
