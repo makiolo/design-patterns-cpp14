@@ -6,11 +6,12 @@ This is a only-header library with someone the most common design patterns imple
 
 * Can assume variadic templates supported by your compiler.
 * Use perfect forwarding and new features of C++11/14 when it's possible.
-* Preferibly only header code, but not is must.
+* Preferably only header code, but not is must.
 
 ## Quality assurance
 
 * Code tested in last versions of gcc, clang and Visual Studio.
+* Test cases relationated with problems crossing boundaries of dynamic libraries.
 
 ## Contributing
 
