@@ -35,16 +35,13 @@ namespace std
 	};
 }
 
-template<int ...>
-struct seq { };
+template <int... Is>
+struct seq {};
 
-template<int N, int ...S>
-struct gens : gens < N - 1, N - 1, S... > { };
+template <int N, int... Is>
+struct gens : gens < N - 1, N - 1, Is... > {};
 
-template<int ...S>
-struct gens < 0, S... >
-{
-	using type = seq<S...>;
-};
+template <int... Is>
+struct gens<0, Is...> : seq < Is... > {};
 
 #endif

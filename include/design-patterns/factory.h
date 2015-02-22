@@ -3,33 +3,39 @@
 
 #include "common.h"
 
-template <typename T, typename... Args>
+namespace dp14 {
+
+template<typename T, typename U, typename ... Args>
+class FactoryRegistrator;
+
+template <typename T, typename ... Args>
 class Factory
 {
 public:
 	DEFINE_KEY(Factory<T>)
 
 	using Key = std::string;
-	using Value = typedef typename std::function<std::shared_ptr<T> (Args&&...)>;
+	using Value = std::function<std::shared_ptr<T> (Args...)>;
+	template<typename U> using Registrator = FactoryRegistrator<T, U, Args...>;
 
 	static typename T::Factory& instance()
 	{
 		static typename T::Factory factory;
 		return factory;
 	}
-
+	
 	template <typename U>
 	Key get_key()
 	{
 		return U::KEY();
 	}
-
-	template <typename U>
-	void register_type(const Value& value)
+	
+	template <typename U, typename F>
+	void register_type(F && value)
 	{
-		_map_creators[get_key<U>()] = value;
+		_map_creators[get_key<U>()] = std::forward<F>(value);
 	}
-
+	
 	std::shared_ptr<T> create(const Key& key_impl, Args&&... data)
 	{
 		auto it =  _map_creators.find(key_impl);
@@ -50,37 +56,39 @@ private:
 	std::map<Key, Value> _map_creators;
 };
 
-template<typename T, typename U, typename... Args>
+template<typename T, typename U, typename ... Args>
 class FactoryRegistrator
 {
 public:
 	explicit FactoryRegistrator()
 	{
-		indirection(make_int_sequence< sizeof...(Args) >{});
+		register_to_singleton(make_int_sequence< sizeof...(Args) >{});
 	}
 
 	explicit FactoryRegistrator(Factory<T, Args...>& factory)
 	{
-		indirection(factory, make_int_sequence< sizeof...(Args) >{});
+		register_in_a_factory(factory, make_int_sequence< sizeof...(Args) >{});
 	}
-
+	
 	static std::shared_ptr<T> create(Args&&... data)
 	{
-		return std::make_shared<U>(data...);
+		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 
 protected:
 	template <int... Is>
-	void indirection(int_sequence<Is...>)
+	void register_to_singleton(int_sequence<Is...>)
 	{
-		T::Factory::instance().template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args&&...>::create, placeholder_template < Is > {}...));
+		T::Factory::instance().template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
 
 	template <int... Is>
-	void indirection(Factory<T, Args...>& factory, int_sequence<Is...>)
+	void register_in_a_factory(Factory<T, Args...>& factory, int_sequence<Is...>)
 	{
-		factory.template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args&&...>::create, placeholder_template < Is > {}...));
+		factory.template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
 };
+
+}
 
 #endif
