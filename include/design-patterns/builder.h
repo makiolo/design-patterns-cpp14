@@ -8,9 +8,9 @@ class Builder
 {
 public:
 	DEFINE_KEY(Builder<T>)
-
-	typedef std::string Key;
-	typedef typename std::function<std::shared_ptr<T> (Args&&...)> Value;
+	
+	using Key = std::string;
+	using Value = typename std::function<std::shared_ptr<T> (Args&&...)>;
 
 	static typename T::Builder& instance()
 	{
@@ -79,6 +79,11 @@ public:
 		indirection(make_int_sequence< sizeof...(Args) >{});
 	}
 
+	explicit BuilderRegistrator(Builder<T, Args...>& builder)
+	{
+		indirection(builder, make_int_sequence< sizeof...(Args) >{});
+	}
+
 	static std::shared_ptr<T> get(Args&&... data)
 	{
 		return std::make_shared<U>(data...);
@@ -89,6 +94,12 @@ protected:
 	void indirection(int_sequence<Is...>)
 	{
 		T::Builder::instance().template register_type<U>(std::bind(&BuilderRegistrator<T, U, Args&&...>::get, placeholder_template < Is > {}...));
+	}
+
+	template <int... Is>
+	void indirection(Builder<T, Args...>& builder, int_sequence<Is...>)
+	{
+		builder.template register_type<U>(std::bind(&BuilderRegistrator<T, U, Args&&...>::get, placeholder_template < Is > {}...));
 	}
 };
 

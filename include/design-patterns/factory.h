@@ -9,8 +9,8 @@ class Factory
 public:
 	DEFINE_KEY(Factory<T>)
 
-	typedef std::string Key;
-	typedef typename std::function<std::shared_ptr<T> (Args&&...)> Value;
+	using Key = std::string;
+	using Value = typedef typename std::function<std::shared_ptr<T> (Args&&...)>;
 
 	static typename T::Factory& instance()
 	{
@@ -59,6 +59,11 @@ public:
 		indirection(make_int_sequence< sizeof...(Args) >{});
 	}
 
+	explicit FactoryRegistrator(Factory<T, Args...>& factory)
+	{
+		indirection(factory, make_int_sequence< sizeof...(Args) >{});
+	}
+
 	static std::shared_ptr<T> create(Args&&... data)
 	{
 		return std::make_shared<U>(data...);
@@ -69,6 +74,12 @@ protected:
 	void indirection(int_sequence<Is...>)
 	{
 		T::Factory::instance().template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args&&...>::create, placeholder_template < Is > {}...));
+	}
+
+	template <int... Is>
+	void indirection(Factory<T, Args...>& factory, int_sequence<Is...>)
+	{
+		factory.template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args&&...>::create, placeholder_template < Is > {}...));
 	}
 };
 
