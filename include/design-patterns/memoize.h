@@ -38,8 +38,14 @@ public:
 
 	bool exists(const Key& key_impl, Args&&... data)
 	{
-		Key key = T::get_data_key(std::forward<Args>(data)...);
+		Key key = T::get_data_key(key_impl, std::forward<Args>(data)...);
 		return (_map_cache.find(key) != _map_cache.end());
+	}
+
+	template <typename U>
+	bool exists(Args&&... data)
+	{
+		return exists(get_key<U>(), std::forward<Args>(data)...);
 	}
 
 	std::shared_ptr<T> get(const Key& key_impl, Args&&... data)
