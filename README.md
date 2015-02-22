@@ -1,16 +1,17 @@
 # Design patterns C++11/14
 
-This is a only-header library with someone the most common design patterns implemmented in C++11/14.
+This is a header-only library with some of the most common design patterns implemmented in C++11/14.
 
 ## Design guidelines in design-patterns-cpp14
 
 * Can assume variadic templates supported by your compiler.
-* Use perfect forwarding and new features of C++11/14 when it's possible.
-* Preferibly only header code, but not is must.
+* Use perfect forwarding and new features from C++11/14 when possible.
+* Prefer header only code, but it is not a must.
 
 ## Quality assurance
 
-* Code tested in last versions of gcc, clang and Visual Studio.
+* Code tested on last versions of gcc, clang and Visual Studio.
+* Test cases relationated with problems crossing boundaries of dynamic libraries.
 
 ## Contributing
 
@@ -21,7 +22,7 @@ To report an issue, use the [design-patterns-cpp14 issue tracker](https://github
 ## Using design-patterns-cpp14
 
 ### Compile design-patterns-cpp14
-It's a only-header library. Only need a include.
+It's a header-only library. Only need an include.
 
 ### Compile tests
 You will need cmake (and a compiler).
