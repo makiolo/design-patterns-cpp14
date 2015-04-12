@@ -59,21 +59,11 @@ public:
 	void connect(const std::shared_ptr<UBot>& leader)
 	{
 		// follow to leader
-		
 		_conn = leader->get_queue().connect([&](const CommandFollower& cmd)
 		{
 			cmd(this);
 		});
-		
-		//_conn = leader->get_queue().connect(this, &Follower::dispatch);
 	}
-
-	/*
-	void dispatch(const CommandFollower& cmd)
-	{
-		cmd(this);
-	}
-	*/
 	
 protected:
 	fes::connection_scoped<CommandFollower> _conn;
@@ -104,9 +94,9 @@ int main()
 {
 	auto leader = std::make_shared<Leader>();
 	auto follower1 = std::make_shared<Follower>();
-	auto follower2 = std::make_shared<Follower>();
 	follower1->connect(leader);
-	follower2->connect(leader);
+
+	// TODO: test multiples followers
 
 	leader->order();
 
