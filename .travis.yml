@@ -25,6 +25,7 @@ script:
   - cd $FL_CONF
   - cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=$FL_CONF
   - make
+  - make test
 
 env:
   - ignore=this
