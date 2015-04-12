@@ -12,27 +12,39 @@ private:
 	std::function<ret(Ts...)> _function;
 	std::tuple<Ts...> _args;
 public:
-	template <typename F, typename... Args>
-	Command(F&& func, Args&&... args)
-		: _function(std::forward<F>(func)),
-		_args(std::forward<Args>(args)...)
+
+#ifdef _MSC_VER
+	template <typename F>
+	Command(F&& func, Ts&&... args)
+		: _function(std::forward<F>(func)) 
+		, _args(std::forward<Ts>(args)...)
 	{
-		;
+		
+	}
+	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>, typename F, typename... Args>
+ #else
+	template <typename F, typename... Args>
+#endif
+	Command(F&& func, Args&&... args)
+		: _function(std::forward<F>(func)) 
+		, _args(std::forward<Args>(args)...)
+	{
+		
 	}
 
 	template <typename... Args, int... Is>
-	ret execute(std::tuple<Args...>& tuple, seq<Is...>)
+	ret execute(const std::tuple<Args...>& tuple, seq<Is...>) const
 	{
 		return _function(std::get<Is>(tuple)...);
 	}
 
 	template <typename... Args>
-	ret execute(std::tuple<Args...>& tuple)
+	ret execute(const std::tuple<Args...>& tuple) const
 	{
 		return execute(tuple, gens < sizeof...(Args) > {});
 	}
 
-	ret operator()()
+	ret operator()() const
 	{
 		return execute(_args);
 	}
