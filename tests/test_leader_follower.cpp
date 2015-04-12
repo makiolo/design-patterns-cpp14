@@ -5,7 +5,6 @@
 #include <string>
 #include <sstream>
 #include <queue>
-#include <windows.h>
 
 #include <fast-event-system/fes.h>
 #include <design-patterns/command.h>
