@@ -73,6 +73,32 @@ matrix:
     - compiler: clang
       env: REAL_CC=clang-3.4 EXTRA_DEF=-std=c++1y FL_CONF=Release REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8
 
+#clang-3.5
+##Debug
+    - compiler: clang
+      env: REAL_CC=clang-3.5 EXTRA_DEF=-std=c++11 FL_CONF=Debug REAL_CXX=clang++-3.5 PACKAGE=clang-3.5 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.5 EXTRA_DEF=-std=c++1z FL_CONF=Debug REAL_CXX=clang++-3.5 PACKAGE=clang-3.5 SUPPORT=g++-4.9
+
+##Release
+    - compiler: clang
+      env: REAL_CC=clang-3.5 EXTRA_DEF=-std=c++11 FL_CONF=Release REAL_CXX=clang++-3.5 PACKAGE=clang-3.5 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.5 EXTRA_DEF=-std=c++1z FL_CONF=Release REAL_CXX=clang++-3.5 PACKAGE=clang-3.5 SUPPORT=g++-4.9
+
+#clang-3.6
+##Debug
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++11 FL_CONF=Debug REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++1z FL_CONF=Debug REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+
+##Release
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++11 FL_CONF=Release REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++1z FL_CONF=Release REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+
 #gcc-4.7
 ##Debug
     - compiler: clang
@@ -98,13 +124,17 @@ matrix:
 #gcc-4.9
 ##Debug
     - compiler: clang
-      env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++11 FL_CONF=Debug REAL_CXX=g++-4.9     PACKAGE=g++-4.9   SUPPORT=    
+      env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++11 FL_CONF=Debug REAL_CXX=g++-4.9     PACKAGE=g++-4.9   SUPPORT=
+    - compiler: clang
+      env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++1y FL_CONF=Debug REAL_CXX=g++-4.9     PACKAGE=g++-4.9   SUPPORT=    
     - compiler: clang
       env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++14 FL_CONF=Debug REAL_CXX=g++-4.9     PACKAGE=g++-4.9   SUPPORT=    
       
 ##Release
     - compiler: clang
       env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++11 FL_CONF=Release REAL_CXX=g++-4.9 PACKAGE=g++-4.9   SUPPORT=
+    - compiler: clang
+      env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++1y FL_CONF=Release REAL_CXX=g++-4.9 PACKAGE=g++-4.9   SUPPORT=
     - compiler: clang
       env: REAL_CC=gcc-4.9   EXTRA_DEF=-std=c++14 FL_CONF=Release REAL_CXX=g++-4.9 PACKAGE=g++-4.9   SUPPORT=
 
