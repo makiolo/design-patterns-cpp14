@@ -19,21 +19,16 @@
 #include <queue>
 #include <design-patterns/common.h>
 
-#ifndef make_unique
+#if __cplusplus < 201103
 namespace std
 {
+	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
+	
 	template<typename T, typename... Args>
 	std::unique_ptr<T> make_unique(Args&&... args)
 	{
 		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 	}
-}
-#endif
-
-#ifndef enable_if_t
-namespace std
-{
-	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
 }
 #endif
 
