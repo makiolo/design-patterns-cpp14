@@ -55,12 +55,14 @@ public:
 
 	~connection()
 	{
-
+		
 	}
 
 	void disconnect()
 	{
-		_registered.erase(_it);
+		// BUG: here
+		// I think erase invalidate other tickets
+		//_registered.erase(_it);
 	}
 	
 protected:

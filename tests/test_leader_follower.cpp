@@ -5,28 +5,25 @@
 #include <string>
 #include <sstream>
 #include <queue>
-
 #include <fast-event-system/fes.h>
 #include <design-patterns/command.h>
-
-class Follower;
-
-using CommandFollower = std::function < void(Follower*) >;
 
 class UBot
 {
 public:
+	using CommandUBot = std::function < void(UBot*) >;
+	
 	UBot(const std::string& name)
 		: _name(name)
 	{
-
+		
 	}
-
+	
 	void update()
 	{
 		_queue.update();
 	}
-
+	
 	void walk()
 	{
 		std::cout << "I am walking" << std::endl;
@@ -37,73 +34,45 @@ public:
 		std::cout << "I am kamikace" << std::endl;
 	}
 	
-	fes::queue_fast<CommandFollower>& get_queue()
+	fes::queue_fast<CommandUBot>& get_queue()
 	{
 		return _queue;
-	}
-
-protected:
-	fes::queue_fast<CommandFollower> _queue;
-	std::string _name;
-};
-
-class Follower : public UBot
-{
-public:
-	Follower()
-		: UBot("follower")
-	{
-
 	}
 
 	void connect(const std::shared_ptr<UBot>& leader)
 	{
 		// follow to leader
-		_conn = leader->get_queue().connect([&](const CommandFollower& cmd)
+		_conn = leader->get_queue().connect([&](const CommandUBot& cmd)
 		{
 			cmd(this);
 		});
 	}
 	
-protected:
-	fes::connection_scoped<CommandFollower> _conn;
-};
-
-class Leader : public UBot
-{
-public:
-	Leader()
-		: UBot("leader")
-	{
-		
-	}
-	
 	void order()
 	{
 		_queue(
-			[=](Follower* self)
+			[=](UBot* self)
 			{
 				self->walk();
 				self->kamikace();
 			}
 		);
 	}
+protected:
+	fes::connection_scoped<CommandUBot> _conn;
+	fes::queue_fast<CommandUBot> _queue;
+	std::string _name;
 };
 
 int main()
 {
-	auto leader = std::make_shared<Leader>();
-	auto follower1 = std::make_shared<Follower>();
+	auto leader = std::make_shared<UBot>("leader");
+	auto follower1 = std::make_shared<UBot>("f1");
+	auto follower2 = std::make_shared<UBot>("f2");
 	follower1->connect(leader);
-
-	// TODO: test multiples followers
-
+	follower2->connect(leader);
 	leader->order();
-
-	for (int i = 0; i < 4000; ++i)
-	{
-		leader->update();
-	}
+	leader->update();
 	return(0);
 }
 
