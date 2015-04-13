@@ -19,7 +19,7 @@
 #include <queue>
 #include <design-patterns/common.h>
 
-#if (__cplusplus == 201103) || defined(__clang__)
+#if (__cplusplus == 201103) || (__clang__ == 1)
 namespace std
 {
 	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
