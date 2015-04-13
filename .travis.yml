@@ -37,46 +37,66 @@ matrix:
 #clang-3.2
 ##Debug
     - compiler: clang
-      env: REAL_CC=clang-3.2 REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 FL_CONF=Debug
+      env: REAL_CC=clang-3.2 REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 FL_CONF=Debug EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=clang-3.2 REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 FL_CONF=Debug EXTRA_DEF=-std=c++14
 
 ##Release
     - compiler: clang
-      env: REAL_CC=clang-3.2 REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 FL_CONF=Release
+      env: REAL_CC=clang-3.2 REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 FL_CONF=Release EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=clang-3.2 REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 FL_CONF=Release EXTRA_DEF=-std=c++14
 
 #clang-3.3
 ##Debug
     - compiler: clang
-      env: REAL_CC=clang-3.3 REAL_CXX=clang++-3.3 PACKAGE=clang-3.3 SUPPORT=g++-4.8 FL_CONF=Debug
+      env: REAL_CC=clang-3.3 REAL_CXX=clang++-3.3 PACKAGE=clang-3.3 SUPPORT=g++-4.8 FL_CONF=Debug EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=clang-3.3 REAL_CXX=clang++-3.3 PACKAGE=clang-3.3 SUPPORT=g++-4.8 FL_CONF=Debug EXTRA_DEF=-std=c++14
 
 ##Release
     - compiler: clang
-      env: REAL_CC=clang-3.3 REAL_CXX=clang++-3.3 PACKAGE=clang-3.3 SUPPORT=g++-4.8 FL_CONF=Release
+      env: REAL_CC=clang-3.3 REAL_CXX=clang++-3.3 PACKAGE=clang-3.3 SUPPORT=g++-4.8 FL_CONF=Release EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=clang-3.3 REAL_CXX=clang++-3.3 PACKAGE=clang-3.3 SUPPORT=g++-4.8 FL_CONF=Release EXTRA_DEF=-std=c++14
 
 #clang-3.4
 ##Debug
     - compiler: clang
-      env: REAL_CC=clang-3.4 REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8 FL_CONF=Debug
+      env: REAL_CC=clang-3.4 REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8 FL_CONF=Debug EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=clang-3.4 REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8 FL_CONF=Debug EXTRA_DEF=-std=c++14
 
 ##Release
     - compiler: clang
-      env: REAL_CC=clang-3.4 REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8 FL_CONF=Release 
+      env: REAL_CC=clang-3.4 REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8 FL_CONF=Release EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=clang-3.4 REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8 FL_CONF=Release EXTRA_DEF=-std=c++14
 
 #gcc-4.7
 ##Debug
     - compiler: clang
-      env: REAL_CC=gcc-4.7   REAL_CXX=g++-4.7     PACKAGE=g++-4.7   SUPPORT=    FL_CONF=Debug 
+      env: REAL_CC=gcc-4.7   REAL_CXX=g++-4.7     PACKAGE=g++-4.7   SUPPORT=    FL_CONF=Debug EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=gcc-4.7   REAL_CXX=g++-4.7     PACKAGE=g++-4.7   SUPPORT=    FL_CONF=Debug EXTRA_DEF=-std=c++14
 
 ##Release
     - compiler: clang
-      env: REAL_CC=gcc-4.7   REAL_CXX=g++-4.7     PACKAGE=g++-4.7   SUPPORT=    FL_CONF=Release
+      env: REAL_CC=gcc-4.7   REAL_CXX=g++-4.7     PACKAGE=g++-4.7   SUPPORT=    FL_CONF=Release EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=gcc-4.7   REAL_CXX=g++-4.7     PACKAGE=g++-4.7   SUPPORT=    FL_CONF=Release EXTRA_DEF=-std=c++14
 
 #gcc-4.8
 ##Debug
     - compiler: clang
-      env: REAL_CC=gcc-4.8   REAL_CXX=g++-4.8     PACKAGE=g++-4.8   SUPPORT=    FL_CONF=Debug
+      env: REAL_CC=gcc-4.8   REAL_CXX=g++-4.8     PACKAGE=g++-4.8   SUPPORT=    FL_CONF=Debug EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=gcc-4.8   REAL_CXX=g++-4.8     PACKAGE=g++-4.8   SUPPORT=    FL_CONF=Debug EXTRA_DEF=-std=c++14
 ##Release
     - compiler: clang
-      env: REAL_CC=gcc-4.8   REAL_CXX=g++-4.8     PACKAGE=g++-4.8   SUPPORT=    FL_CONF=Release 
+      env: REAL_CC=gcc-4.8   REAL_CXX=g++-4.8     PACKAGE=g++-4.8   SUPPORT=    FL_CONF=Release EXTRA_DEF=-std=c++11
+    - compiler: clang
+      env: REAL_CC=gcc-4.8   REAL_CXX=g++-4.8     PACKAGE=g++-4.8   SUPPORT=    FL_CONF=Release EXTRA_DEF=-std=c++14
 
 
 notifications:
