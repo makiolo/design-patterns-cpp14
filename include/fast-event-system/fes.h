@@ -19,12 +19,9 @@
 #include <queue>
 #include <design-patterns/common.h>
 
-#ifndef _MSC_VER
-#if __cplusplus <= 201103L
+#ifndef make_unique
 namespace std
 {
-	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
-
 	template<typename T, typename... Args>
 	std::unique_ptr<T> make_unique(Args&&... args)
 	{
@@ -32,6 +29,12 @@ namespace std
 	}
 }
 #endif
+
+#ifndef enable_if_t
+namespace std
+{
+	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
+}
 #endif
 
 namespace fes {
