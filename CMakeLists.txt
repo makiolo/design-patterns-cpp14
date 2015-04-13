@@ -3,9 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 enable_testing()
 
 INCLUDE_DIRECTORIES(include/)
-if(NOT MSVC)
-  add_definitions(-std=c++14)
-endif()
+add_definitions(${EXTRA_DEF})
 
 ADD_EXECUTABLE(test_memoize_static tests/test_memoize_static.cpp)
 ADD_TEST(NAME test_memoize_static COMMAND test_memoize_static WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
