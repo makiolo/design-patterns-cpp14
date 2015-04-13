@@ -20,7 +20,7 @@
 #include <design-patterns/common.h>
 
 #ifndef _MSC_VER
-#if __cplusplus < 201402L
+#if __cplusplus <= 201103L
 namespace std
 {
 	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
