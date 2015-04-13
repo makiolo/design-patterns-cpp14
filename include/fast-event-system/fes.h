@@ -20,6 +20,7 @@
 #include <design-patterns/common.h>
 
 #ifndef _MSC_VER
+#if __cplusplus < 201402L
 namespace std
 {
 	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
@@ -30,6 +31,7 @@ namespace std
 		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 	}
 }
+#endif
 #endif
 
 namespace fes {
