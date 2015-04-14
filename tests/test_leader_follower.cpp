@@ -6,7 +6,6 @@
 #include <sstream>
 #include <queue>
 #include <fast-event-system/fes.h>
-#include <design-patterns/command.h>
 
 class UBot
 {
@@ -26,23 +25,23 @@ public:
 	
 	void walk()
 	{
-		std::cout << "I am walking" << std::endl;
+		std::cout << "I am " << _name << ", state: walking" << std::endl;
 	}
 	
 	void kamikace()
 	{
-		std::cout << "I am kamikace" << std::endl;
+		std::cout << "I am " << _name << ", state: kamikace" << std::endl;
 	}
 	
 	fes::queue_fast<CommandUBot>& get_queue()
 	{
 		return _queue;
 	}
-
+	
 	void connect(const std::shared_ptr<UBot>& leader)
 	{
 		// follow to leader
-		_conn = leader->get_queue().connect([&](const CommandUBot& cmd)
+		_conn = leader->get_queue().connect([&](CommandUBot&& cmd)
 		{
 			cmd(this);
 		});
@@ -73,6 +72,10 @@ int main()
 	follower2->connect(leader);
 	leader->order();
 	leader->update();
+	// order himself
+	follower1->connect(follower1);
+	follower1->order();
+	follower1->update();
 	return(0);
 }
 

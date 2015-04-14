@@ -188,9 +188,9 @@ public:
 	
 	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
 #endif
-	void operator()(Args&&... data)
+	void operator()(const Args&... data)
 	{
-		_method(std::forward<Args>(data)...);
+		_method(data...);
 	}
 		
 protected:
@@ -218,7 +218,7 @@ public:
 	{
 		return _connect(obj, ptr_func, make_int_sequence < sizeof...(Args) > {});
 	}
-
+	
 	inline connection<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		typename vector_methods::iterator it = _registered.emplace(_registered.end(), method);
@@ -249,11 +249,11 @@ public:
 	
 	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
 #endif
-	void operator()(Args&& ... data)
+	void operator()(const Args& ... data)
 	{
 		for(auto& reg : _registered)
 		{
-			reg(std::forward<Args>(data)...);
+			reg(data...);
 		}
 	}
 
@@ -282,8 +282,8 @@ template <typename ... Args>
 class message
 {
 public:
-	message(int priority, std::chrono::system_clock::time_point timestamp, Args&&... data)
-		: _data(std::forward<Args>(data)...)
+	message(int priority, std::chrono::system_clock::time_point timestamp, const Args&... data)
+		: _data(data...)
 		, _priority(priority)
 		, _timestamp(timestamp)
 	{
@@ -295,13 +295,11 @@ public:
 		, _timestamp(std::move(other._timestamp))
 		, _data(std::move(other._data))
 	{
-		//std::cout << "constructor move message" << std::endl;
+		
 	}
 
 	message<Args...>& operator=(message<Args...>&& other)
 	{
-		//std::cout << "asignation move message" << std::endl;
-
 		_priority = other._priority;
 		_timestamp = std::move(other._timestamp);
 		_data = std::move(other._data);
@@ -314,13 +312,11 @@ public:
 		, _timestamp(other._timestamp)
 		, _data(other._data)
 	{
-		//std::cout << "constructor copy message" << std::endl;
+
 	}
 	
 	message<Args...>& operator=(const message<Args...>& other)
 	{
-		//std::cout << "asignation copy message" << std::endl;
-
 		_priority = other._priority;
 		_timestamp = other._timestamp;
 		_data = other._data;
@@ -330,7 +326,7 @@ public:
 	
 	~message()
 	{
-		//std::cout << "destructor message" << std::endl;
+		
 	}
 
 	bool operator<(const message<Args...>& other) const
@@ -372,10 +368,10 @@ public:
 #else
 	template <typename R, typename P>
 #endif
-	void operator()(int priority, std::chrono::duration<R,P> delay, Args&& ... data)
+	void operator()(int priority, std::chrono::duration<R,P> delay, const Args& ... data)
 	{
 		auto delay_point = std::chrono::high_resolution_clock::now() + delay;
-		_queue.emplace(priority, delay_point, std::forward<Args>(data)...);
+		_queue.emplace(priority, delay_point, data...);
 	}
 	
 	void update()
@@ -455,9 +451,9 @@ public:
 	
 	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
 #endif
-	void operator()(Args&& ... data)
+	void operator()(const Args& ... data)
 	{
-		_queue.emplace(std::forward<Args>(data)...);
+		_queue.emplace(data...);
 	}
 	
 	void update()
