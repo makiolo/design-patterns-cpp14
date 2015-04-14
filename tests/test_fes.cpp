@@ -36,6 +36,7 @@ protected:
 	TYPE _channel;
 };
 
+template <typename TYPE = fes::callback<std::string> >
 class Consumer
 {
 public:
@@ -50,8 +51,7 @@ public:
 		
 	}
 
-	template <typename T>
-	void connect(Producer<T>& producer)
+	void connect(Producer<TYPE>& producer)
 	{
 		_conn = producer.get_channel().connect(this, &Consumer::on_handler);
 	}
@@ -72,8 +72,8 @@ int main()
 {
 	{
 		Producer<fes::callback<std::string> > p;
-		Consumer c1;
-		Consumer c2;
+		Consumer<fes::callback<std::string> > c1;
+		Consumer<fes::callback<std::string> > c2;
 		{
 			c1.connect(p);
 			c2.connect(p);
@@ -84,8 +84,8 @@ int main()
 	}
 	{
 		Producer<fes::queue_fast<std::string> > p;
-		Consumer c1;
-		Consumer c2;
+		Consumer<fes::queue_fast<std::string> > c1;
+		Consumer<fes::queue_fast<std::string> > c2;
 		{
 			c1.connect(p);
 			c2.connect(p);
@@ -97,8 +97,8 @@ int main()
 	}
 	{
 		Producer<fes::queue_delayer<std::string> > p;
-		Consumer c1;
-		Consumer c2;
+		Consumer<fes::queue_delayer<std::string> > c1;
+		Consumer<fes::queue_delayer<std::string> > c2;
 		{
 			c1.connect(p);
 			c2.connect(p);
