@@ -42,33 +42,32 @@ template <typename ... Args>
 class connection
 {
 public:
-	using list_methods = std::list<method<Args...> >;
-	using connection_id = typename list_methods::iterator;
 
-	connection(list_methods& registered, connection_id it)
-		: _registered(registered)
-		, _it(it)
+
+	connection(const std::function<void(void)>& deleter)
+		: _deleter(deleter)
 	{
 		
 	}
-	connection(const connection<Args...>&) = default;
-	connection<Args...> operator=(const connection<Args...>& other) = delete;
+	
+	connection(const connection<Args...>& other) = delete;
+	const connection<Args...>& operator=(const connection<Args...>& other) = delete;
+	
+	void disconnect()
+	{
+		// call deleter
+		_deleter();
+	}
 
 	~connection()
 	{
 		
 	}
-
-	void disconnect()
-	{
-		_registered.erase(_it);
-	}
 	
 protected:
-	list_methods& _registered;
-	connection_id _it;
+	std::function<void(void)> _deleter;
 };
-
+template <typename ... Args> using connection_shared = std::shared_ptr<connection<Args...> >;
 
 template <typename ... Args>
 class connection_scoped
@@ -79,15 +78,16 @@ public:
 		
 	}
 
-	connection_scoped(const connection<Args ...>& other)
-	{
-		_connection = std::make_unique<connection<Args...>>(other);
-	}
-
-	connection_scoped(connection_scoped<Args...>&& other)
-		: _connection(std::move(other._connection))
+	connection_scoped(const connection_shared<Args ...>& other)
+		: _connection(other)
 	{
 		
+	}
+	
+	const connection_scoped<Args...>& operator=(const connection_shared<Args ...>&other)
+	{
+		_connection = other;
+		return *this;
 	}
 
 	~connection_scoped()
@@ -97,40 +97,9 @@ public:
 			_connection->disconnect();
 		}
 	}
-	
-	const connection_scoped<Args...>& operator=(const connection<Args ...>&other)
-	{
-		_connection = std::make_unique<connection<Args...>>(other);
-		return *this;
-	}
-	
-protected:
-	std::unique_ptr<connection<Args...>> _connection;
-};
 
-template <typename ... Args>
-class connection_shared
-{
-public:
-	connection_shared()
-	{
-		
-	}
-	
-	void disconnect()
-	{
-		if (_connection)
-		{
-			_connection->disconnect();
-		}
-	}
-	
-	void set(const connection<Args...>& other)
-	{
-		_connection = std::make_shared<connection<Args...> >(other);
-	}
 protected:
-	std::shared_ptr<connection<Args...>> _connection;
+	connection_shared<Args ...> _connection;
 };
 
 template <typename ... Args>
@@ -179,14 +148,6 @@ public:
 	}
 #endif
 
-#ifdef _MSC_VER
-	void operator()(Args ... data)
-	{
-		_method(data...);
-	}
-	
-	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
-#endif
 	void operator()(const Args&... data)
 	{
 		_method(data...);
@@ -204,7 +165,7 @@ template <typename ... Args>
 class callback
 {
 public:
-	using list_methods = typename connection<Args...>::list_methods;
+	using list_methods = std::list<method<Args...> >;
 	
 	callback()
 	{
@@ -213,41 +174,34 @@ public:
 	
 #ifdef _MSC_VER
 	template <typename T>
-	inline connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
+	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _connect(obj, ptr_func, make_int_sequence < sizeof...(Args) > {});
 	}
 	
-	inline connection<Args...> connect(const std::function<void(const Args&...)>& method)
+	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
-		typename list_methods::iterator it = _registered.emplace(_registered.end(), method);
-		return connection<Args...>(_registered, it);
+		auto it = _registered.emplace(_registered.end(), method);
+		return std::make_shared<connection<Args ...> >([&](){
+			_registered.erase(it);
+		});
 	}
 #else
 	template <typename T>
-	inline connection<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
+	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
 	{
 		return _connect(obj, ptr_func, make_int_sequence<sizeof...(Args)>{});
 	}
 
-	inline connection<Args...> connect(const std::function<void(Args&&...)>& method)
+	inline connection_shared<Args...> connect(const std::function<void(Args&&...)>& method)
 	{
-		typename list_methods::iterator it = _registered.emplace(_registered.end(), method);
-		return connection<Args...>(_registered, it);
+		auto it = _registered.emplace(_registered.end(), method);
+		return std::make_shared<connection<Args ...> >([&](){
+			_registered.erase(it);
+		});
 	}
 #endif
 
-#ifdef _MSC_VER
-	void operator()(Args ... data)
-	{
-		for(auto& reg : _registered)
-		{
-			reg(data...);
-		}
-	}
-	
-	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
-#endif
 	void operator()(const Args& ... data)
 	{
 		for(auto& reg : _registered)
@@ -259,17 +213,21 @@ public:
 protected:	
 #ifdef _MSC_VER
 	template <typename T, int ... Is>
-	inline connection<Args...> _connect(T* obj, void (T::*ptr_func)(const Args&...), int_sequence<Is...>)
+	inline connection_shared<Args...> _connect(T* obj, void (T::*ptr_func)(const Args&...), int_sequence<Is...>)
 	{
-		typename list_methods::iterator it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
-		return connection<Args...>(_registered, it);
+		auto it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
+		return std::make_shared<connection<Args ...> >([&](){
+			_registered.erase(it);
+		});
 	}
 #else
 	template <typename T, int ... Is>
-	inline connection<Args...> _connect(T* obj, void (T::*ptr_func)(Args&&...), int_sequence<Is...>)
+	inline connection_shared<Args...> _connect(T* obj, void (T::*ptr_func)(Args&&...), int_sequence<Is...>)
 	{
-		typename list_methods::iterator it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
-		return connection<Args...>(_registered, it);
+		auto it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
+		return std::make_shared<connection<Args ...> >([&](){
+			_registered.erase(it);
+		});
 	}
 #endif
 	
@@ -354,19 +312,8 @@ public:
 	{
 		
 	}
-	
-#ifdef _MSC_VER
+
 	template <typename R, typename P>
-	void operator()(int priority, std::chrono::duration<R,P> delay, Args ... data)
-	{
-		auto delay_point = std::chrono::high_resolution_clock::now() + delay;
-		_queue.emplace(priority, delay_point, std::move(data)...);
-	}
-	
-	template <typename R, typename P, typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
-#else
-	template <typename R, typename P>
-#endif
 	void operator()(int priority, std::chrono::duration<R,P> delay, const Args& ... data)
 	{
 		auto delay_point = std::chrono::high_resolution_clock::now() + delay;
@@ -397,24 +344,24 @@ public:
 	
 	template <typename T>
 #ifdef _MSC_VER
-	inline connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
+	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
 #else
-	inline connection<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
+	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
 #endif
 
 #ifdef _MSC_VER
-	inline connection<Args...> connect(const std::function<void(const Args&...)>& method)
+	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		return _output.connect(method);
 	}
 #else
-	inline connection<Args...> connect(const std::function<void(Args&&...)>& method)
+	inline connection_shared<Args...> connect(const std::function<void(Args&&...)>& method)
 	{
 		return _output.connect(method);
 	}
@@ -442,14 +389,6 @@ public:
 		
 	}
 	
-#ifdef _MSC_VER
-	void operator()(Args ... data)
-	{
-		_queue.emplace(std::move(data)...);
-	}
-	
-	template <typename = std::enable_if_t<std::is_lvalue_reference<Args...>::value>>
-#endif
 	void operator()(const Args& ... data)
 	{
 		_queue.emplace(data...);
@@ -466,24 +405,24 @@ public:
 
 	template <typename T>
 #ifdef _MSC_VER
-	inline connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
+	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
 #else
-	inline connection<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
+	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
 #endif
 
 #ifdef _MSC_VER
-	inline connection<Args...> connect(const std::function<void(const Args&...)>& method)
+	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		return _output.connect(method);
 	}
 #else
-	inline connection<Args...> connect(const std::function<void(Args&&...)>& method)
+	inline connection_shared<Args...> connect(const std::function<void(Args&&...)>& method)
 	{
 		return _output.connect(method);
 	}

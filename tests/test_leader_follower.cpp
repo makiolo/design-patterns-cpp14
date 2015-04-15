@@ -63,8 +63,7 @@ public:
 	
 	void add_shopkeeper(T& shopkeeper)
 	{
-		// TODO: save connection
-		get_queue().connect(std::bind(&talker::planificator, *this, shopkeeper, std::placeholders::_1));
+		_conns.emplace_back( get_queue().connect(std::bind(&talker::planificator, *this, shopkeeper, std::placeholders::_1)) );
 	}
 
 	void planificator(T& shopkeeper, CommandShopKeeper<T>&& cmd)
@@ -127,7 +126,7 @@ public:
 	}
 	
 protected:
-	//std::vector<fes::connection_scoped<CommandShopKeeper>> _conns;
+	std::vector<fes::connection_shared<CommandShopKeeper<T> > > _conns;
 	fes::callback<CommandShopKeeper<T> > _queue;
 	std::string _name;
 };
@@ -187,24 +186,27 @@ public:
 
 int main()
 {
-	auto talker1 = std::make_shared<lead::talker<ShopKeeper> >("talker 1");
-	auto talker2 = std::make_shared<lead::talker<ShopKeeper> >("talker 2");
-	auto shopkeeper1 = std::make_shared<ShopKeeper>("shopkeeper 1");
-	auto shopkeeper2 = std::make_shared<ShopKeeper>("shopkeeper 2");
-	
-	talker1->add_shopkeeper(*shopkeeper1);
-	talker1->add_shopkeeper(*shopkeeper2);
-	
-	talker1->order([=](ShopKeeper& self) {return self.right();});
-	talker1->order([=](ShopKeeper& self) {return self.left();});
-	talker1->order([=](ShopKeeper& self) {return self.up();});
-	talker1->order([=](ShopKeeper& self) {return self.down();});
-	talker1->order([=](ShopKeeper& self) {return self.right();});
-	
-	// shopkeeper threat your talker
-	shopkeeper2->add_shopkeeper(*talker2);
-	shopkeeper2->order([=](lead::talker<ShopKeeper>& self) {return self.kamikace();});
+	{
+		auto talker1 = std::make_shared<lead::talker<ShopKeeper> >("talker 1");
+		auto talker2 = std::make_shared<lead::talker<ShopKeeper> >("talker 2");
+		auto shopkeeper1 = std::make_shared<ShopKeeper>("shopkeeper 1");
+		auto shopkeeper2 = std::make_shared<ShopKeeper>("shopkeeper 2");
 
+		talker1->add_shopkeeper(*shopkeeper1);
+		//talker1->add_shopkeeper(*shopkeeper2);
+
+		talker1->order([=](ShopKeeper& self) {return self.right(); });
+		/*
+		talker1->order([=](ShopKeeper& self) {return self.left();});
+		talker1->order([=](ShopKeeper& self) {return self.up();});
+		talker1->order([=](ShopKeeper& self) {return self.down();});
+		talker1->order([=](ShopKeeper& self) {return self.right();});
+
+		// shopkeeper threat your talker
+		shopkeeper2->add_shopkeeper(*talker2);
+		shopkeeper2->order([=](lead::talker<ShopKeeper>& self) {return self.kamikace();});
+		*/
+	}
 	return(0);
 }
 
