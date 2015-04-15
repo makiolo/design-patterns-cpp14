@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 enable_testing()
 
 INCLUDE_DIRECTORIES(include/)
+if (NOT DEFINED EXTRA_DEF)
+	set(EXTRA_DEF -std=c++11)
+endif()
 add_definitions(${EXTRA_DEF})
 
 # Generate .clang_complete for full completation in vim + clang_complete

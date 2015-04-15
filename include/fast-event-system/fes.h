@@ -14,6 +14,7 @@
 #include <tuple>
 #include <functional>
 #include <vector>
+#include <list>
 #include <string>
 #include <sstream>
 #include <queue>
@@ -41,10 +42,10 @@ template <typename ... Args>
 class connection
 {
 public:
-	using vector_methods = std::vector<method<Args...> >;
-	using connection_id = typename vector_methods::iterator;
+	using list_methods = std::list<method<Args...> >;
+	using connection_id = typename list_methods::iterator;
 
-	connection(vector_methods& registered, connection_id it)
+	connection(list_methods& registered, connection_id it)
 		: _registered(registered)
 		, _it(it)
 	{
@@ -60,13 +61,11 @@ public:
 
 	void disconnect()
 	{
-		// BUG: here
-		// I think erase invalidate other tickets
-		//_registered.erase(_it);
+		_registered.erase(_it);
 	}
 	
 protected:
-	vector_methods& _registered;
+	list_methods& _registered;
 	connection_id _it;
 };
 
@@ -205,7 +204,7 @@ template <typename ... Args>
 class callback
 {
 public:
-	using vector_methods = typename connection<Args...>::vector_methods;
+	using list_methods = typename connection<Args...>::list_methods;
 	
 	callback()
 	{
@@ -221,7 +220,7 @@ public:
 	
 	inline connection<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
-		typename vector_methods::iterator it = _registered.emplace(_registered.end(), method);
+		typename list_methods::iterator it = _registered.emplace(_registered.end(), method);
 		return connection<Args...>(_registered, it);
 	}
 #else
@@ -233,7 +232,7 @@ public:
 
 	inline connection<Args...> connect(const std::function<void(Args&&...)>& method)
 	{
-		typename vector_methods::iterator it = _registered.emplace(_registered.end(), method);
+		typename list_methods::iterator it = _registered.emplace(_registered.end(), method);
 		return connection<Args...>(_registered, it);
 	}
 #endif
@@ -262,20 +261,20 @@ protected:
 	template <typename T, int ... Is>
 	inline connection<Args...> _connect(T* obj, void (T::*ptr_func)(const Args&...), int_sequence<Is...>)
 	{
-		typename vector_methods::iterator it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
+		typename list_methods::iterator it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
 		return connection<Args...>(_registered, it);
 	}
 #else
 	template <typename T, int ... Is>
 	inline connection<Args...> _connect(T* obj, void (T::*ptr_func)(Args&&...), int_sequence<Is...>)
 	{
-		typename vector_methods::iterator it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
+		typename list_methods::iterator it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
 		return connection<Args...>(_registered, it);
 	}
 #endif
 	
 protected:
-	vector_methods _registered;
+	list_methods _registered;
 };
 
 template <typename ... Args>
