@@ -16,20 +16,19 @@
 */
 
 class UBot;
+using CommandUBot = std::function<void(UBot&)>;
+using CompositeCommandUBot = std::function<CommandUBot(const CommandUBot&)>;
 
-using CommandUBot = std::function<void(UBot*)>;
-using composite = std::function<CommandUBot(const CommandUBot&)>;
-
-CommandUBot operator+=(const composite& a, const CommandUBot& b)
+CommandUBot operator+=(const CompositeCommandUBot& a, const CommandUBot& b)
 {
 	return a(b);
 }
 
-composite repeat(int n)
+CompositeCommandUBot repeat(int n)
 {
 	return [=](const CommandUBot& f)
 	{
-		return [&](UBot* self)
+		return [&](UBot& self)
 		{
 			for(int i=0; i<n; ++i)
 			{
@@ -47,15 +46,18 @@ public:
 	{
 		
 	}
-		
-	void connect(const std::shared_ptr<UBot>& leader)
+	
+	void add_follower(UBot& follower)
 	{
-		_conn = leader->get_queue().connect([&](CommandUBot&& cmd)
+		//_conns.push_back(
+		get_queue().connect([&](CommandUBot&& cmd)
 		{
-			cmd(this);
-		});
+			cmd(follower);
+		})
+		//)
+		;
 	}
-
+	
 	/*	
 	template <typename R, typename P>
 	void order(int priority, std::chrono::duration<R,P> delay, const CommandUBot& command)
@@ -72,7 +74,7 @@ public:
 	{
 		return _queue;
 	}
-
+	
 	/*
 	void update()
 	{
@@ -104,38 +106,43 @@ public:
 	}
 
 protected:
-	fes::connection_scoped<CommandUBot> _conn;
+	//std::vector<fes::connection_scoped<CommandUBot>> _conns;
 	fes::callback<CommandUBot> _queue;
 	std::string _name;
 };
 
 int main()
 {
-	auto leader1 = std::make_shared<UBot>("leader1");
-	auto leader2 = std::make_shared<UBot>("leader2");
-	auto follower1 = std::make_shared<UBot>("follower1");
-	auto follower2 = std::make_shared<UBot>("follower2");
-	{
-		follower1->connect(leader1);
-		follower2->connect(leader1);
-		leader1->order( [=](UBot* self) { self->right(); } );
-		leader1->order(repeat(1) += [=](UBot* self) { self->left(); } );
-		leader1->order(repeat(1) += [=](UBot* self) { self->up(); } );
-		leader1->order(repeat(1) += [=](UBot* self) { self->down(); } );
-		follower2->connect(leader2);
-		leader2->order(repeat(100) += [=](UBot* self) { self->kamikace(); } );
-		
-		/*
-		for(int i=0;i<4000;++i)
-		{
-			leader1->update();
-			leader2->update();
-#ifdef _WIN32
-			Sleep(1);
-#endif
-		}
-		*/
-	}
+	auto leader1 = std::make_shared<UBot>("leader 1");
+	auto leader2 = std::make_shared<UBot>("leader 2");
+	auto follower1 = std::make_shared<UBot>("follower 1");
+	auto follower2 = std::make_shared<UBot>("follower 2");
+	
+	leader1->add_follower(*follower1);
+	leader1->add_follower(*follower2);
+	
+	leader1->order([=](UBot& self) {
+									self.right(); 
+								});
+	leader1->order(repeat(2) += [=](UBot& self) {
+									self.left();
+								});
+	leader1->order(repeat(2) += [=](UBot& self) {
+									self.up(); 
+								});
+	leader1->order(repeat(2) += [=](UBot& self) {
+									self.down(); 
+								});
+	leader1->order(repeat(2) += [=](UBot& self) {
+									self.right(); 
+								});
+	
+	// follower threat your leader
+	follower2->add_follower(*leader2);
+	follower2->order(repeat(5) += [=](UBot& self) {
+									self.kamikace();
+									self.kamikace();
+								});
 	return(0);
 }
 
