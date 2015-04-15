@@ -1,6 +1,6 @@
 // Ricardo Marmolejo Garcia
 // 15-04-2015
-// reinterpretation pattern command
+// experimental reinterpretation pattern command
 #include <iostream>
 #include <tuple>
 #include <functional>
@@ -15,62 +15,100 @@
 #endif
 */
 
-class UBot;
-using CommandUBot = std::function<void(UBot&)>;
-using CompositeCommandUBot = std::function<CommandUBot(const CommandUBot&)>;
+namespace lead {
 
-CommandUBot operator+=(const CompositeCommandUBot& a, const CommandUBot& b)
+template <typename T> using CommandShopKeeper = std::function<bool(T&)>;
+#if 0
+template <typename T> using CompositeCommandShopKeeper = std::function<CommandShopKeeper<T>(const CommandShopKeeper<T>&)>;
+
+template <typename T>
+CommandShopKeeper<T> operator>>=(const CompositeCommandShopKeeper<T>& a, const CommandShopKeeper<T>& b)
 {
 	return a(b);
 }
 
-CompositeCommandUBot repeat(int n)
+template <typename T>
+CompositeCommandShopKeeper<T> repeat(int n)
 {
-	return [=](const CommandUBot& f)
+	return [=](const CommandShopKeeper<T>& f)
 	{
-		return [&](UBot& self)
+		return [&](T& self)
 		{
-			for(int i=0; i<n; ++i)
+			// I want coroutines :(
+			int cont = 0;
+			while(cont < n)
 			{
-				f(self);
+				bool ret = f(self);
+				if(ret)
+				{
+					++cont;
+				}
 			}
+			return true;
 		};
 	};
 }
+#endif
 
-class UBot
+template <typename T>
+class talker
 {
 public:
-	UBot(const std::string& name)
+	talker(const std::string& name)
 		: _name(name)
 	{
 		
 	}
+	~talker() { ; }
 	
-	void add_follower(UBot& follower)
+	void add_shopkeeper(T& shopkeeper)
 	{
-		//_conns.push_back(
-		get_queue().connect([&](CommandUBot&& cmd)
-		{
-			cmd(follower);
-		})
-		//)
-		;
+		// TODO: save connection
+		get_queue().connect(std::bind(&talker::planificator, *this, shopkeeper, std::placeholders::_1));
+	}
+
+	void planificator(T& shopkeeper, CommandShopKeeper<T>&& cmd)
+	{
+		//TODO:
+		//TODO:
+		//TODO:
+		//
+		// command added to queue
+		// El que encola establece sus propias prioridades
+		// Al despachar se vuelve a encolar con las
+		// preferencias personales
+		//
+		// Si no se esta ejecutando nada:
+		//		se ejecuta
+		// Si ya se esta ejecutando algo, algoritmos de planificación:
+		//		Cuando una nueva tarea cancela la que se esta ejecutando?
+		cmd(shopkeeper);
+		
+		/*
+		if I am idle:
+			trabajar
+		else
+			if nueva tarea es mas importante que la actual
+				cancelar actual y trabajar con la nueva
+			else
+				encolar la nueva tarea con una prioridad basada en heuristica
+		*/
 	}
 	
 	/*	
 	template <typename R, typename P>
-	void order(int priority, std::chrono::duration<R,P> delay, const CommandUBot& command)
+	void order(int priority, std::chrono::duration<R,P> delay, const CommandShopKeeper& command)
 	{
 		_queue(priority, delay, command);
 	}
 	*/
-	void order(const CommandUBot& command)
+	
+	void order(const CommandShopKeeper<T>& command)
 	{
 		_queue(command);
 	}
 	
-	fes::callback<CommandUBot>& get_queue()
+	fes::callback<CommandShopKeeper<T> >& get_queue()
 	{
 		return _queue;
 	}
@@ -82,67 +120,91 @@ public:
 	}
 	*/
 	
-	// skills
-	void right()
-	{
-		std::cout << "I am " << _name << ", state: right" << std::endl;
-	}
-	void left()
-	{
-		std::cout << "I am " << _name << ", state: left" << std::endl;
-	}
-	void up()
-	{
-		std::cout << "I am " << _name << ", state: up" << std::endl;
-	}
-	void down()
-	{
-		std::cout << "I am " << _name << ", state: down" << std::endl;
-	}
-	
-	void kamikace()
+	bool kamikace()
 	{
 		std::cout << "I am " << _name << ", state: kamikace" << std::endl;
+		return true;
+	}
+	
+protected:
+	//std::vector<fes::connection_scoped<CommandShopKeeper>> _conns;
+	fes::callback<CommandShopKeeper<T> > _queue;
+	std::string _name;
+};
+
+}
+
+// client side
+// ShopKeeper can be a lider of liders
+class ShopKeeper : public lead::talker< lead::talker<ShopKeeper> >
+{
+public:
+	ShopKeeper(const std::string& name)
+		: talker(name)
+	{
+		
+	}
+	
+	~ShopKeeper() { ; }
+	
+	// skills
+	bool right()
+	{
+		std::cout << "I am " << _name << ", state: right" << std::endl;
+		return true;
 	}
 
-protected:
-	//std::vector<fes::connection_scoped<CommandUBot>> _conns;
-	fes::callback<CommandUBot> _queue;
-	std::string _name;
+	bool left()
+	{
+		std::cout << "I am " << _name << ", state: left" << std::endl;
+		return true;
+	}
+
+	bool up()
+	{
+		std::cout << "I am " << _name << ", state: up" << std::endl;
+		return true;
+	}
+
+	bool down()
+	{
+		std::cout << "I am " << _name << ", state: down" << std::endl;
+		return true;
+	}
+};
+
+
+class Buyer : public lead::talker< lead::talker<ShopKeeper> >
+{
+public:
+	Buyer(const std::string& name)
+		: talker(name)
+	{
+		
+	}
+	~Buyer() { ; }	
 };
 
 int main()
 {
-	auto leader1 = std::make_shared<UBot>("leader 1");
-	auto leader2 = std::make_shared<UBot>("leader 2");
-	auto follower1 = std::make_shared<UBot>("follower 1");
-	auto follower2 = std::make_shared<UBot>("follower 2");
+	auto talker1 = std::make_shared<lead::talker<ShopKeeper> >("talker 1");
+	auto talker2 = std::make_shared<lead::talker<ShopKeeper> >("talker 2");
+	auto shopkeeper1 = std::make_shared<ShopKeeper>("shopkeeper 1");
+	auto shopkeeper2 = std::make_shared<ShopKeeper>("shopkeeper 2");
 	
-	leader1->add_follower(*follower1);
-	leader1->add_follower(*follower2);
+	talker1->add_shopkeeper(*shopkeeper1);
+	talker1->add_shopkeeper(*shopkeeper2);
 	
-	leader1->order([=](UBot& self) {
-									self.right(); 
-								});
-	leader1->order(repeat(2) += [=](UBot& self) {
-									self.left();
-								});
-	leader1->order(repeat(2) += [=](UBot& self) {
-									self.up(); 
-								});
-	leader1->order(repeat(2) += [=](UBot& self) {
-									self.down(); 
-								});
-	leader1->order(repeat(2) += [=](UBot& self) {
-									self.right(); 
-								});
+	talker1->order([=](ShopKeeper& self) {return self.right();});
+	talker1->order([=](ShopKeeper& self) {return self.left();});
+	talker1->order([=](ShopKeeper& self) {return self.up();});
+	talker1->order([=](ShopKeeper& self) {return self.down();});
+	talker1->order([=](ShopKeeper& self) {return self.right();});
 	
-	// follower threat your leader
-	follower2->add_follower(*leader2);
-	follower2->order(repeat(5) += [=](UBot& self) {
-									self.kamikace();
-									self.kamikace();
-								});
+	// shopkeeper threat your talker
+	shopkeeper2->add_shopkeeper(*talker2);
+	shopkeeper2->order([=](lead::talker<ShopKeeper>& self) {return self.kamikace();});
+
 	return(0);
 }
 
