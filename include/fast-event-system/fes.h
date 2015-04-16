@@ -106,7 +106,6 @@ template <typename ... Args>
 class method
 {
 public:
-#ifdef _MSC_VER
 	method(const std::function<void(const Args&...)>& method)
 		: _method(method)
 	{
@@ -126,27 +125,6 @@ public:
 	{
 		
 	}
-#else
-	method(const std::function<void(Args&&...)>& method)
-		: _method(method)
-	{
-		
-	}
-
-	template <typename T>
-	method(T* obj, void (T::*ptr_func)(Args&&...))
-		: method(obj, ptr_func, make_int_sequence<sizeof...(Args)>{})
-	{
-		
-	}
-
-	template <typename T, int ... Is>
-	method(T* obj, void (T::*ptr_func)(Args&&...), int_sequence<Is...>)
-		: method(std::bind(ptr_func, obj, placeholder_template<Is>{}...))
-	{
-		
-	}
-#endif
 
 	void operator()(const Args&... data)
 	{
@@ -154,11 +132,7 @@ public:
 	}
 		
 protected:
-#ifdef _MSC_VER
 	std::function<void(const Args&...)> _method;
-#else
-	std::function<void(Args...)> _method;
-#endif
 };
 
 template <typename ... Args>
@@ -172,7 +146,6 @@ public:
 		
 	}
 	
-#ifdef _MSC_VER
 	template <typename T>
 	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
@@ -186,21 +159,6 @@ public:
 			_registered.erase(it);
 		});
 	}
-#else
-	template <typename T>
-	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
-	{
-		return _connect(obj, ptr_func, make_int_sequence<sizeof...(Args)>{});
-	}
-
-	inline connection_shared<Args...> connect(const std::function<void(Args&&...)>& method)
-	{
-		auto it = _registered.emplace(_registered.end(), method);
-		return std::make_shared<connection<Args ...> >([&](){
-			_registered.erase(it);
-		});
-	}
-#endif
 
 	void operator()(const Args& ... data)
 	{
@@ -211,7 +169,6 @@ public:
 	}
 
 protected:	
-#ifdef _MSC_VER
 	template <typename T, int ... Is>
 	inline connection_shared<Args...> _connect(T* obj, void (T::*ptr_func)(const Args&...), int_sequence<Is...>)
 	{
@@ -220,16 +177,6 @@ protected:
 			_registered.erase(it);
 		});
 	}
-#else
-	template <typename T, int ... Is>
-	inline connection_shared<Args...> _connect(T* obj, void (T::*ptr_func)(Args&&...), int_sequence<Is...>)
-	{
-		auto it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
-		return std::make_shared<connection<Args ...> >([&](){
-			_registered.erase(it);
-		});
-	}
-#endif
 	
 protected:
 	list_methods _registered;
@@ -343,29 +290,15 @@ public:
 	}
 	
 	template <typename T>
-#ifdef _MSC_VER
 	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
-#else
-	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
-	{
-		return _output.connect(obj, ptr_func);
-	}
-#endif
 
-#ifdef _MSC_VER
 	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		return _output.connect(method);
 	}
-#else
-	inline connection_shared<Args...> connect(const std::function<void(Args&&...)>& method)
-	{
-		return _output.connect(method);
-	}
-#endif
 protected:
 	template<int ...S>
 	inline void update(typename container_type::value_type&& top, seq<S...>)
@@ -404,29 +337,15 @@ public:
 	}
 
 	template <typename T>
-#ifdef _MSC_VER
 	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
-#else
-	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(Args&&...))
-	{
-		return _output.connect(obj, ptr_func);
-	}
-#endif
 
-#ifdef _MSC_VER
 	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		return _output.connect(method);
 	}
-#else
-	inline connection_shared<Args...> connect(const std::function<void(Args&&...)>& method)
-	{
-		return _output.connect(method);
-	}
-#endif
 
 protected:	
 	template<int ...S>

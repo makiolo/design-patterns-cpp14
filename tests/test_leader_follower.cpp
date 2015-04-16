@@ -9,51 +9,43 @@
 #include <sstream>
 #include <queue>
 #include <fast-event-system/fes.h>
-/*
 #ifdef _WIN32
 #include <Windows.h>
 #endif
-*/
 
 namespace lead {
 
-template <typename T> using CommandShopKeeper = std::function<bool(T&)>;
-#if 0
-template <typename T> using CompositeCommandShopKeeper = std::function<CommandShopKeeper<T>(const CommandShopKeeper<T>&)>;
+template <typename T> using CommandTalker = std::function<void(T&)>;
+template <typename T> using CompositeCommandTalker = std::function<CommandTalker<T>(const CommandTalker<T>&)>;
 
 template <typename T>
-CommandShopKeeper<T> operator>>=(const CompositeCommandShopKeeper<T>& a, const CommandShopKeeper<T>& b)
+CommandTalker<T> operator>>=(const CompositeCommandTalker<T>& a, const CommandTalker<T>& b)
 {
 	return a(b);
 }
 
 template <typename T>
-CompositeCommandShopKeeper<T> repeat(int n)
+CompositeCommandTalker<T> repeat(int n)
 {
-	return [=](const CommandShopKeeper<T>& f)
+	return [=](const CommandTalker<T>& f)
 	{
 		return [&](T& self)
 		{
 			// I want coroutines :(
-			int cont = 0;
-			while(cont < n)
+			for(int cont = 0; cont < n; ++cont)
 			{
-				bool ret = f(self);
-				if(ret)
-				{
-					++cont;
-				}
+				f(self);
 			}
-			return true;
 		};
 	};
 }
-#endif
 
 template <typename T>
 class talker
 {
 public:
+	using container = fes::queue_delayer<CommandTalker<T> >;
+	
 	talker(const std::string& name)
 		: _name(name)
 	{
@@ -61,12 +53,12 @@ public:
 	}
 	~talker() { ; }
 	
-	void add_shopkeeper(T& shopkeeper)
+	void add_follower(T& talker)
 	{
-		_conns.emplace_back( get_queue().connect(std::bind(&talker::planificator, *this, shopkeeper, std::placeholders::_1)) );
+		_conns.emplace_back( get_queue().connect(std::bind(&talker::planificator, *this, std::ref(talker), std::placeholders::_1)) );
 	}
-
-	void planificator(T& shopkeeper, CommandShopKeeper<T>&& cmd)
+	
+	void planificator(T& talker, const CommandTalker<T>& cmd)
 	{
 		//TODO:
 		//TODO:
@@ -81,7 +73,7 @@ public:
 		//		se ejecuta
 		// Si ya se esta ejecutando algo, algoritmos de planificación:
 		//		Cuando una nueva tarea cancela la que se esta ejecutando?
-		cmd(shopkeeper);
+		cmd(talker);
 		
 		/*
 		if I am idle:
@@ -91,51 +83,49 @@ public:
 				cancelar actual y trabajar con la nueva
 			else
 				encolar la nueva tarea con una prioridad basada en heuristica
+		
+		// Otra opcion es asumir que los comandos son latentes
 		*/
 	}
 	
-	/*	
-	template <typename R, typename P>
-	void order(int priority, std::chrono::duration<R,P> delay, const CommandShopKeeper& command)
+	void order(const CommandTalker<T>& command, int milli = 0, int priority = 0)
 	{
-		_queue(priority, delay, command);
-	}
-	*/
-	
-	void order(const CommandShopKeeper<T>& command)
-	{
-		_queue(command);
+		_queue(priority, std::chrono::milliseconds(milli), command);
 	}
 	
-	fes::callback<CommandShopKeeper<T> >& get_queue()
+	container& get_queue()
 	{
 		return _queue;
 	}
 	
-	/*
 	void update()
 	{
 		_queue.update();
 	}
-	*/
-	
-	bool kamikace()
+
+	void suspend()
 	{
-		std::cout << "I am " << _name << ", state: kamikace" << std::endl;
-		return true;
+		std::cout << "suspend" << std::endl;
+	}
+	
+	void resume()
+	{
+		std::cout << "resume" << std::endl;
 	}
 	
 protected:
-	std::vector<fes::connection_shared<CommandShopKeeper<T> > > _conns;
-	fes::callback<CommandShopKeeper<T> > _queue;
+	std::vector<fes::connection_shared<CommandTalker<T> > > _conns;
+	container _queue;
 	std::string _name;
 };
 
 }
 
+class Buyer;
+
 // client side
 // ShopKeeper can be a lider of liders
-class ShopKeeper : public lead::talker< lead::talker<ShopKeeper> >
+class ShopKeeper : public lead::talker<Buyer>
 {
 public:
 	ShopKeeper(const std::string& name)
@@ -147,33 +137,15 @@ public:
 	~ShopKeeper() { ; }
 	
 	// skills
-	bool right()
+	void say(const std::string& text)
 	{
-		std::cout << "I am " << _name << ", state: right" << std::endl;
-		return true;
-	}
-
-	bool left()
-	{
-		std::cout << "I am " << _name << ", state: left" << std::endl;
-		return true;
-	}
-
-	bool up()
-	{
-		std::cout << "I am " << _name << ", state: up" << std::endl;
-		return true;
-	}
-
-	bool down()
-	{
-		std::cout << "I am " << _name << ", state: down" << std::endl;
-		return true;
+		std::cout << "<" << _name << "> " << text << std::endl;
+		//return true;
 	}
 };
 
 
-class Buyer : public lead::talker< lead::talker<ShopKeeper> >
+class Buyer : public lead::talker< ShopKeeper >
 {
 public:
 	Buyer(const std::string& name)
@@ -182,30 +154,52 @@ public:
 		
 	}
 	~Buyer() { ; }	
+
+	// skills
+	void say(const std::string& text)
+	{
+		std::cout << "<" << _name << "> " << text << std::endl;
+		//return true;
+	}
 };
 
 int main()
 {
 	{
-		auto talker1 = std::make_shared<lead::talker<ShopKeeper> >("talker 1");
-		auto talker2 = std::make_shared<lead::talker<ShopKeeper> >("talker 2");
-		auto shopkeeper1 = std::make_shared<ShopKeeper>("shopkeeper 1");
-		auto shopkeeper2 = std::make_shared<ShopKeeper>("shopkeeper 2");
+		auto buyer = Buyer("buyer");
+		auto shopkeeper = ShopKeeper("shopkeeper");
+		
+		buyer.add_follower(shopkeeper);
+		shopkeeper.add_follower(buyer);
+		
+		// conversation between tyrants
+		
+		int time = 0;
+		buyer.order([=](ShopKeeper& self) {
+				self.say("Hi!");
+		}, time++);
 
-		talker1->add_shopkeeper(*shopkeeper1);
-		//talker1->add_shopkeeper(*shopkeeper2);
+		shopkeeper.order([=](Buyer& self) {
+				self.say("How much cost are the apples?");
+		}, time++);
 
-		talker1->order([=](ShopKeeper& self) {return self.right(); });
-		/*
-		talker1->order([=](ShopKeeper& self) {return self.left();});
-		talker1->order([=](ShopKeeper& self) {return self.up();});
-		talker1->order([=](ShopKeeper& self) {return self.down();});
-		talker1->order([=](ShopKeeper& self) {return self.right();});
+		buyer.order([=](ShopKeeper& self) {
+				self.say("50 cents each apple"); 
+		}, time++);
 
-		// shopkeeper threat your talker
-		shopkeeper2->add_shopkeeper(*talker2);
-		shopkeeper2->order([=](lead::talker<ShopKeeper>& self) {return self.kamikace();});
-		*/
+		shopkeeper.order([=](Buyer& self) {
+				self.say("I want apples!");
+		}, time++);
+		
+		for(int i=0; i<1000; ++i)
+		{
+			// process queue
+			buyer.update();
+			shopkeeper.update();
+#ifdef _WIN32
+			Sleep(1);
+#endif
+		}
 	}
 	return(0);
 }

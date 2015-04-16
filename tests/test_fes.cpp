@@ -62,7 +62,7 @@ public:
 	const std::string& get_data() const {return _data;}
 
 protected:
-	void on_handler(std::string&& data)
+	void on_handler(const std::string& data)
 	{
 		_data = data;
 	}
