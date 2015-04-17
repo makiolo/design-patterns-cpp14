@@ -9,6 +9,7 @@
 #include <sstream>
 #include <queue>
 #include <fast-event-system/fes.h>
+#include <future>
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -73,7 +74,7 @@ public:
 		//		se ejecuta
 		// Si ya se esta ejecutando algo, algoritmos de planificación:
 		//		Cuando una nueva tarea cancela la que se esta ejecutando?
-		cmd(talker);
+		std::async(std::launch::async, [&]{ cmd(talker); });
 		
 		/*
 		if I am idle:
