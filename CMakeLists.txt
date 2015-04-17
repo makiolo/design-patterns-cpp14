@@ -7,6 +7,9 @@ if (NOT DEFINED EXTRA_DEF)
 	set(EXTRA_DEF -std=c++11)
 endif()
 add_definitions(${EXTRA_DEF})
+if (NOT MSVC)
+	add_definitions(-pthread)
+endif()
 
 # Generate .clang_complete for full completation in vim + clang_complete
 set(extra_parameters "")

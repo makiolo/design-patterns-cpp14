@@ -74,8 +74,15 @@ public:
 		//		se ejecuta
 		// Si ya se esta ejecutando algo, algoritmos de planificación:
 		//		Cuando una nueva tarea cancela la que se esta ejecutando?
-		std::async(std::launch::async, [&]{ cmd(talker); });
-		
+		try
+		{
+			auto resul = std::async(std::launch::async, [&]{ cmd(talker); });
+			resul.get();
+		}
+		catch(...)
+		{
+			
+		}
 		/*
 		if I am idle:
 			trabajar
