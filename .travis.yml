@@ -25,7 +25,7 @@ script:
   - cd $FL_CONF
   - cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=$FL_CONF -DEXTRA_DEF=$EXTRA_DEF
   - make
-  - make test
+  - make test ARGS="-VV"
 
 env:
   - ignore=this
