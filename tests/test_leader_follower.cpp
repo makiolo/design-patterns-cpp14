@@ -10,13 +10,12 @@
 #include <queue>
 #include <fast-event-system/fes.h>
 #include <future>
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+#include <chrono>
 
 namespace lead {
 
 template <typename T> using CommandTalker = std::function<void(T&)>;
+template <typename T> using CommandTalkerReturn = decltype(CommandTalker<T>);
 template <typename T> using CompositeCommandTalker = std::function<CommandTalker<T>(const CommandTalker<T>&)>;
 
 template <typename T>
@@ -49,78 +48,89 @@ public:
 	
 	talker(const std::string& name)
 		: _name(name)
+		, _thread(nullptr)
 	{
 		
 	}
-	~talker() { ; }
+	~talker()
+	{
+		
+	}
 	
 	void add_follower(T& talker)
 	{
-		_conns.emplace_back( get_queue().connect(std::bind(&talker::planificator, *this, std::ref(talker), std::placeholders::_1)) );
+		_conns.emplace_back(_queue.connect(std::bind(&talker::planificator, *this, std::ref(talker), std::placeholders::_1)));
 	}
 	
 	void planificator(T& talker, const CommandTalker<T>& cmd)
 	{
-		//TODO:
-		//TODO:
-		//TODO:
-		//
-		// command added to queue
-		// El que encola establece sus propias prioridades
-		// Al despachar se vuelve a encolar con las
-		// preferencias personales
-		//
-		// Si no se esta ejecutando nada:
-		//		se ejecuta
-		// Si ya se esta ejecutando algo, algoritmos de planificación:
-		//		Cuando una nueva tarea cancela la que se esta ejecutando?
-		auto resul = std::async(std::launch::async, [&]{ cmd(talker); });
-		resul.get();
-		/*
-		if I am idle:
-			trabajar
+		if (_thread == nullptr)
+		{
+			//printf("creating new task\n");
+			std::packaged_task<int(T&)> _task([&](T& parm){cmd(parm); return 0; });
+			_future = _task.get_future();
+			_thread = std::make_shared<std::thread>(std::move(_task), talker);
+			_thread->detach();
+		}
 		else
-			if nueva tarea es mas importante que la actual
-				cancelar actual y trabajar con la nueva
+		{
+			// release cpu
+			bool is_ready = _future.wait_for(std::chrono::milliseconds(1)) == std::future_status::ready;
+			if (is_ready)
+			{
+				//printf("task finished\n");
+				auto ret = _future.get();
+				_thread = nullptr;
+
+				// planification now!
+				planificator(talker, cmd);
+			}
 			else
-				encolar la nueva tarea con una prioridad basada en heuristica
-		
-		// Otra opcion es asumir que los comandos son latentes
-		*/
+			{
+				// queue message with more priority
+				order(cmd, 0, 1);
+			}
+		}
 	}
 	
-	void order(const CommandTalker<T>& command, int milli = 0, int priority = 0)
+	inline void order(const CommandTalker<T>& command, int milli = 0, int priority = 0)
 	{
 		_queue(priority, std::chrono::milliseconds(milli), command);
 	}
 	
-	container& get_queue()
-	{
-		return _queue;
-	}
-	
-	void update()
+	inline void update()
 	{
 		_queue.update();
-	}
-
-	void suspend()
-	{
-		std::cout << "suspend" << std::endl;
-	}
-	
-	void resume()
-	{
-		std::cout << "resume" << std::endl;
 	}
 	
 protected:
 	std::vector<fes::connection_shared<CommandTalker<T> > > _conns;
 	container _queue;
 	std::string _name;
+	std::shared_ptr<std::thread> _thread;
+	std::shared_future<int> _future;
 };
 
 }
+
+
+class Context
+{
+public:
+	Context()
+	{
+		
+	}
+	
+	~Context() { ; }
+	
+	// skills
+	void print(const std::string& text)
+	{
+		std::cout << "thread: " << std::thread::id() << ": " << text << std::endl;
+	}
+protected:
+};
 
 class Buyer;
 
@@ -140,9 +150,10 @@ public:
 	// skills
 	void say(const std::string& text)
 	{
-		std::cout << "<" << _name << "> " << text << std::endl;
-		//return true;
+		std::cout << "thread: " << std::thread::id() << " <" << _name << "> " << text << std::endl;
 	}
+protected:
+	//lead::talker<Context> _context;
 };
 
 
@@ -159,14 +170,16 @@ public:
 	// skills
 	void say(const std::string& text)
 	{
-		std::cout << "<" << _name << "> " << text << std::endl;
-		//return true;
+		std::cout << "thread: " << std::thread::id() << " <" << _name << "> " << text << std::endl;
 	}
+protected:
+	//lead::talker<Context> _context;
 };
 
 int main()
 {
 	{
+		//lead::talker<Context> _context;
 		auto buyer = Buyer("buyer");
 		auto shopkeeper = ShopKeeper("shopkeeper");
 		
@@ -175,31 +188,37 @@ int main()
 		
 		// conversation between tyrants
 		
-		int time = 0;
 		buyer.order([=](ShopKeeper& self) {
 				self.say("Hi!");
-		}, time++);
+		}, 100);
 
 		shopkeeper.order([=](Buyer& self) {
 				self.say("How much cost are the apples?");
-		}, time++);
+		}, 1100);
 
 		buyer.order([=](ShopKeeper& self) {
 				self.say("50 cents each apple"); 
-		}, time++);
+		}, 2500);
 
 		shopkeeper.order([=](Buyer& self) {
 				self.say("I want apples!");
-		}, time++);
+		}, 3100);
+
+		buyer.order([=](ShopKeeper& self) {
+				self.say("You apples, thanks"); 
+		}, 4500);
+
+		shopkeeper.order([=](Buyer& self) {
+				self.say("Bye!");
+		}, 6000);
 		
-		for(int i=0; i<1000; ++i)
+		for(int i=0; i<900 /* x 10 */; ++i)
 		{
 			// process queue
 			buyer.update();
 			shopkeeper.update();
-#ifdef _WIN32
-			Sleep(1);
-#endif
+
+			std::this_thread::sleep_for( std::chrono::milliseconds(10) );
 		}
 	}
 	return(0);

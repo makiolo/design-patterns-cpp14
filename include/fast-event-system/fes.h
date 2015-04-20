@@ -288,6 +288,11 @@ public:
 			}
 		}
 	}
+
+	bool empty() const
+	{
+		return _queue.empty();
+	}
 	
 	template <typename T>
 	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
@@ -334,6 +339,11 @@ public:
 			update(std::move(_queue.front()), gens<sizeof...(Args)>{} );
 			_queue.pop();
 		}
+	}
+
+	bool empty() const
+	{
+		return _queue.empty();
 	}
 
 	template <typename T>
