@@ -15,7 +15,6 @@
 namespace lead {
 
 template <typename T> using CommandTalker = std::function<void(T&)>;
-template <typename T> using CommandTalkerReturn = decltype(CommandTalker<T>);
 template <typename T> using CompositeCommandTalker = std::function<CommandTalker<T>(const CommandTalker<T>&)>;
 
 template <typename T>
