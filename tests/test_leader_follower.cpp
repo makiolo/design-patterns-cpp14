@@ -66,21 +66,25 @@ public:
 		if (_thread == nullptr)
 		{
 			//printf("creating new task\n");
-			std::packaged_task<int(T&)> _task([&](T& parm){cmd(parm); return 0; });
+			
+			auto task_wrap = std::make_shared<std::packaged_task<int()> >([&](T& parm)->int{cmd(parm);return 0;});
+    			std::packaged_task<void(T&)> _task{ [&](T& parm){ (*task_wrap)(parm); } };
+			
+			//std::packaged_task<int(T&)> _task([&](T& parm) -> int {cmd(parm); return 0; });
+			
 			_future = _task.get_future();
-			_thread = std::make_shared<std::thread>(std::move(_task), std::ref(talker));
-			_thread->detach();
+			_thread = std::make_shared<std::thread>(std::move(_task), std::ref(talker))->detach();
 		}
 		else
 		{
 			// release cpu
-			bool is_ready = _future.wait_for(std::chrono::milliseconds(1)) == std::future_status::ready;
+			bool is_ready = _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
 			if (is_ready)
 			{
 				//printf("task finished\n");
-				auto ret = _future.get();
+				_future = nullptr;
 				_thread = nullptr;
-
+				
 				// planification now!
 				planificator(talker, cmd);
 			}
@@ -107,7 +111,7 @@ protected:
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	std::shared_future<int> _future;
+	std::shared_future<void> _future;
 };
 
 }
