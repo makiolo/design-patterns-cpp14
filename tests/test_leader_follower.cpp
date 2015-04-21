@@ -65,12 +65,7 @@ public:
 	{
 		if (_thread == nullptr)
 		{
-			//printf("creating new task\n");
-			
-			auto task_wrap = std::make_shared<std::packaged_task<int()> >([&](T& parm)->int{cmd(parm);return 0;});
-    			std::packaged_task<void(T&)> _task{ [&](T& parm){ (*task_wrap)(parm); } };
-			
-			//std::packaged_task<int(T&)> _task([&](T& parm) -> int {cmd(parm); return 0; });
+			std::packaged_task<int(T&)> _task([&](T& parm) -> int {cmd(parm); return 0; });
 			
 			_future = _task.get_future();
 			_thread = std::make_shared<std::thread>(std::move(_task), std::ref(talker))->detach();
@@ -91,7 +86,7 @@ public:
 			else
 			{
 				// queue message with more priority
-				order(cmd, 0, 1);
+				order(cmd, 1, 1);
 			}
 		}
 	}
@@ -111,7 +106,7 @@ protected:
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	std::shared_future<void> _future;
+	std::shared_future<int> _future;
 };
 
 }
