@@ -68,7 +68,7 @@ public:
 			//printf("creating new task\n");
 			std::packaged_task<int(T&)> _task([&](T& parm){cmd(parm); return 0; });
 			_future = _task.get_future();
-			_thread = std::make_shared<std::thread>(std::move(_task), talker);
+			_thread = std::make_shared<std::thread>(std::move(_task), std::ref(talker));
 			_thread->detach();
 		}
 		else
