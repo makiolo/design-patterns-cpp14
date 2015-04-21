@@ -272,10 +272,7 @@ public:
 		auto t1 = std::chrono::high_resolution_clock::now();
 		while(!_queue.empty())
 		{
-			// future proposal top: 
-			// https://groups.google.com/a/isocpp.org/forum/#!msg/std-proposals/TIst1FOdveo/D54Uo-QuGfUJ
-			auto& top = const_cast<typename container_type::value_type&>(_queue.top());
-			//auto& top = _queue.top();
+			auto& top = _queue.top();
 			if(t1 >= top._timestamp)
 			{
 				update(std::move(top), gens<sizeof...(Args)>{} );
@@ -287,6 +284,11 @@ public:
 				break;
 			}
 		}
+	}
+
+	const typename container_type::value_type& top() const
+	{
+		return _queue.top();
 	}
 
 	bool empty() const

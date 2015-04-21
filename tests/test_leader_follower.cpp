@@ -77,8 +77,7 @@ public:
 			bool is_ready = _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
 			if (is_ready)
 			{
-				//printf("task finished\n");
-				_future = nullptr;
+				_future.get();
 				_thread = nullptr;
 				
 				// planification now!

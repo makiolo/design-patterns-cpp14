@@ -72,9 +72,6 @@ ADD_TEST(NAME test_factory_static COMMAND test_factory_static WORKING_DIRECTORY 
 ADD_EXECUTABLE(test_factory_dynamic tests/test_factory_dynamic.cpp)
 ADD_TEST(NAME test_factory_dynamic COMMAND test_factory_dynamic WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_EXECUTABLE(test_command tests/test_command.cpp)
-ADD_TEST(NAME test_command COMMAND test_command WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-
 ADD_EXECUTABLE(test_leader_follower tests/test_leader_follower.cpp)
 ADD_TEST(NAME test_leader_follower COMMAND test_leader_follower WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
