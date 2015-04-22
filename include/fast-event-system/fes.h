@@ -1,3 +1,6 @@
+// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a Creative Commons Reconocimiento 4.0 Internacional License.
+// http://creativecommons.org/licenses/by/4.0/
+//
 #ifndef _FAST_EVENT_SYSTEM_
 #define _FAST_EVENT_SYSTEM_
 
@@ -286,12 +289,12 @@ public:
 			}
 		}
 	}
-
+	
 	const typename container_type::value_type& top() const
 	{
 		return _queue.top();
 	}
-
+	
 	bool empty() const
 	{
 		return _queue.empty();
