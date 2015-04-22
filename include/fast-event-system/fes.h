@@ -256,7 +256,6 @@ template <typename ... Args>
 class queue_delayer
 {
 public:
-	// deque vs vector: http://www.gotw.ca/gotw/054.htm
 	using container_type = std::priority_queue<message<Args...>, std::deque<message<Args...> > >;
 	
 	queue_delayer()
@@ -271,23 +270,20 @@ public:
 		_queue.emplace(priority, delay_point, data...);
 	}
 	
-	void update()
+	bool dispatch()
 	{
-		auto t1 = std::chrono::high_resolution_clock::now();
-		while(!_queue.empty())
+		if(!_queue.empty())
 		{
+			auto t1 = std::chrono::high_resolution_clock::now();
 			auto& top = _queue.top();
 			if(t1 >= top._timestamp)
 			{
-				update(top, gens<sizeof...(Args)>{} );
+				dispatch(top, gens<sizeof...(Args)>{} );
 				_queue.pop();
-			}
-			else
-			{
-				// all is already dispatched
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	const typename container_type::value_type& top() const
@@ -300,6 +296,11 @@ public:
 		return _queue.empty();
 	}
 	
+	size_t size() const
+	{
+		return _queue.size();
+	}
+
 	template <typename T>
 	inline shared_connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
@@ -312,7 +313,7 @@ public:
 	}
 protected:
 	template<int ...S>
-	inline void update(const typename container_type::value_type& top, seq<S...>)
+	inline void dispatch(const typename container_type::value_type& top, seq<S...>)
 	{
 		_output(std::get<S>(top._data)...);
 	}
@@ -338,18 +339,25 @@ public:
 		_queue.emplace(data...);
 	}
 	
-	void update()
+	bool dispatch()
 	{
-		while(!_queue.empty())
+		if(!_queue.empty())
 		{
-			update(_queue.front(), gens<sizeof...(Args)>{} );
+			dispatch(_queue.front(), gens<sizeof...(Args)>{} );
 			_queue.pop();
+			return true;
 		}
+		return false;
 	}
 
 	bool empty() const
 	{
 		return _queue.empty();
+	}
+
+	size_t size() const
+	{
+		return _queue.size();
 	}
 
 	template <typename T>
@@ -365,7 +373,7 @@ public:
 
 protected:	
 	template<int ...S>
-	inline void update(const typename container_type::value_type& top, seq<S...>)
+	inline void dispatch(const typename container_type::value_type& top, seq<S...>)
 	{
 		_output(std::get<S>(top)...);
 	}

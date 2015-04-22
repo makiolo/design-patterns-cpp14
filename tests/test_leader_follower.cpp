@@ -11,6 +11,7 @@
 #include <fast-event-system/fes.h>
 #include <future>
 #include <chrono>
+#include <assert.h>
 
 namespace lead {
 
@@ -48,6 +49,7 @@ public:
 	talker(const std::string& name)
 		: _name(name)
 		, _thread(nullptr)
+		, _idle(true)
 	{
 		
 	}
@@ -63,32 +65,15 @@ public:
 	
 	void planificator(T& talker, const CommandTalker<T>& cmd)
 	{
-		if (_thread == nullptr)
-		{
-			std::packaged_task<int(T&)> _task([&](T& parm) -> int {cmd(parm); return 0; });
-			
-			_future = _task.get_future();
-			_thread = std::make_shared<std::thread>(std::move(_task), std::ref(talker));
-			_thread->detach();
-		}
-		else
-		{
-			// release cpu
-			bool is_ready = _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
-			if (is_ready)
-			{
-				_future.get();
-				_thread = nullptr;
-				
-				// planification now!
-				planificator(talker, cmd);
-			}
-			else
-			{
-				// queue message with more priority
-				order(cmd, 1, 1);
-			}
-		}
+		std::cout << "new work" << std::endl;
+		assert(_idle == true);
+
+		//std::packaged_task<int(T&)> pt([&](T& parm) -> int {cmd(parm); return 0; });
+		std::packaged_task<void(T&)> pt(cmd);
+		
+		_future = pt.get_future();
+		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
+		//_thread->detach();
 	}
 	
 	inline void order(const CommandTalker<T>& command, int milli = 0, int priority = 0)
@@ -96,26 +81,51 @@ public:
 		_queue(priority, std::chrono::milliseconds(milli), command);
 	}
 	
-	inline void update()
+	void update()
 	{
-		_queue.update();
+		if (_idle)
+		{
+			if(_queue.dispatch())
+			{
+				_idle = false;
+			}
+		}
+		else
+		{
+			bool is_ready = _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
+			if (is_ready)
+			{
+				_thread->join();
+				_thread = nullptr;
+				_idle = true;
+			}
+		}
+	}
+
+	inline bool empty() const
+	{
+		return _queue.empty();
 	}
 	
+	inline void wait(int milli)
+	{
+		std::this_thread::sleep_for( std::chrono::milliseconds(milli) );
+	}
 protected:
 	std::vector<fes::shared_connection<CommandTalker<T> > > _conns;
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	std::shared_future<int> _future;
+	std::shared_future<void> _future;
+	bool _idle;
 };
 
 }
 
-
 class Context
 {
 public:
-	Context()
+	explicit Context()
 	{
 		
 	}
@@ -125,9 +135,19 @@ public:
 	// skills
 	void print(const std::string& text)
 	{
-		std::cout << "thread: " << std::thread::id() << ": " << text << std::endl;
+		_lock.lock();
+
+		for(const char& c : text)
+		{
+			std::cout << c << std::flush;
+			std::this_thread::sleep_for( std::chrono::milliseconds(100) );
+		}
+		std::cout << std::endl;
+
+		_lock.unlock();
 	}
 protected:
+	std::mutex _lock;
 };
 
 class Buyer;
@@ -137,8 +157,9 @@ class Buyer;
 class ShopKeeper : public lead::talker<Buyer>
 {
 public:
-	ShopKeeper(const std::string& name)
+	explicit ShopKeeper(const std::string& name, Context& context)
 		: talker(name)
+		, _context(context)
 	{
 		
 	}
@@ -148,18 +169,19 @@ public:
 	// skills
 	void say(const std::string& text)
 	{
-		std::cout << "thread: " << std::thread::id() << " <" << _name << "> " << text << std::endl;
+		_context.print(text);
 	}
 protected:
-	//lead::talker<Context> _context;
+	Context& _context;
 };
 
 
 class Buyer : public lead::talker< ShopKeeper >
 {
 public:
-	Buyer(const std::string& name)
+	explicit Buyer(const std::string& name, Context& context)
 		: talker(name)
+		, _context(context)
 	{
 		
 	}
@@ -168,55 +190,54 @@ public:
 	// skills
 	void say(const std::string& text)
 	{
-		std::cout << "thread: " << std::thread::id() << " <" << _name << "> " << text << std::endl;
+		_context.print(text);
 	}
 protected:
-	//lead::talker<Context> _context;
+	Context& _context;
 };
 
 int main()
 {
 	{
-		//lead::talker<Context> _context;
-		auto buyer = Buyer("buyer");
-		auto shopkeeper = ShopKeeper("shopkeeper");
+		Context context;
+		auto buyer = Buyer("buyer", context);
+		auto shopkeeper = ShopKeeper("shopkeeper", context);
 		
 		buyer.add_follower(shopkeeper);
 		shopkeeper.add_follower(buyer);
 		
 		// conversation between tyrants
 		
-		buyer.order([=](ShopKeeper& self) {
+		buyer.order([&](ShopKeeper& self) {
 				self.say("Hi!");
-		}, 100);
+		}, 1);
 
-		shopkeeper.order([=](Buyer& self) {
+		shopkeeper.order([&](Buyer& self) {
 				self.say("How much cost are the apples?");
-		}, 1100);
+		}, 2);
 
-		buyer.order([=](ShopKeeper& self) {
+		buyer.order([&](ShopKeeper& self) {
 				self.say("50 cents each apple"); 
-		}, 2500);
+		}, 3);
 
-		shopkeeper.order([=](Buyer& self) {
+		shopkeeper.order([&](Buyer& self) {
 				self.say("I want apples!");
-		}, 3100);
+		}, 4);
 
-		buyer.order([=](ShopKeeper& self) {
+		buyer.order([&](ShopKeeper& self) {
 				self.say("You apples, thanks"); 
-		}, 4500);
+		}, 5);
 
-		shopkeeper.order([=](Buyer& self) {
+		shopkeeper.order([&](Buyer& self) {
 				self.say("Bye!");
-		}, 6000);
-		
-		for(int i=0; i<900 /* x 10 */; ++i)
+		}, 6);
+	
+		for(int i=0; i<9000;++i)	
 		{
-			// process queue
 			buyer.update();
 			shopkeeper.update();
 
-			std::this_thread::sleep_for( std::chrono::milliseconds(10) );
+			std::this_thread::sleep_for( std::chrono::milliseconds(1) );
 		}
 	}
 	return(0);
