@@ -187,14 +187,14 @@ class message
 {
 public:
 	message(int priority, std::chrono::system_clock::time_point timestamp, const Args&... data)
-		: _data(data...)
-		, _priority(priority)
+		: _priority(priority)
 		, _timestamp(timestamp)
+		, _data(data...)
 	{
 		
 	}
 
-	message(message<Args...>&& other)
+	message(message<Args...>&& other) noexcept
 		: _priority(other._priority)
 		, _timestamp(std::move(other._timestamp))
 		, _data(std::move(other._data))
@@ -202,7 +202,7 @@ public:
 		
 	}
 
-	message<Args...>& operator=(message<Args...>&& other)
+	message<Args...>& operator=(message<Args...>&& other) noexcept
 	{
 		_priority = other._priority;
 		_timestamp = std::move(other._timestamp);
