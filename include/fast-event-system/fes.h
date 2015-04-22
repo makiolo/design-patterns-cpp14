@@ -275,7 +275,7 @@ public:
 			auto& top = _queue.top();
 			if(t1 >= top._timestamp)
 			{
-				update(std::move(top), gens<sizeof...(Args)>{} );
+				update(top, gens<sizeof...(Args)>{} );
 				_queue.pop();
 			}
 			else
@@ -308,9 +308,9 @@ public:
 	}
 protected:
 	template<int ...S>
-	inline void update(typename container_type::value_type&& top, seq<S...>)
+	inline void update(const typename container_type::value_type& top, seq<S...>)
 	{
-		_output(std::forward<Args>(std::get<S>(top._data))...);
+		_output(std::get<S>(top._data)...);
 	}
 
 protected:
@@ -338,7 +338,7 @@ public:
 	{
 		while(!_queue.empty())
 		{
-			update(std::move(_queue.front()), gens<sizeof...(Args)>{} );
+			update(_queue.front(), gens<sizeof...(Args)>{} );
 			_queue.pop();
 		}
 	}
@@ -361,9 +361,9 @@ public:
 
 protected:	
 	template<int ...S>
-	inline void update(typename container_type::value_type&& top, seq<S...>)
+	inline void update(const typename container_type::value_type& top, seq<S...>)
 	{
-		_output(std::forward<Args>(std::get<S>(top))...);
+		_output(std::get<S>(top)...);
 	}
 
 protected:
