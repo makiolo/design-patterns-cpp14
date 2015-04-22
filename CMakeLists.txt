@@ -55,10 +55,10 @@ endforeach()
 STRING(REGEX REPLACE ";" "\n" extra_parameters "${extra_parameters}")
 FILE(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/.clang_complete" "${extra_parameters}\n")
 
-foreach(BBVA_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+foreach(BUILD_TYPE ${CMAKE_BUILD_TYPE})
 	INSTALL(    TARGETS ${LIBNAME}
-				DESTINATION ${BBVA_BUILD_TYPE}
-				CONFIGURATIONS ${BBVA_BUILD_TYPE})
+				DESTINATION ${BUILD_TYPE}
+				CONFIGURATIONS ${BUILD_TYPE})
 endforeach()
 
 ADD_EXECUTABLE(test_memoize_static tests/test_memoize_static.cpp)
