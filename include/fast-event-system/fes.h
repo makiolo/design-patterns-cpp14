@@ -32,6 +32,9 @@ namespace std
 	}
 }
 #endif
+#ifdef _MSC_VER
+#define noexcept _NOEXCEPT
+#endif
 
 namespace fes {
 
@@ -39,19 +42,17 @@ template <typename ... Args>
 class method;
 
 template <typename ... Args>
-class connection
+class internal_connection
 {
 public:
-
-
-	connection(const std::function<void(void)>& deleter)
+	internal_connection(const std::function<void(void)>& deleter)
 		: _deleter(deleter)
 	{
 		
 	}
 	
-	connection(const connection<Args...>& other) = delete;
-	const connection<Args...>& operator=(const connection<Args...>& other) = delete;
+	internal_connection(const internal_connection<Args...>& other) = delete;
+	const internal_connection<Args...>& operator=(const internal_connection<Args...>& other) = delete;
 	
 	void disconnect()
 	{
@@ -59,7 +60,7 @@ public:
 		_deleter();
 	}
 
-	~connection()
+	~internal_connection()
 	{
 		
 	}
@@ -67,30 +68,30 @@ public:
 protected:
 	std::function<void(void)> _deleter;
 };
-template <typename ... Args> using connection_shared = std::shared_ptr<connection<Args...> >;
+template <typename ... Args> using shared_connection = std::shared_ptr<internal_connection<Args...> >;
 
 template <typename ... Args>
-class connection_scoped
+class connection
 {
 public:
-	connection_scoped()
+	connection()
 	{
 		
 	}
 
-	connection_scoped(const connection_shared<Args ...>& other)
+	connection(const shared_connection<Args ...>& other)
 		: _connection(other)
 	{
 		
 	}
 	
-	const connection_scoped<Args...>& operator=(const connection_shared<Args ...>&other)
+	const connection<Args...>& operator=(const shared_connection<Args ...>&other)
 	{
 		_connection = other;
 		return *this;
 	}
 
-	~connection_scoped()
+	~connection()
 	{
 		if (_connection)
 		{
@@ -99,7 +100,7 @@ public:
 	}
 
 protected:
-	connection_shared<Args ...> _connection;
+	shared_connection<Args ...> _connection;
 };
 
 template <typename ... Args>
@@ -147,15 +148,15 @@ public:
 	}
 	
 	template <typename T>
-	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
+	inline shared_connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _connect(obj, ptr_func, make_int_sequence < sizeof...(Args) > {});
 	}
 	
-	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
+	inline shared_connection<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		auto it = _registered.emplace(_registered.end(), method);
-		return std::make_shared<connection<Args ...> >([&](){
+		return std::make_shared<internal_connection<Args ...> >([&](){
 			_registered.erase(it);
 		});
 	}
@@ -170,10 +171,10 @@ public:
 
 protected:	
 	template <typename T, int ... Is>
-	inline connection_shared<Args...> _connect(T* obj, void (T::*ptr_func)(const Args&...), int_sequence<Is...>)
+	inline shared_connection<Args...> _connect(T* obj, void (T::*ptr_func)(const Args&...), int_sequence<Is...>)
 	{
 		auto it = _registered.emplace(_registered.end(), std::bind(ptr_func, obj, placeholder_template<Is>{}...));
-		return std::make_shared<connection<Args ...> >([&](){
+		return std::make_shared<internal_connection<Args ...> >([&](){
 			_registered.erase(it);
 		});
 	}
@@ -297,12 +298,12 @@ public:
 	}
 	
 	template <typename T>
-	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
+	inline shared_connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
 
-	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
+	inline shared_connection<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		return _output.connect(method);
 	}
@@ -349,12 +350,12 @@ public:
 	}
 
 	template <typename T>
-	inline connection_shared<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
+	inline shared_connection<Args...> connect(T* obj, void (T::*ptr_func)(const Args&...))
 	{
 		return _output.connect(obj, ptr_func);
 	}
 
-	inline connection_shared<Args...> connect(const std::function<void(const Args&...)>& method)
+	inline shared_connection<Args...> connect(const std::function<void(const Args&...)>& method)
 	{
 		return _output.connect(method);
 	}

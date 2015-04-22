@@ -102,7 +102,7 @@ public:
 	}
 	
 protected:
-	std::vector<fes::connection_shared<CommandTalker<T> > > _conns;
+	std::vector<fes::shared_connection<CommandTalker<T> > > _conns;
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
