@@ -197,7 +197,7 @@ public:
 
 	message(message<Args...>&& other) noexcept
 		: _priority(other._priority)
-		, _timestamp(std::move(other._timestamp))
+		, _timestamp(other._timestamp)
 		, _data(std::move(other._data))
 	{
 		
@@ -206,7 +206,7 @@ public:
 	message<Args...>& operator=(message<Args...>&& other) noexcept
 	{
 		_priority = other._priority;
-		_timestamp = std::move(other._timestamp);
+		_timestamp = other._timestamp;
 		_data = std::move(other._data);
 
 		return *this;
