@@ -12,10 +12,14 @@
 #include <future>
 #include <chrono>
 #include <assert.h>
+#include <atomic>
+#include <exception>
+#include <condition_variable>
 
 namespace lead {
 
-template <typename T> using CommandTalker = std::function<void(T&)>;
+template <typename T> using CommandTalker = std::function<int(T&)>;
+/*
 template <typename T> using CompositeCommandTalker = std::function<CommandTalker<T>(const CommandTalker<T>&)>;
 
 template <typename T>
@@ -39,6 +43,7 @@ CompositeCommandTalker<T> repeat(int n)
 		};
 	};
 }
+*/
 
 template <typename T>
 class talker
@@ -57,6 +62,11 @@ public:
 	{
 		
 	}
+
+	//talker(const talker&) = delete;
+	//talker& operator=(const talker&) = delete;
+	//talker(talker&&) = default;
+	//talker& operator=(talker&&) = default;
 	
 	void add_follower(T& talker)
 	{
@@ -65,14 +75,14 @@ public:
 	
 	void planificator(T& talker, const CommandTalker<T>& cmd)
 	{
-		std::cout << "new work" << std::endl;
 		assert(_idle == true);
+
+		std::packaged_task<int(T&)> pt(cmd);
 		
-		//std::packaged_task<int(T&)> pt([&](T& parm) -> int {cmd(parm); return 0; });
-		std::packaged_task<void(T&)> pt(cmd);
-		
-		_future = pt.get_future();
+		_future = pt.get_future().share();
+		assert(_future.valid());
 		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
+		assert(_future.valid());
 		_thread->detach();
 	}
 	
@@ -87,14 +97,18 @@ public:
 		{
 			if(_queue.dispatch())
 			{
+				assert(_future.valid());
 				_idle = false;
 			}
 		}
 		else
 		{
+			assert(_future.valid());
+
 			if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
 			{
-				//_thread->join();
+				auto ret = _future.get();
+				assert(ret);
 				_thread = nullptr;
 				_idle = true;
 			}
@@ -115,7 +129,7 @@ protected:
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	std::shared_future<void> _future;
+	std::shared_future<int> _future;
 	bool _idle;
 };
 
@@ -130,6 +144,8 @@ public:
 	}
 	
 	~Context() { ; }
+	//Context(const Context&) = delete;
+	//Context& operator=(const Context&) = delete;
 	
 	// skills
 	void print(const std::string& text)
@@ -164,11 +180,13 @@ public:
 	}
 	
 	~ShopKeeper() { ; }
+	//ShopKeeper(const ShopKeeper&) = delete;
 	
 	// skills
-	void say(const std::string& text)
+	int say(const std::string& text)
 	{
 		_context.print(text);
+		return 0;
 	}
 protected:
 	Context& _context;
@@ -185,11 +203,13 @@ public:
 		
 	}
 	~Buyer() { ; }	
+	Buyer(const Buyer&) = delete;
 
 	// skills
-	void say(const std::string& text)
+	int say(const std::string& text)
 	{
 		_context.print(text);
+		return 0;
 	}
 protected:
 	Context& _context;
@@ -199,8 +219,8 @@ int main()
 {
 	{
 		Context context;
-		auto buyer = Buyer("buyer", context);
-		auto shopkeeper = ShopKeeper("shopkeeper", context);
+		Buyer buyer("buyer", context);
+		ShopKeeper shopkeeper("shopkeeper", context);
 		
 		buyer.add_follower(shopkeeper);
 		shopkeeper.add_follower(buyer);
@@ -208,27 +228,27 @@ int main()
 		// conversation between tyrants
 		
 		buyer.order([&](ShopKeeper& self) {
-				self.say("Hi!");
+				return self.say("Hi!");
 		}, 1);
 
 		shopkeeper.order([&](Buyer& self) {
-				self.say("How much cost are the apples?");
+				return self.say("How much cost are the apples?");
 		}, 2);
 
 		buyer.order([&](ShopKeeper& self) {
-				self.say("50 cents each apple"); 
+				return self.say("50 cents each apple"); 
 		}, 3);
 
 		shopkeeper.order([&](Buyer& self) {
-				self.say("I want apples!");
+				return self.say("I want apples!");
 		}, 4);
 
 		buyer.order([&](ShopKeeper& self) {
-				self.say("You apples, thanks"); 
+				return self.say("You apples, thanks"); 
 		}, 5);
 
 		shopkeeper.order([&](Buyer& self) {
-				self.say("Bye!");
+				return self.say("Bye!");
 		}, 6);
 	
 		for(int i=0; i<9000;++i)	
