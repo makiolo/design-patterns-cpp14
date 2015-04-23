@@ -67,13 +67,13 @@ public:
 	{
 		std::cout << "new work" << std::endl;
 		assert(_idle == true);
-
+		
 		//std::packaged_task<int(T&)> pt([&](T& parm) -> int {cmd(parm); return 0; });
 		std::packaged_task<void(T&)> pt(cmd);
 		
 		_future = pt.get_future();
 		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
-		//_thread->detach();
+		_thread->detach();
 	}
 	
 	inline void order(const CommandTalker<T>& command, int milli = 0, int priority = 0)
@@ -92,10 +92,9 @@ public:
 		}
 		else
 		{
-			bool is_ready = _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
-			if (is_ready)
+			if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
 			{
-				_thread->join();
+				//_thread->join();
 				_thread = nullptr;
 				_idle = true;
 			}
@@ -140,7 +139,7 @@ public:
 		for(const char& c : text)
 		{
 			std::cout << c << std::flush;
-			std::this_thread::sleep_for( std::chrono::milliseconds(100) );
+			//std::this_thread::sleep_for( std::chrono::milliseconds(100) );
 		}
 		std::cout << std::endl;
 
