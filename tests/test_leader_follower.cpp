@@ -18,8 +18,7 @@
 
 namespace lead {
 
-template <typename T> using CommandTalker = std::function<int(T&)>;
-/*
+template <typename T> using CommandTalker = std::function<void(T&)>;
 template <typename T> using CompositeCommandTalker = std::function<CommandTalker<T>(const CommandTalker<T>&)>;
 
 template <typename T>
@@ -43,7 +42,6 @@ CompositeCommandTalker<T> repeat(int n)
 		};
 	};
 }
-*/
 
 template <typename T>
 class talker
@@ -77,12 +75,10 @@ public:
 	{
 		assert(_idle == true);
 
-		std::packaged_task<int(T&)> pt(cmd);
+		std::packaged_task<void(T&)> pt(cmd);
 		
-		_future = pt.get_future().share();
-		assert(_future.valid());
+		_future = pt.get_future();
 		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
-		assert(_future.valid());
 		_thread->detach();
 	}
 	
@@ -97,18 +93,24 @@ public:
 		{
 			if(_queue.dispatch())
 			{
-				assert(_future.valid());
 				_idle = false;
 			}
 		}
 		else
 		{
-			assert(_future.valid());
-
-			if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+			if (!_future.valid() || _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
 			{
-				auto ret = _future.get();
-				assert(ret);
+				if(!_future.valid())
+				{
+					//std::cout << "no future valid" << std::endl;
+
+				}
+				else
+				{
+					//std::cout << "finish thread" << std::endl;
+				}
+
+				// WIP: bugged here
 				_thread = nullptr;
 				_idle = true;
 			}
@@ -129,7 +131,7 @@ protected:
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	std::shared_future<int> _future;
+	std::shared_future<void> _future;
 	bool _idle;
 };
 
@@ -144,10 +146,7 @@ public:
 	}
 	
 	~Context() { ; }
-	//Context(const Context&) = delete;
-	//Context& operator=(const Context&) = delete;
-	
-	// skills
+
 	void print(const std::string& text)
 	{
 		_lock.lock();
@@ -155,7 +154,7 @@ public:
 		for(const char& c : text)
 		{
 			std::cout << c << std::flush;
-			//std::this_thread::sleep_for( std::chrono::milliseconds(100) );
+			std::this_thread::sleep_for( std::chrono::milliseconds(100) );
 		}
 		std::cout << std::endl;
 
@@ -167,8 +166,6 @@ protected:
 
 class Buyer;
 
-// client side
-// ShopKeeper can be a lider of liders
 class ShopKeeper : public lead::talker<Buyer>
 {
 public:
@@ -180,13 +177,10 @@ public:
 	}
 	
 	~ShopKeeper() { ; }
-	//ShopKeeper(const ShopKeeper&) = delete;
 	
-	// skills
-	int say(const std::string& text)
+	void say(const std::string& text)
 	{
 		_context.print(text);
-		return 0;
 	}
 protected:
 	Context& _context;
@@ -206,10 +200,9 @@ public:
 	Buyer(const Buyer&) = delete;
 
 	// skills
-	int say(const std::string& text)
+	void say(const std::string& text)
 	{
 		_context.print(text);
-		return 0;
 	}
 protected:
 	Context& _context;
@@ -228,23 +221,27 @@ int main()
 		// conversation between tyrants
 		
 		buyer.order([&](ShopKeeper& self) {
-				return self.say("Hi!");
+				self.say("Hi!");
+				self.wait(100);
+				self.say("Hiiiiiiiiiiii!");
 		}, 1);
 
 		shopkeeper.order([&](Buyer& self) {
-				return self.say("How much cost are the apples?");
+				self.say("How much cost are the apples?");
+				self.wait(100);
+				self.say("How much cost are the apples???????????");
 		}, 2);
 
 		buyer.order([&](ShopKeeper& self) {
-				return self.say("50 cents each apple"); 
+				self.say("50 cents each apple"); 
 		}, 3);
 
 		shopkeeper.order([&](Buyer& self) {
-				return self.say("I want apples!");
+				self.say("I want apples!");
 		}, 4);
 
 		buyer.order([&](ShopKeeper& self) {
-				return self.say("You apples, thanks"); 
+				self.say("You apples, thanks"); 
 		}, 5);
 
 		shopkeeper.order([&](Buyer& self) {
