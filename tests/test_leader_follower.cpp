@@ -74,8 +74,9 @@ public:
 	void planificator(T& talker, const CommandTalker<T>& cmd)
 	{
 		assert(_idle == true);
-
+		
 		std::packaged_task<void(T&)> pt(cmd);
+		pt.make_ready_at_thread_exit(std::ref(talker));
 		
 		_future = pt.get_future();
 		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
@@ -98,19 +99,8 @@ public:
 		}
 		else
 		{
-			if (!_future.valid() || _future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+			if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
 			{
-				if(!_future.valid())
-				{
-					//std::cout << "no future valid" << std::endl;
-
-				}
-				else
-				{
-					//std::cout << "finish thread" << std::endl;
-				}
-
-				// WIP: bugged here
 				_thread = nullptr;
 				_idle = true;
 			}
