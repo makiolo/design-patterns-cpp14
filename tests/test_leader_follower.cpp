@@ -109,7 +109,7 @@ public:
 			}
 			catch (const std::future_error& e)
 			{
-				std::cout << "Caught a future_error with code " << e.code().message() << " - what" << e.what() << endl;
+				std::cout << "Caught a future_error with code " << e.code().message() << " - what" << e.what() << std::endl;
 			}
 		}
 	}
