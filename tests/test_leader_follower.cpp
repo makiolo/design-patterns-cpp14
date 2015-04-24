@@ -76,7 +76,7 @@ public:
 		assert(_idle == true);
 		
 		std::packaged_task<void(T&)> pt(cmd);
-		pt.make_ready_at_thread_exit(std::ref(talker));
+		//pt.make_ready_at_thread_exit(std::ref(talker));
 		
 		_future = pt.get_future();
 		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
@@ -99,10 +99,19 @@ public:
 		}
 		else
 		{
-			if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+			try
 			{
-				_thread = nullptr;
-				_idle = true;
+				if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+				{
+					_thread = nullptr;
+					_idle = true;
+				}
+			}
+			catch (const std::future_error& e)
+			{
+				const error_code eCode = e.code();
+				char *sValue = (char*)e.what();
+				std::cout << "Caught a future_error with code " << eCode.message() << " - what" << sValue << endl;
 			}
 		}
 	}
