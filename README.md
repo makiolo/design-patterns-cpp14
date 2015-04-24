@@ -10,7 +10,7 @@ This is a header-only library with some of the most common design patterns imple
 
 ## Quality assurance
 
-* Code tested on last versions of gcc, clang and Visual Studio.
+* Code tested in travis on gcc (4.7, 4.8, 4.9), clang (3.3, 3.4) and Visual Studio (2013).
 * Test cases relationated with problems crossing boundaries of dynamic libraries.
 
 ## License
