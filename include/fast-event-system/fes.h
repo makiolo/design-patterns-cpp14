@@ -1,4 +1,4 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a Creative Commons Reconocimiento 4.0 Internacional License.
+// design-patterns-cpp14 by Ricardo Marmolejo GarcÃ­a is licensed under a Creative Commons Reconocimiento 4.0 Internacional License.
 // http://creativecommons.org/licenses/by/4.0/
 //
 #ifndef _FAST_EVENT_SYSTEM_
@@ -23,7 +23,7 @@
 #include <queue>
 #include <design-patterns/common.h>
 
-#if (__cplusplus == 201103) || (__clang__ == 1)
+#if (__cplusplus == 201103) || ((__clang__ == 1) && (__clang_minor__ != 6))
 namespace std
 {
 	template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
