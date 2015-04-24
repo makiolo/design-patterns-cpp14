@@ -60,11 +60,6 @@ public:
 	{
 		
 	}
-
-	//talker(const talker&) = delete;
-	//talker& operator=(const talker&) = delete;
-	//talker(talker&&) = default;
-	//talker& operator=(talker&&) = default;
 	
 	void add_follower(T& talker)
 	{
@@ -77,7 +72,7 @@ public:
 		
 		_packaged = std::make_shared<std::packaged_task<void(T&)> >(cmd);
 		_future = _packaged->get_future();
-		_thread = std::make_shared<std::thread>(std::move(*_packaged), std::ref(talker));
+		_thread = std::make_shared<std::thread>(*_packaged, std::ref(talker));
 		_thread->detach();
 	}
 	
