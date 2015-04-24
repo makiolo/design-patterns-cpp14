@@ -8,6 +8,8 @@ before_install:
 
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; 
     then
+        wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -;
+        sudo add-apt-repository --yes "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main";
         sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
         sudo add-apt-repository --yes ppa:h-rayflood/llvm;
         sudo add-apt-repository --yes ppa:andykimpe/cmake;
@@ -59,6 +61,27 @@ matrix:
       env: REAL_CC=clang-3.4 EXTRA_DEF=-std=c++11 FL_CONF=Release REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8
     - compiler: clang
       env: REAL_CC=clang-3.4 EXTRA_DEF=-std=c++1y FL_CONF=Release REAL_CXX=clang++-3.4 PACKAGE=clang-3.4 SUPPORT=g++-4.8
+
+#clang-3.6
+##Debug
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++11 FL_CONF=Debug REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9 
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++1y FL_CONF=Debug REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++14 FL_CONF=Debug REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++1z FL_CONF=Debug REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9 
+
+##Release
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++11 FL_CONF=Release REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++1y FL_CONF=Release REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++14 FL_CONF=Release REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
+    - compiler: clang
+      env: REAL_CC=clang-3.6 EXTRA_DEF=-std=c++1z FL_CONF=Release REAL_CXX=clang++-3.6 PACKAGE=clang-3.6 SUPPORT=g++-4.9
 
 #gcc-4.7
 ##Debug
