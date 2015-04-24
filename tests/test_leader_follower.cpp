@@ -122,8 +122,8 @@ protected:
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
 	std::shared_future<void> _future;
-	std::promise<bool> _mark;
 	bool _idle;
+	//std::promise<bool> _mark;
 };
 
 }
