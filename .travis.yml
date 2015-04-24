@@ -34,19 +34,6 @@ matrix:
   exclude:
     - env: ignore=this
   include:
-#clang-3.2
-##Debug
-    - compiler: clang
-      env: REAL_CC=clang-3.2 EXTRA_DEF=-std=c++11 FL_CONF=Debug REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 
-    - compiler: clang
-      env: REAL_CC=clang-3.2 EXTRA_DEF=-std=c++1y FL_CONF=Debug REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 
-
-##Release
-    - compiler: clang
-      env: REAL_CC=clang-3.2 EXTRA_DEF=-std=c++11 FL_CONF=Release REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 
-    - compiler: clang
-      env: REAL_CC=clang-3.2 EXTRA_DEF=-std=c++1y FL_CONF=Release REAL_CXX=clang++-3.2 PACKAGE=clang-3.2 SUPPORT=g++-4.8 
-
 #clang-3.3
 ##Debug
     - compiler: clang
