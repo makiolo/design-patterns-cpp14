@@ -109,9 +109,7 @@ public:
 			}
 			catch (const std::future_error& e)
 			{
-				const error_code eCode = e.code();
-				char *sValue = (char*)e.what();
-				std::cout << "Caught a future_error with code " << eCode.message() << " - what" << sValue << endl;
+				std::cout << "Caught a future_error with code " << e.code().message() << " - what" << e.what() << endl;
 			}
 		}
 	}
