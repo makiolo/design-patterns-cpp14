@@ -75,11 +75,9 @@ public:
 	{
 		assert(_idle == true);
 		
-		std::packaged_task<void(T&)> pt(cmd);
-		//pt.make_ready_at_thread_exit(std::ref(talker));
-		
-		_future = pt.get_future();
-		_thread = std::make_shared<std::thread>(std::move(pt), std::ref(talker));
+		_packaged = std::make_shared<std::packaged_task<void(T&)> >(cmd);
+		_future = _packaged->get_future();
+		_thread = std::make_shared<std::thread>(std::move(*_packaged), std::ref(talker));
 		_thread->detach();
 	}
 	
@@ -104,6 +102,7 @@ public:
 				if (_future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
 				{
 					_thread = nullptr;
+					_packaged = nullptr;
 					_idle = true;
 				}
 			}
@@ -129,6 +128,7 @@ protected:
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
 	std::shared_future<void> _future;
+	std::shared_ptr<std::packaged_task<void(T&)> > _packaged;
 	bool _idle;
 	//std::promise<bool> _mark;
 };
