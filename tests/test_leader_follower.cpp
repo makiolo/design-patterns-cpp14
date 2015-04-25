@@ -132,7 +132,7 @@ public:
 		for(const char& c : text)
 		{
 			std::cout << c << std::flush;
-			std::this_thread::sleep_for( std::chrono::milliseconds(100) );
+			//std::this_thread::sleep_for( std::chrono::milliseconds(100) );
 		}
 		std::cout << std::endl;
 
@@ -200,13 +200,13 @@ int main()
 		
 		buyer.order([&](ShopKeeper& self) {
 				self.say("Hi!");
-				self.wait(100);
+				self.wait(10);
 				self.say("Hiiiiiiiiiiii!");
 		}, 1);
 
 		shopkeeper.order([&](Buyer& self) {
 				self.say("How much cost are the apples?");
-				self.wait(100);
+				self.wait(10);
 				self.say("How much cost are the apples???????????");
 		}, 2);
 
