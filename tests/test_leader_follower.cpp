@@ -52,7 +52,6 @@ public:
 	talker(const std::string& name)
 		: _name(name)
 		, _thread(nullptr)
-		, _idle(true)
 		, _finish(false)
 	{
 		
@@ -69,13 +68,10 @@ public:
 	
 	void planificator(T& talker, const CommandTalker<T>& cmd)
 	{
-		assert(_idle == true);
-		
 		_thread = std::make_shared<std::thread>([&](T& obj){
 			cmd(obj);
 			_finish = true;
 		}, std::ref(talker));
-		_thread->detach();
 	}
 	
 	inline void order(const CommandTalker<T>& command, int milli = 0, int priority = 0)
@@ -85,19 +81,16 @@ public:
 	
 	void update()
 	{
-		if (_idle)
+		if (_thread == nullptr)
 		{
-			if(_queue.dispatch())
-			{
-				_idle = false;
-			}
+			_queue.dispatch();
 		}
 		else
 		{
 			if (_finish)
 			{
+				_thread->join();
 				_thread = nullptr;
-				_idle = true;
 				_finish = false;
 			}
 		}
@@ -117,7 +110,6 @@ protected:
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	bool _idle;
 	bool _finish;
 };
 
