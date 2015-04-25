@@ -63,7 +63,7 @@ public:
 	
 	void add_follower(T& talker)
 	{
-		_conns.emplace_back(_queue.connect(std::bind(&talker::planificator, *this, std::ref(talker), std::placeholders::_1)));
+		_conns.emplace_back(_queue.connect(std::bind(&talker::planificator, this, std::ref(talker), std::placeholders::_1)));
 	}
 	
 	void planificator(T& talker, const CommandTalker<T>& cmd)
