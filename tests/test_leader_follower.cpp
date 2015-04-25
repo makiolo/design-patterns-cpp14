@@ -53,6 +53,7 @@ public:
 		: _name(name)
 		, _thread(nullptr)
 		, _idle(true)
+		, _finish(false)
 	{
 		
 	}
@@ -70,8 +71,10 @@ public:
 	{
 		assert(_idle == true);
 		
-		_packaged = std::make_shared<std::packaged_task<void(T&)> >(cmd);
-		_thread = std::make_shared<std::thread>(std::move(*_packaged), std::ref(talker));
+		_thread = std::make_shared<std::thread>([](T& obj){
+			cmd(obj);
+			_finish = true;
+		}, std::ref(talker));
 		_thread->detach();
 	}
 	
@@ -91,18 +94,11 @@ public:
 		}
 		else
 		{
-			try
+			if (_finish)
 			{
-				if (_packaged->get_future().wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
-				{
-					_thread = nullptr;
-					_packaged = nullptr;
-					_idle = true;
-				}
-			}
-			catch (const std::future_error& e)
-			{
-				std::cout << "Caught a future_error with code " << e.code().message() << " - what" << e.what() << std::endl;
+				_thread = nullptr;
+				_idle = true;
+				_finish = false;
 			}
 		}
 	}
@@ -121,9 +117,8 @@ protected:
 	container _queue;
 	std::string _name;
 	std::shared_ptr<std::thread> _thread;
-	std::shared_ptr<std::packaged_task<void(T&)> > _packaged;
 	bool _idle;
-	//std::promise<bool> _mark;
+	bool _finish;
 };
 
 }
