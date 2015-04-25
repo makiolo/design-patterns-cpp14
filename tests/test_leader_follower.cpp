@@ -71,7 +71,7 @@ public:
 	{
 		assert(_idle == true);
 		
-		_thread = std::make_shared<std::thread>([](T& obj){
+		_thread = std::make_shared<std::thread>([&](T& obj){
 			cmd(obj);
 			_finish = true;
 		}, std::ref(talker));
