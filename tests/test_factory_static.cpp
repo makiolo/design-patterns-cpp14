@@ -5,7 +5,7 @@
 class Base
 {
 public:
-	using Factory = dp14::Factory<Base, const std::string&, const int&>;
+	using Factory = dp14::Factory<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)

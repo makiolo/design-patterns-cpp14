@@ -48,7 +48,7 @@ $ make (in unix) or compile generated solution (in windows)
 class Base
 {
 public:
-	using Factory = dp14::Factory<Base, const std::string&, const int&>;
+	using Factory = dp14::Factory<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -121,18 +121,8 @@ int main()
 class Base
 {
 public:
-	using Memoize = dp14::Memoize<Base, const std::string&, const int&>;
-	
-	// used for template Memoize<>
-	// define cache behaviour
-	static std::string get_data_key(const std::string& key_impl, const std::string& name, int n)
-	{
-		// key for cache
-		std::stringstream ss;
-		ss << key_impl << "_" << name << "_" << n;
-		return ss.str();
-	}
-	
+	using Memoize = dp14::Memoize<Base, std::string, int>;
+
 	explicit Base(const std::string& name, int q)
 		: _name(name)
 		, _q(q)
@@ -162,12 +152,29 @@ public:
 	virtual ~B() = default;
 };
 
+// specialization std::hash<Base>
+namespace std
+{
+	template<>
+	class hash<Base>
+	{
+	public:
+		size_t operator()(const std::string& implementation, std::string& name, int n) const
+		{
+			size_t h1 = std::hash<std::string>()(implementation);
+			size_t h2 = std::hash<std::string>()(name);
+			size_t h3 = std::hash<int>()(n);
+			return h1 ^ (h2 ^ (h3 << 1) << 1);
+		}
+	};
+}
+
 int main()
 {
 	Base::Memoize memoize;
 	Base::Memoize::Registrator<A> reg1(memoize);
 	Base::Memoize::Registrator<B> reg2(memoize);
-	
+
 	{
 		// equivalent ways of get A
 		std::shared_ptr<Base> a1 = memoize.get<A>("first parameter", 2);
@@ -180,7 +187,7 @@ int main()
 		std::shared_ptr<B> b2 = memoize.get<B>("first parameter", 2);
 		std::shared_ptr<Base> b3 = memoize.get(B::KEY(), "first parameter", 4);
 		std::shared_ptr<Base> b4 = memoize.get("B", "first parameter", 4);
-		
+
 		assert(a1 == a2);
 		assert(a3 == a4);
 		assert(a2 != a4);

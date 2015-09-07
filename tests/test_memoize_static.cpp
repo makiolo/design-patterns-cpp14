@@ -6,17 +6,7 @@
 class Base
 {
 public:
-	using Memoize = dp14::Memoize<Base, const std::string&, const int&>;
-	
-	// used for template Memoize<>
-	// define cache behaviour
-	static std::string get_data_key(const std::string& key_impl, const std::string& name, int n)
-	{
-		// key for cache
-		std::stringstream ss;
-		ss << key_impl << "_" << name << "_" << n;
-		return ss.str();
-	}
+	using Memoize = dp14::Memoize<Base, std::string, int>;
 	
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -46,6 +36,23 @@ public:
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
+
+// specialization std::hash<Base>
+namespace std
+{
+	template<>
+	class hash<Base>
+	{
+	public:
+		size_t operator()(const std::string& implementation, std::string& name, int n) const
+		{
+			size_t h1 = std::hash<std::string>()(implementation);
+			size_t h2 = std::hash<std::string>()(name);
+			size_t h3 = std::hash<int>()(n);
+			return h1 ^ (h2 ^ (h3 << 1) << 1);
+		}
+	};
+}
 
 // register implementations to static memoize
 namespace regA

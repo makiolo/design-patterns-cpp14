@@ -17,6 +17,7 @@ class Memoize
 public:
 	DEFINE_KEY(Memoize<T>)
 	
+	using KeyCache = size_t;
 	using Key = std::string;
 	using Value = std::function<std::shared_ptr<T> (Args...)>;
 	template<typename U> using Registrator = MemoizeRegistrator<T, U, Args...>;
@@ -41,7 +42,7 @@ public:
 
 	bool exists(const Key& key_impl, Args&&... data)
 	{
-		Key key = T::get_data_key(key_impl, std::forward<Args>(data)...);
+		Key key = std::hash<T>()(key_impl, std::forward<Args>(data)...);
 		return (_map_cache.find(key) != _map_cache.end());
 	}
 
@@ -53,7 +54,7 @@ public:
 
 	std::shared_ptr<T> get(const Key& key_impl, Args&&... data)
 	{
-		Key key = T::get_data_key(key_impl, std::forward<Args>(data)...);
+		KeyCache key = std::hash<T>()(key_impl, std::forward<Args>(data)...);
 
 		auto it = _map_cache.find(key);
 		if (it != _map_cache.end())
@@ -82,7 +83,7 @@ public:
 	}
 private:
 	std::map<Key, Value> _map_creators;
-	std::map<Key, std::weak_ptr<T> > _map_cache;
+	std::map<KeyCache, std::weak_ptr<T> > _map_cache;
 };
 
 template<typename T, typename U, typename ... Args>

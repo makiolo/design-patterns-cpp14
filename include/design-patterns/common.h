@@ -12,7 +12,7 @@
 
 #define DEFINE_KEY(__CLASS__) \
 	static const std::string& KEY() { static std::string key = #__CLASS__; return key; } \
-	virtual const std::string& getKEY() const { static std::string key = #__CLASS__; return key; } \
+	virtual const std::string& get_key() const { return __CLASS__::KEY(); } \
 
 template<int...>
 struct int_sequence {};
