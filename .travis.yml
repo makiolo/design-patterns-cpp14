@@ -1,8 +1,9 @@
 language: cpp
-
+sudo: required
+services:
+  - docker
 os:
   - linux
-  - osx
 
 before_install:
 
@@ -128,4 +129,3 @@ notifications:
       - makiolo@gmail.com
     on_success: change
     on_failure: always
-
