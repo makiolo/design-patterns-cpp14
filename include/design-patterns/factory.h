@@ -26,7 +26,7 @@ public:
 	}
 
 	template <typename U>
-	KeyImpl get_key()
+	KeyImpl get_key() const
 	{
 		return std::hash<U>()();
 	}
@@ -37,20 +37,20 @@ public:
 		_map_registrators[get_key<U>()] = std::forward<F>(value);
 	}
 
-	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data)
+	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data) const
 	{
 		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
 		return create(key_impl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
-	std::shared_ptr<U> create(Args&&... data)
+	std::shared_ptr<U> create(Args&&... data) const
 	{
 		return std::dynamic_pointer_cast<U>(create(get_key<U>(), std::forward<Args>(data)...));
 	}
 
 protected:
-	std::shared_ptr<T> create(const KeyImpl& key_impl, Args&&... data)
+	std::shared_ptr<T> create(const KeyImpl& key_impl, Args&&... data) const
 	{
 		auto it =  _map_registrators.find(key_impl);
 		if(it == _map_registrators.end())

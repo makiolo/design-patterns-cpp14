@@ -6,7 +6,7 @@
 class Base
 {
 public:
-	using Memoize = dp14::Memoize<Base, std::string, int>;
+	using memoize = dp14::memoize<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -40,31 +40,31 @@ DEFINE_HASH(B)
 // register implementations to static memoize
 namespace regA
 {
-	Base::Memoize::Registrator<A> reg;
+	Base::memoize::registrator<A> reg;
 }
 namespace regB
 {
-	Base::Memoize::Registrator<B> reg;
+	Base::memoize::registrator<B> reg;
 }
 
-// Memoize with singleton is useful for DLL/plugin systems:
-// if you want publish your Memoize in a DLL, only need:
-//		template LIBNAME_API Base::Memoize;
+// memoize with singleton is useful for DLL/plugin systems:
+// if you want publish your memoize in a DLL, only need:
+//		template LIBNAME_API Base::memoize;
 
 int main()
 {
 	{
 		// equivalent ways of get A
-		std::shared_ptr<Base> a1 = Base::Memoize::instance().get<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = Base::Memoize::instance().get<A>("first parameter", 2);
+		std::shared_ptr<Base> a1 = Base::memoize::instance().get<A>("first parameter", 2);
+		std::shared_ptr<A> a2 = Base::memoize::instance().get<A>("first parameter", 2);
 		// std::shared_ptr<Base> a3 = Base::Memoize::instance().get(A::KEY(), "first parameter", 4);
-		std::shared_ptr<Base> a4 = Base::Memoize::instance().get("A", "first parameter", 4);
+		std::shared_ptr<Base> a4 = Base::memoize::instance().get("A", "first parameter", 4);
 
 		// equivalent ways of get B
-		std::shared_ptr<Base> b1 = Base::Memoize::instance().get<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = Base::Memoize::instance().get<B>("first parameter", 2);
-		// std::shared_ptr<Base> b3 = Base::Memoize::instance().get(B::KEY(), "first parameter", 4);
-		std::shared_ptr<Base> b4 = Base::Memoize::instance().get("B", "first parameter", 4);
+		std::shared_ptr<Base> b1 = Base::memoize::instance().get<B>("first parameter", 2);
+		std::shared_ptr<B> b2 = Base::memoize::instance().get<B>("first parameter", 2);
+		// std::shared_ptr<Base> b3 = Base::memoize::instance().get(B::KEY(), "first parameter", 4);
+		std::shared_ptr<Base> b4 = Base::memoize::instance().get("B", "first parameter", 4);
 
 		assert(a1 == a2);
 		// assert(a3 == a4);

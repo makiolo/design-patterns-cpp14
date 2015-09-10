@@ -115,7 +115,7 @@ int main()
 class Base
 {
 public:
-	using Memoize = dp14::Memoize<Base, std::string, int>;
+	using memoize = dp14::memoize<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -148,34 +148,34 @@ DEFINE_HASH(B)
 
 int main()
 {
-	Base::Memoize memoize;
-	Base::Memoize::Registrator<A> reg1(memoize);
-	Base::Memoize::Registrator<B> reg2(memoize);
+	Base::memoize m;
+	Base::memoize::registrator<A> reg1(m);
+	Base::memoize::registrator<B> reg2(m);
 
 	{
-		std::shared_ptr<Base> a1 = memoize.get<A>("first parameter", 2);
-		assert( memoize.exists<A>("first parameter", 2) == true );
+		std::shared_ptr<Base> a1 = m.get<A>("first parameter", 2);
+		assert( m.exists<A>("first parameter", 2) == true );
 	}
-	assert( memoize.exists<A>("first parameter", 2) == false );
+	assert( m.exists<A>("first parameter", 2) == false );
 
 	{
-		std::shared_ptr<Base> a1 = memoize.get<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = memoize.get<A>("first parameter", 2);
+		std::shared_ptr<Base> a1 = m.get<A>("first parameter", 2);
+		std::shared_ptr<A> a2 = m.get<A>("first parameter", 2);
 		assert(a1 == a2);
 
-		std::shared_ptr<Base> a3 = memoize.get("A", "first parameter", 4);
+		std::shared_ptr<Base> a3 = m.get("A", "first parameter", 4);
 		assert(a2 != a3);
 
-		std::shared_ptr<Base> b1 = memoize.get<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = memoize.get<B>("first parameter", 2);
+		std::shared_ptr<Base> b1 = m.get<B>("first parameter", 2);
+		std::shared_ptr<B> b2 = m.get<B>("first parameter", 2);
 		assert(b1 == b2);
 
-		std::shared_ptr<Base> b3 = memoize.get("B", "first parameter", 4);
+		std::shared_ptr<Base> b3 = m.get("B", "first parameter", 4);
 		assert(b2 != b3);
 
-		assert( memoize.exists<A>("first parameter", 2) == true );
+		assert( m.exists<A>("first parameter", 2) == true );
 	}
-	assert( memoize.exists<A>("first parameter", 2) == false );
+	assert( m.exists<A>("first parameter", 2) == false );
 
 	return(0);
 }
