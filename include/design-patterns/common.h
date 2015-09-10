@@ -8,6 +8,7 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <unordered_map>
 #include <exception>
 
 #define DEFINE_KEY(__CLASS__) \

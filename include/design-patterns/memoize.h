@@ -11,6 +11,9 @@ namespace dp14 {
 template<typename T, typename U, typename... Args>
 class MemoizeRegistrator;
 
+template<typename T>
+class hash;
+
 template <typename T, typename... Args>
 class Memoize
 {
@@ -43,10 +46,10 @@ public:
 		_map_registrators[get_impl_hash<U>()] = std::forward<F>(value);
 	}
 
-	bool exists(const KeyImpl& key_impl, Args&&... data)
+	inline bool exists(const std::string& key_impl_str, Args&&... data)
 	{
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
-		return (_map_cache.find(key) != _map_cache.end());
+		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
+		return exists(key_impl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -55,10 +58,22 @@ public:
 		return exists(get_impl_hash<U>(), std::forward<Args>(data)...);
 	}
 
-	std::shared_ptr<T> get(const KeyImpl& key_impl, Args&&... data)
+	std::shared_ptr<T> get(const std::string& key_impl_str, Args&&... data)
 	{
+		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
 		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
+		return get(key_impl, key, std::forward<Args>(data)...);
+	}
 
+	template <typename U>
+	inline std::shared_ptr<U> get(Args&&... data)
+	{
+		return std::dynamic_pointer_cast<U>(get(get_impl_hash<U>(), std::forward<Args>(data)...));
+	}
+
+protected:
+	std::shared_ptr<T> get(const KeyImpl& key_impl, KeyCache key, Args&&... data)
+	{
 		auto it = _map_cache.find(key);
 		if (it != _map_cache.end())
 		{
@@ -77,16 +92,30 @@ public:
 		}
 
 		std::shared_ptr<T> new_product = (itc->second)(std::forward<Args>(data)...);
-		_map_cache.insert(std::make_pair(key, std::weak_ptr<T>(new_product)));
+		_map_cache[key] = std::weak_ptr<T>(new_product);
 		return new_product;
 	}
 
-	template <typename U>
-	inline std::shared_ptr<U> get(Args&&... data)
+	std::shared_ptr<T> get(const KeyImpl& key_impl, Args&&... data)
 	{
-		return std::dynamic_pointer_cast<U>(get(get_impl_hash<U>(), std::forward<Args>(data)...));
+		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
+		return get(key_impl, key, std::forward<Args>(data)...);
 	}
-private:
+
+	bool exists(const KeyImpl& key_impl, Args&&... data)
+	{
+		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
+		auto it = _map_cache.find(key);
+		if (it != _map_cache.end())
+		{
+			if(!it->second.expired())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+protected:
 	std::unordered_map<KeyImpl, RegistratorFunction> _map_registrators;
 	std::unordered_map<KeyCache, std::weak_ptr<T> > _map_cache;
 };
@@ -137,24 +166,23 @@ public:
 	}
 
 protected:
-	template<typename T>
-	void _combine_hash(size_t& seed, T&& x) const
+	template<typename U>
+	void _combine_hash(size_t& seed, U&& x) const
 	{
-		// from boost
-		seed ^= std::hash<T>()(std::forward<T>(x)) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+		seed ^= std::hash<U>()(std::forward<U>(x)) + 0x9e3779b9 + (seed<<6) + (seed>>2);
 	}
 
-	template <typename T, typename ... Args>
-	void _hash_forwarding(size_t& h, T&& parm, Args&& ... args) const
+	template <typename U, typename ... Args>
+	void _hash_forwarding(size_t& h, U&& parm, Args&& ... args) const
 	{
-		_combine_hash<T>(h, parm);
+		_combine_hash<U>(h, std::forward<U>(parm));
 		_hash_forwarding(h, std::forward<Args>(args)...);
 	}
 
-	template <typename T>
-	void _hash_forwarding(size_t& h, T&& parm) const
+	template <typename U>
+	void _hash_forwarding(size_t& h, U&& parm) const
 	{
-		_combine_hash<T>(h, parm);
+		_combine_hash<U>(h, std::forward<U>(parm));
 	}
 };
 
