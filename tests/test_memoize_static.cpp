@@ -7,7 +7,7 @@ class Base
 {
 public:
 	using Memoize = dp14::Memoize<Base, std::string, int>;
-	
+
 	explicit Base(const std::string& name, int q)
 		: _name(name)
 		, _q(q)
@@ -24,35 +24,18 @@ protected:
 class A : public Base
 {
 public:
-	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
+DEFINE_HASH(A)
 
 class B : public Base
 {
 public:
-	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-
-// specialization std::hash<Base>
-namespace std
-{
-	template<>
-	class hash<Base>
-	{
-	public:
-		size_t operator()(const std::string& implementation, std::string& name, int n) const
-		{
-			size_t h1 = std::hash<std::string>()(implementation);
-			size_t h2 = std::hash<std::string>()(name);
-			size_t h3 = std::hash<int>()(n);
-			return h1 ^ (h2 ^ (h3 << 1) << 1);
-		}
-	};
-}
+DEFINE_HASH(B)
 
 // register implementations to static memoize
 namespace regA
@@ -82,7 +65,7 @@ int main()
 		std::shared_ptr<B> b2 = Base::Memoize::instance().get<B>("first parameter", 2);
 		std::shared_ptr<Base> b3 = Base::Memoize::instance().get(B::KEY(), "first parameter", 4);
 		std::shared_ptr<Base> b4 = Base::Memoize::instance().get("B", "first parameter", 4);
-	
+
 		assert(a1 == a2);
 		assert(a3 == a4);
 		assert(a2 != a4);
@@ -91,6 +74,6 @@ int main()
 		assert(b3 == b4);
 		assert(b2 != b4);
 	}
-	
+
 	return(0);
 }

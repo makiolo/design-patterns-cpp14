@@ -15,11 +15,9 @@ template <typename T, typename... Args>
 class Memoize
 {
 public:
-	DEFINE_KEY(Memoize<T>)
-	
 	using KeyCache = size_t;
-	using Key = std::string;
-	using Value = std::function<std::shared_ptr<T> (Args...)>;
+	using KeyImpl = size_t;
+	using RegistratorFunction = std::function<std::shared_ptr<T> (Args...)>;
 	template<typename U> using Registrator = MemoizeRegistrator<T, U, Args...>;
 
 	static typename T::Memoize& instance()
@@ -29,61 +27,68 @@ public:
 	}
 
 	template <typename U>
-	Key get_key()
+	inline KeyImpl get_impl_hash()
 	{
-		return U::KEY();
-	}
-	
-	template <typename U, typename F>
-	void register_type(F && value)
-	{
-		_map_creators[get_key<U>()] = std::forward<F>(value);
+		return std::hash<U>()();
 	}
 
-	bool exists(const Key& key_impl, Args&&... data)
+	inline KeyCache get_base_hash(const KeyImpl& key_impl, Args&&... data)
 	{
-		Key key = std::hash<T>()(key_impl, std::forward<Args>(data)...);
+		return key_impl ^ dp14::hash<T>()(std::forward<Args>(data)...);
+	}
+
+	template <typename U, typename F>
+	void register_type(F&& value)
+	{
+		_map_registrators[get_impl_hash<U>()] = std::forward<F>(value);
+	}
+
+	bool exists(const KeyImpl& key_impl, Args&&... data)
+	{
+		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
 		return (_map_cache.find(key) != _map_cache.end());
 	}
 
 	template <typename U>
-	bool exists(Args&&... data)
+	inline bool exists(Args&&... data)
 	{
-		return exists(get_key<U>(), std::forward<Args>(data)...);
+		return exists(get_impl_hash<U>(), std::forward<Args>(data)...);
 	}
 
-	std::shared_ptr<T> get(const Key& key_impl, Args&&... data)
+	std::shared_ptr<T> get(const KeyImpl& key_impl, Args&&... data)
 	{
-		KeyCache key = std::hash<T>()(key_impl, std::forward<Args>(data)...);
+		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
 
 		auto it = _map_cache.find(key);
 		if (it != _map_cache.end())
 		{
-			return it->second.lock();
-		}
-		else
-		{
-			auto itc =  _map_creators.find(key_impl);
-			if(itc == _map_creators.end())
+			if(!it->second.expired())
 			{
-				std::cout << "Can't found key in map: " << key << std::endl;
-				throw std::exception();
+				return it->second.lock();
 			}
-		
-			std::shared_ptr<T> new_product = (itc->second)(std::forward<Args>(data)...);
-			_map_cache.insert(std::make_pair(key, std::weak_ptr<T>(new_product)));
-			return new_product;
 		}
+
+		// create element
+		auto itc =  _map_registrators.find(key_impl);
+		if(itc == _map_registrators.end())
+		{
+			std::cout << "Can't found key in map: " << key << std::endl;
+			throw std::exception();
+		}
+
+		std::shared_ptr<T> new_product = (itc->second)(std::forward<Args>(data)...);
+		_map_cache.insert(std::make_pair(key, std::weak_ptr<T>(new_product)));
+		return new_product;
 	}
 
 	template <typename U>
-	std::shared_ptr<U> get(Args&&... data)
+	inline std::shared_ptr<U> get(Args&&... data)
 	{
-		return std::dynamic_pointer_cast<U>(get(get_key<U>(), std::forward<Args>(data)...));
+		return std::dynamic_pointer_cast<U>(get(get_impl_hash<U>(), std::forward<Args>(data)...));
 	}
 private:
-	std::map<Key, Value> _map_creators;
-	std::map<KeyCache, std::weak_ptr<T> > _map_cache;
+	std::unordered_map<KeyImpl, RegistratorFunction> _map_registrators;
+	std::unordered_map<KeyCache, std::weak_ptr<T> > _map_cache;
 };
 
 template<typename T, typename U, typename ... Args>
@@ -94,17 +99,17 @@ public:
 	{
 		register_to_singleton(make_int_sequence< sizeof...(Args) >{});
 	}
-	
+
 	explicit MemoizeRegistrator(Memoize<T, Args...>& memoize)
 	{
 		register_in_a_memoize(memoize, make_int_sequence< sizeof...(Args) >{});
 	}
-	
+
 	static std::shared_ptr<T> get(Args&&... data)
 	{
 		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
-	
+
 protected:
 	template <int... Is>
 	void register_to_singleton(int_sequence<Is...>)
@@ -116,6 +121,40 @@ protected:
 	void register_in_a_memoize(Memoize<T, Args...>& memoize, int_sequence<Is...>)
 	{
 		memoize.template register_type<U>(std::bind(&MemoizeRegistrator<T, U, Args...>::get, placeholder_template < Is > {}...));
+	}
+};
+
+template<typename T>
+class hash
+{
+public:
+	template <typename ... Args>
+	size_t operator()(Args&& ... args) const
+	{
+		size_t h = 0;
+		_hash_forwarding(h, std::forward<Args>(args)...);
+		return h;
+	}
+
+protected:
+	template<typename T>
+	void _combine_hash(size_t& seed, T&& x) const
+	{
+		// from boost
+		seed ^= std::hash<T>()(std::forward<T>(x)) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+	}
+
+	template <typename T, typename ... Args>
+	void _hash_forwarding(size_t& h, T&& parm, Args&& ... args) const
+	{
+		_combine_hash<T>(h, parm);
+		_hash_forwarding(h, std::forward<Args>(args)...);
+	}
+
+	template <typename T>
+	void _hash_forwarding(size_t& h, T&& parm) const
+	{
+		_combine_hash<T>(h, parm);
 	}
 };
 
