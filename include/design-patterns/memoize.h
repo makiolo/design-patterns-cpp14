@@ -11,9 +11,6 @@ namespace dp14 {
 template<typename T, typename U, typename... Args>
 class MemoizeRegistrator;
 
-template<typename T>
-class hash;
-
 template <typename T, typename... Args>
 class Memoize
 {
@@ -150,39 +147,6 @@ protected:
 	void register_in_a_memoize(Memoize<T, Args...>& memoize, int_sequence<Is...>)
 	{
 		memoize.template register_type<U>(std::bind(&MemoizeRegistrator<T, U, Args...>::get, placeholder_template < Is > {}...));
-	}
-};
-
-template<typename T>
-class hash
-{
-public:
-	template <typename ... Args>
-	size_t operator()(Args&& ... args) const
-	{
-		size_t h = 0;
-		_hash_forwarding(h, std::forward<Args>(args)...);
-		return h;
-	}
-
-protected:
-	template<typename U>
-	void _combine_hash(size_t& seed, U&& x) const
-	{
-		seed ^= std::hash<U>()(std::forward<U>(x)) + 0x9e3779b9 + (seed<<6) + (seed>>2);
-	}
-
-	template <typename U, typename ... Args>
-	void _hash_forwarding(size_t& h, U&& parm, Args&& ... args) const
-	{
-		_combine_hash<U>(h, std::forward<U>(parm));
-		_hash_forwarding(h, std::forward<Args>(args)...);
-	}
-
-	template <typename U>
-	void _hash_forwarding(size_t& h, U&& parm) const
-	{
-		_combine_hash<U>(h, std::forward<U>(parm));
 	}
 };
 

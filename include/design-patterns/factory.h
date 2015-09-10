@@ -15,10 +15,8 @@ template <typename T, typename ... Args>
 class Factory
 {
 public:
-	DEFINE_KEY(Factory<T>)
-
-	using Key = std::string;
-	using Value = std::function<std::shared_ptr<T> (Args...)>;
+	using KeyImpl = size_t;
+	using RegistratorFunction = std::function<std::shared_ptr<T> (Args...)>;
 	template<typename U> using Registrator = FactoryRegistrator<T, U, Args...>;
 
 	static typename T::Factory& instance()
@@ -26,28 +24,23 @@ public:
 		static typename T::Factory factory;
 		return factory;
 	}
-	
+
 	template <typename U>
-	Key get_key()
+	KeyImpl get_key()
 	{
-		return U::KEY();
+		return std::hash<U>()();
 	}
-	
+
 	template <typename U, typename F>
-	void register_type(F && value)
+	void register_type(F&& value)
 	{
-		_map_creators[get_key<U>()] = std::forward<F>(value);
+		_map_registrators[get_key<U>()] = std::forward<F>(value);
 	}
-	
-	std::shared_ptr<T> create(const Key& key_impl, Args&&... data)
+
+	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data)
 	{
-		auto it =  _map_creators.find(key_impl);
-		if(it == _map_creators.end())
-		{
-			std::cout << "Can't found key in map: " << key_impl << std::endl;
-			throw std::exception();
-		}
-		return (it->second)(std::forward<Args>(data)...);
+		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
+		return create(key_impl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -55,8 +48,20 @@ public:
 	{
 		return std::dynamic_pointer_cast<U>(create(get_key<U>(), std::forward<Args>(data)...));
 	}
-private:
-	std::map<Key, Value> _map_creators;
+
+protected:
+	std::shared_ptr<T> create(const KeyImpl& key_impl, Args&&... data)
+	{
+		auto it =  _map_registrators.find(key_impl);
+		if(it == _map_registrators.end())
+		{
+			std::cout << "Can't found key in map: " << key_impl << std::endl;
+			throw std::exception();
+		}
+		return (it->second)(std::forward<Args>(data)...);
+	}
+protected:
+	std::map<KeyImpl, RegistratorFunction> _map_registrators;
 };
 
 template<typename T, typename U, typename ... Args>
@@ -72,7 +77,7 @@ public:
 	{
 		register_in_a_factory(factory, make_int_sequence< sizeof...(Args) >{});
 	}
-	
+
 	static std::shared_ptr<T> create(Args&&... data)
 	{
 		return std::make_shared<U>(std::forward<Args>(data)...);
