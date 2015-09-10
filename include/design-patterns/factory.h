@@ -1,4 +1,5 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a Creative Commons Reconocimiento 4.0 Internacional License.
+// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a
+// Creative Commons Reconocimiento 4.0 Internacional License.
 // http://creativecommons.org/licenses/by/4.0/
 //
 #ifndef _FACTORY_H_
@@ -6,22 +7,25 @@
 
 #include "common.h"
 
-namespace dp14 {
+namespace dp14
+{
 
-template<typename T, typename U, typename ... Args>
-class FactoryRegistrator;
+template <typename T, typename U, typename... Args>
+class factory_registrator;
 
-template <typename T, typename ... Args>
-class Factory
+template <typename T, typename... Args>
+class factory
 {
 public:
 	using KeyImpl = size_t;
-	using RegistratorFunction = std::function<std::shared_ptr<T> (Args...)>;
-	template<typename U> using Registrator = FactoryRegistrator<T, U, Args...>;
+	using RegistratorFunction = std::function<std::shared_ptr<T>(Args...)>;
+	using registrator_container = std::unordered_map<KeyImpl, RegistratorFunction>;
+	template <typename U>
+	using registrator = factory_registrator<T, U, Args...>;
 
-	static typename T::Factory& instance()
+	static typename T::factory& instance()
 	{
-		static typename T::Factory factory;
+		static typename T::factory factory;
 		return factory;
 	}
 
@@ -52,30 +56,28 @@ public:
 protected:
 	std::shared_ptr<T> create(const KeyImpl& key_impl, Args&&... data) const
 	{
-		auto it =  _map_registrators.find(key_impl);
-		if(it == _map_registrators.end())
+		auto it = _map_registrators.find(key_impl);
+		if (it == _map_registrators.end())
 		{
 			std::cout << "Can't found key in map: " << key_impl << std::endl;
 			throw std::exception();
 		}
 		return (it->second)(std::forward<Args>(data)...);
 	}
+
 protected:
-	std::unordered_map<KeyImpl, RegistratorFunction> _map_registrators;
+	registrator_container _map_registrators;
 };
 
-template<typename T, typename U, typename ... Args>
-class FactoryRegistrator
+template <typename T, typename U, typename... Args>
+class factory_registrator
 {
 public:
-	explicit FactoryRegistrator()
-	{
-		register_to_singleton(make_int_sequence< sizeof...(Args) >{});
-	}
+	explicit factory_registrator() { register_to_singleton(make_int_sequence<sizeof...(Args)>{}); }
 
-	explicit FactoryRegistrator(Factory<T, Args...>& factory)
+	explicit factory_registrator(factory<T, Args...>& factory)
 	{
-		register_in_a_factory(factory, make_int_sequence< sizeof...(Args) >{});
+		register_in_a_factory(factory, make_int_sequence<sizeof...(Args)>{});
 	}
 
 	static std::shared_ptr<T> create(Args&&... data)
@@ -87,13 +89,15 @@ protected:
 	template <int... Is>
 	void register_to_singleton(int_sequence<Is...>)
 	{
-		T::Factory::instance().template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args...>::create, placeholder_template<Is>{}...));
+		T::factory::instance().template register_type<U>(
+			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
 
 	template <int... Is>
-	void register_in_a_factory(Factory<T, Args...>& factory, int_sequence<Is...>)
+	void register_in_a_factory(factory<T, Args...>& factory, int_sequence<Is...>)
 	{
-		factory.template register_type<U>(std::bind(&FactoryRegistrator<T, U, Args...>::create, placeholder_template<Is>{}...));
+		factory.template register_type<U>(
+			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
 };
 

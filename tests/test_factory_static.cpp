@@ -5,7 +5,7 @@
 class Base
 {
 public:
-	using Factory = dp14::Factory<Base, std::string, int>;
+	using factory = dp14::factory<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -39,29 +39,29 @@ DEFINE_HASH(B)
 // register implementations to static factory
 namespace regA
 {
-	Base::Factory::Registrator<A> reg;
+	Base::factory::registrator<A> reg;
 }
 namespace regB
 {
-	Base::Factory::Registrator<B> reg;
+	Base::factory::registrator<B> reg;
 }
 
-// Factory with singleton is useful for DLL/plugin systems:
+// factory with singleton is useful for DLL/plugin systems:
 // if you want publish your factory in a DLL, only need:
-//		template LIBNAME_API Base::Factory;
+//		template LIBNAME_API Base::factory;
 
 int main()
 {
 	{
 		// equivalent ways of create A
-		std::shared_ptr<Base> a1 = Base::Factory::instance().create<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = Base::Factory::instance().create<A>("first parameter", 2);
-		std::shared_ptr<Base> a3 = Base::Factory::instance().create("A", "first parameter", 2);
+		std::shared_ptr<Base> a1 = Base::factory::instance().create<A>("first parameter", 2);
+		std::shared_ptr<A> a2 = Base::factory::instance().create<A>("first parameter", 2);
+		std::shared_ptr<Base> a3 = Base::factory::instance().create("A", "first parameter", 2);
 
 		// equivalent ways of create B
-		std::shared_ptr<Base> b1 = Base::Factory::instance().create<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = Base::Factory::instance().create<B>("first parameter", 2);
-		std::shared_ptr<Base> b3 = Base::Factory::instance().create("B", "first parameter", 2);
+		std::shared_ptr<Base> b1 = Base::factory::instance().create<B>("first parameter", 2);
+		std::shared_ptr<B> b2 = Base::factory::instance().create<B>("first parameter", 2);
+		std::shared_ptr<Base> b3 = Base::factory::instance().create("B", "first parameter", 2);
 
 		assert(a1 != a2);
 		assert(a3 != b1);
