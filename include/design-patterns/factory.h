@@ -61,7 +61,7 @@ protected:
 		return (it->second)(std::forward<Args>(data)...);
 	}
 protected:
-	std::map<KeyImpl, RegistratorFunction> _map_registrators;
+	std::unordered_map<KeyImpl, RegistratorFunction> _map_registrators;
 };
 
 template<typename T, typename U, typename ... Args>
