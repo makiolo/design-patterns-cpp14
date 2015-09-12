@@ -1,13 +1,11 @@
 language: cpp
 sudo: required
-services:
-  - docker
 os:
   - linux
 
 before_install:
 
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; 
+  - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
         wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -;
         sudo add-apt-repository --yes "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main";
