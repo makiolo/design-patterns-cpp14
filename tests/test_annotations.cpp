@@ -66,6 +66,7 @@ leaf content(const decltype(leaf()())& a)
 
 int main(int argc, const char *argv[])
 {
+    // replegation tree (down to top)
     std::cout << (
                     tag("html") += 
                     (
@@ -88,6 +89,30 @@ int main(int argc, const char *argv[])
                             )
                     )
                     )() << std::endl;
+    // brainstorm
+    // async tree execute (top-down)
+    /*
+    (a,b,c) = parallel(1,2,(x,y,z)) +=
+    (
+    	a = sequence(1) += 
+    	{
+    		a' = functor(1)
+    		,
+    		a = functor(a')
+    	}
+    	,
+    	b = functor(2)
+    	,
+    	c = agregation(x',y',z') += parallel((x,y,z)) += 
+    	{
+    		x' = functor(x)
+    		,
+    		y' = functor(y)
+    		,
+    		z' = functor(z)
+    	}
+    )
+    */
 	return 0;
 }
 
