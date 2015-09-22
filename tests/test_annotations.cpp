@@ -10,12 +10,20 @@
 
 using leaf = std::function<std::string()>;
 using composite = std::function<leaf(const leaf&)>;
-// aggregator convierte una lista de leaf en un solo leaf
-// aggregator convierte una lista de composites en un solo composite
 
 leaf operator+=(const composite& a, const leaf& b)
 {
 	return a(b);
+}
+
+leaf operator,(const leaf& a, const leaf& b)
+{
+	return [&]()
+	{
+		std::stringstream ss;
+		ss << a() << b();
+		return ss.str();
+	};
 }
 
 composite repeat(int n)
@@ -42,24 +50,56 @@ composite tag(const std::string& tag)
 	};
 }
 
-class Generator
+leaf content(const std::string& a)
 {
-public:
-	Generator(){ ; }
-	~Generator(){ ; }
-	
-	std::string generate()
-	{
-		auto t = tag("html");
-		
-		return (t += tag("html") += t += tag("body") += tag("b") += repeat(5) += [](){return "Hello world!";})();
-	}
-};
+	return [&]() { return a; };
+}
 
 int main(int argc, const char *argv[])
 {
-	Generator p;
-	std::cout << p.generate() << std::endl;
+    std::cout << (
+                    tag("html") += 
+                    (
+                            tag("head") += 
+                            (
+                                    tag("title") += content("title page")
+                                    ,
+                                    tag("script") += content("alert(a);")
+                                    ,
+                                    tag("script") += content("alert(b);")
+                                    ,
+                                    tag("script") += content("alert(c);")
+                            )
+                            ,
+                            tag("body") += 
+                            (
+                                tag("h1") += content("Hello world!")
+                                ,
+                                tag("ul") += repeat(5) += tag("li") += content("element")
+                            )
+                    )
+                    )() << std::endl;
+    /*
+    Generate:
+    <html>
+    <head>
+        <title>title page</title>
+        <script>alert(a);</script>
+        <script>alert(b);</script>
+        <script>alert(c);</script>
+    </head>
+    <body>
+    <h1>Hello world!</h1>
+    <ul>
+        <li>element</li>
+        <li>element</li>
+        <li>element</li>
+        <li>element</li>
+        <li>element</li>
+    </ul>
+    </body>
+    </html>
+    */
 	return 0;
 }
 
