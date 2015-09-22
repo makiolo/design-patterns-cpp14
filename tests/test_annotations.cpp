@@ -7,6 +7,8 @@
 
 // http://blog.sigfpe.com/2006/08/you-could-have-invented-monads-and.html
 // http://stackoverflow.com/questions/44965/what-is-a-monad
+// http://www.cplusplus.com/doc/tutorial/operators/
+// https://github.com/mattn/emmet-vim
 
 using leaf = std::function<std::string()>;
 using composite = std::function<leaf(const leaf&)>;
@@ -24,31 +26,40 @@ leaf operator,(const leaf& a, const leaf& b)
 	};
 }
 
-composite repeat(int n)
+leaf operator*(int n, const leaf& f)
 {
-	return [=](const leaf& f)
+	return [&]()
+	{
+	    std::stringstream ss;
+	    for(int i=0; i<n; ++i)
+	        ss << f();
+	    return ss.str();
+	};
+}
+
+composite operator*(int n, const composite& a)
+{
+	return [&](const leaf& f)
 	{
 		return [&]()
 		{
-			std::stringstream ss;
-			for(int i=0; i<n; ++i)
-			{
-				ss << f();
-			}
-			return ss.str();
+		    std::stringstream ss;
+		    for(int i=0; i<n; ++i)
+		        ss << a(f)();
+		    return ss.str();
 		};
 	};
 }
 
-composite tag(const std::string& tag)
+composite tag(const decltype(leaf()())& tag)
 {
 	return [=](const leaf& f)
 	{
-		return [&]() {return "<" + tag + ">" + f() + "</" + tag + ">";};
+		return [&]() {return "<" + tag + ">\n" + f() + "</" + tag + ">\n";};
 	};
 }
 
-leaf content(const std::string& a)
+leaf content(const decltype(leaf()())& a)
 {
 	return [&]() { return a; };
 }
@@ -73,31 +84,10 @@ int main(int argc, const char *argv[])
                             (
                                 tag("h1") += content("Hello world!")
                                 ,
-                                tag("ul") += repeat(5) += tag("li") += content("element")
+                                tag("ul") += 5*tag("li") += 2*content("element $")
                             )
                     )
                     )() << std::endl;
-    /*
-    Generate:
-    <html>
-    <head>
-        <title>title page</title>
-        <script>alert(a);</script>
-        <script>alert(b);</script>
-        <script>alert(c);</script>
-    </head>
-    <body>
-    <h1>Hello world!</h1>
-    <ul>
-        <li>element</li>
-        <li>element</li>
-        <li>element</li>
-        <li>element</li>
-        <li>element</li>
-    </ul>
-    </body>
-    </html>
-    */
 	return 0;
 }
 
