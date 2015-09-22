@@ -20,9 +20,7 @@ leaf operator,(const leaf& a, const leaf& b)
 {
 	return [&]()
 	{
-		std::stringstream ss;
-		ss << a() << b();
-		return ss.str();
+		return a() + b();
 	};
 }
 
@@ -35,7 +33,7 @@ composite repeat(int n)
 			std::stringstream ss;
 			for(int i=0; i<n; ++i)
 			{
-				ss << f() << std::endl;
+				ss << f();
 			}
 			return ss.str();
 		};
