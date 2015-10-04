@@ -1,0 +1,3 @@
+[submodule "cmaki"]
+	path = cmaki
+	url = https://github.com/makiolo/cmaki.git
