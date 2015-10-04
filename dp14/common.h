@@ -15,7 +15,7 @@
 	namespace std                                                                                  \
 	{                                                                                              \
 	template <>                                                                                    \
-	class hash<__CLASS__>                                                                          \
+	struct hash<__CLASS__>                                                                          \
 	{                                                                                              \
 	public:                                                                                        \
 		size_t operator()() const { return std::hash<std::string>()(#__CLASS__); }                 \
