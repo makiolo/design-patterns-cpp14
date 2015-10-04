@@ -11,7 +11,7 @@ script:
     - cd $FL_CONF
     - export CC=${REAL_CC} CXX=${REAL_CXX}
     - rm CMakeCache.txt || true
-    - cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=$FL_CONF -DEXTRA_DEF=$EXTRA_DEF
+    - cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=$FL_CONF -DEXTRA_DEF=$EXTRA_DEF -DCOVERAGE=$COVERAGE -DSANITIZER=$SANITIZER -DCMAKE_MODULE_PATH=$(pwd)/../cmaki -DCMAKE_PREFIX_PATH=$(pwd)/../cmaki
     - make -j12
     - ctest .. -j12 --no-compress-output --output-on-failure --schedule-random -T Test --timeout 30 || true
     - find Testing/ -name "*.xml" | xargs xsltproc ../cmaki/junit/CTest2JUnit.xsl > ../shippable/testresults/tests.xml
