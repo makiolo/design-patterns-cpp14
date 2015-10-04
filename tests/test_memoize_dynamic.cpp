@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <assert.h>
-#include <dp14/memoize.h>
+#include "../memoize.h"
 
 class Base
 {
