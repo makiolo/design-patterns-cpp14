@@ -1,6 +1,6 @@
 #include <iostream>
 #include <assert.h>
-#include <design-patterns/factory.h>
+#include <dp14/h/factory.h>
 
 class Base
 {
