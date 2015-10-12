@@ -30,13 +30,14 @@ It's a header-only library. Only need an include.
 
 ### Compile tests
 You will need cmake (and a compiler).
-
-```
-$ git clone https://github.com/makiolo/design-patterns-cpp14.git
+```bash
+$ git clone --recursive https://github.com/makiolo/design-patterns-cpp14.git dp14
+$ cd dp14
 $ mkdir build
 $ cd build
 $ cmake ..
-$ make (in unix) or compile generated solution (in windows)
+$ make -j
+$ make test ARGS=-V
 ```
 
 ### Example factory
