@@ -33,11 +33,11 @@ You will need cmake (and a compiler).
 ```bash
 $ git clone --recursive https://github.com/makiolo/design-patterns-cpp14.git dp14
 $ cd dp14
-$ mkdir build
-$ cd build
+$ mkdir release
+$ cd release
 $ cmake ..
-$ make -j
-$ make test ARGS=-V
+$ cmake --build . --config release
+$ ctest . -C release
 ```
 
 ### Example factory
