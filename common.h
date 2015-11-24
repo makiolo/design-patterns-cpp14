@@ -11,16 +11,20 @@
 #include <unordered_map>
 #include <exception>
 
-#define DEFINE_HASH(__CLASS__)                                                                     \
-	namespace std                                                                                  \
-	{                                                                                              \
-	template <>                                                                                    \
-	struct hash<__CLASS__>                                                                          \
-	{                                                                                              \
-	public:                                                                                        \
-		size_t operator()() const { return std::hash<std::string>()(#__CLASS__); }                 \
-	};                                                                                             \
-	}
+#define DEFINE_KEY(__CLASS__) \
+	static const std::string& KEY() { static std::string key = #__CLASS__; return key; } \
+	virtual const std::string& getKEY() const { static std::string key = #__CLASS__; return key; } \
+
+#define DEFINE_HASH(__CLASS__)  \
+	namespace std               \
+	{                           \
+	template <>                 \
+	struct hash<__CLASS__>      \
+	{                           \
+	public:                     \
+		size_t operator()() const { return std::hash<std::string>()(#__CLASS__); }                          \
+	};                          \
+	}							\
 
 template <int...>
 struct int_sequence
