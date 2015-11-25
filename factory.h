@@ -38,6 +38,7 @@ public:
 	template <typename U, typename F>
 	void register_type(F&& value)
 	{
+		std::cout << "registrando = " << get_key<U>() << std::endl;
 		_map_registrators[get_key<U>()] = std::forward<F>(value);
 	}
 
