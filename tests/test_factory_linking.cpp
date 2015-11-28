@@ -9,7 +9,7 @@ class load_library
 public:
 	load_library(const std::string& libname)
 	{
-		_handle = dlopen(libname.c_str(), RTLD_LAZY);
+		_handle = dlopen(libname.c_str(), RTLD_NOW);
 		if (!_handle) {
 			fputs (dlerror(), stderr);
 			throw std::runtime_error("error loading library");
@@ -34,14 +34,14 @@ int main()
 	load_library fooB("libfooB.so");
 
 	// equivalent ways of create A
-	std::shared_ptr<Base> a1 = get_factory().create<A>("first parameter", 2);
-	std::shared_ptr<A> a2 = get_factory().create<A>("first parameter", 2);
-	std::shared_ptr<Base> a3 = get_factory().create("A", "first parameter", 2);
+	std::shared_ptr<Base> a1 = Base::get_factory().create<A>("first parameter", 2);
+	std::shared_ptr<A> a2 = Base::get_factory().create<A>("first parameter", 2);
+	std::shared_ptr<Base> a3 = Base::get_factory().create("A", "first parameter", 2);
 
 	// equivalent ways of create B
-	std::shared_ptr<Base> b1 = get_factory().create<B>("first parameter", 2);
-	std::shared_ptr<B> b2 = get_factory().create<B>("first parameter", 2);
-	std::shared_ptr<Base> b3 = get_factory().create("B", "first parameter", 2);
+	std::shared_ptr<Base> b1 = Base::get_factory().create<B>("first parameter", 2);
+	std::shared_ptr<B> b2 = Base::get_factory().create<B>("first parameter", 2);
+	std::shared_ptr<Base> b3 = Base::get_factory().create("B", "first parameter", 2);
 
 	assert(a1 != a2);
 	assert(a3 != b1);

@@ -24,6 +24,7 @@ class foo_API Base
 {
 public:
 	using factory = dp14::factory<Base, std::string, int>;
+	static foo_API Base::factory& get_factory();
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -39,8 +40,6 @@ protected:
 };
 
 }
-
-foo_API dp14::factory<foo::Base, std::string, int>& get_factory();
 
 #endif
 

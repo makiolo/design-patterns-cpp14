@@ -7,19 +7,11 @@
     #ifdef fooA_EXPORTS
         #define fooA_API __declspec(dllexport)
     #else
-        #ifndef fooA_STATIC
-            #define fooA_API __declspec(dllimport)
-        #else
-            #define fooA_API
-        #endif
+		#define fooA_API __declspec(dllimport)
     #endif
 #else
     #ifdef fooA_EXPORTS
-		#if __GNUC__ >= 4
-			#define fooA_API __attribute__((visibility("default")))
-		#else
-			#define fooA_API
-		#endif
+		#define fooA_API __attribute__((visibility("default")))
     #else
         #define fooA_API
     #endif
