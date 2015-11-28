@@ -24,6 +24,7 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
@@ -32,6 +33,7 @@ DEFINE_HASH(A)
 class B : public Base
 {
 public:
+	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
@@ -54,14 +56,14 @@ int main()
 		std::shared_ptr<A> a2 = m.get<A>("first parameter", 2);
 		assert(a1 == a2);
 
-		std::shared_ptr<Base> a3 = m.get("A", "first parameter", 4);
+		std::shared_ptr<Base> a3 = m.get(A::KEY(), "first parameter", 4);
 		assert(a2 != a3);
 
 		std::shared_ptr<Base> b1 = m.get<B>("first parameter", 2);
 		std::shared_ptr<B> b2 = m.get<B>("first parameter", 2);
 		assert(b1 == b2);
 
-		std::shared_ptr<Base> b3 = m.get("B", "first parameter", 4);
+		std::shared_ptr<Base> b3 = m.get(B::KEY(), "first parameter", 4);
 		assert(b2 != b3);
 
 		assert( m.exists<A>("first parameter", 2) == true );

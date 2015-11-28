@@ -1,9 +1,5 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a Creative Commons
-// Reconocimiento 4.0 Internacional License.
-// http://creativecommons.org/licenses/by/4.0/
-//
-#ifndef _PATTERNS_COMMON_
-#define _PATTERNS_COMMON_
+#ifndef _META_COMMON_
+#define _META_COMMON_
 
 #include <functional>
 #include <string>
@@ -16,15 +12,16 @@
 	virtual const std::string& getKEY() const { static std::string key = #__CLASS__; return key; } \
 
 #define DEFINE_HASH(__CLASS__)  \
-	namespace std               \
-	{                           \
+	namespace std {             \
 	template <>                 \
 	struct hash<__CLASS__>      \
-	{                           \
-	public:                     \
-		size_t operator()() const { return std::hash<std::string>()(#__CLASS__); }                          \
-	};                          \
-	}							\
+	{ size_t operator()() const { static size_t h = std::hash<std::string>()(__CLASS__::KEY()); return h; }	}; }			\
+
+#define DEFINE_HASH_API(__API__, __CLASS__)  \
+	namespace std {             \
+	template <>                 \
+	struct __API__ hash<__CLASS__>      \
+	{ size_t operator()() const { static size_t h = std::hash<std::string>()(__CLASS__::KEY()); return h; }	}; }			\
 
 template <int...>
 struct int_sequence

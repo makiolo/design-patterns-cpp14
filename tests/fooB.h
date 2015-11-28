@@ -29,16 +29,7 @@ public:
 
 }
 
-namespace std {
-
-template <>
-struct fooB_API hash<fooB::B>
-{
-public:
-	size_t operator()() const { return std::hash<std::string>()(fooB::B::KEY()); }
-};
-
-}
+DEFINE_HASH_API(fooB_API, fooB::B)
 
 #endif
 

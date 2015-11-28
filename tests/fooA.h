@@ -22,24 +22,13 @@ namespace fooA {
 class fooA_API A : public foo::Base
 {
 public:
-	DEFINE_KEY(A)
+	DEFINE_KEY(fooA::A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
 
 }
-
-namespace std {
-
-template <>
-struct fooA_API hash<fooA::A>
-{
-public:
-	size_t operator()() const { return std::hash<std::string>()(fooA::A::KEY()); }
-};
-
-}
-
+DEFINE_HASH_API(fooA_API, fooA::A)
 
 #endif
 

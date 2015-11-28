@@ -1,11 +1,10 @@
 #include "fooA.h"
 
-namespace fooA {
-namespace regA {
+namespace {
 
-	dp14::factory<foo::Base, std::string, int>::registrator<A> reg(
+	foo::Base::factory::registrator<fooA::A> reg(
 			foo::Base::get_factory()
 		);
 
-}}
+}
 

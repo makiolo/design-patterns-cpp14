@@ -23,6 +23,7 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
@@ -31,6 +32,7 @@ DEFINE_HASH(A)
 class B : public Base
 {
 public:
+	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
@@ -46,22 +48,18 @@ namespace regB
 	Base::factory::registrator<B> reg;
 }
 
-// factory with singleton is useful for DLL/plugin systems:
-// if you want publish your factory in a DLL, only need:
-//		template LIBNAME_API Base::factory;
-
 int main()
 {
 	{
 		// equivalent ways of create A
 		std::shared_ptr<Base> a1 = Base::factory::instance().create<A>("first parameter", 2);
 		std::shared_ptr<A> a2 = Base::factory::instance().create<A>("first parameter", 2);
-		std::shared_ptr<Base> a3 = Base::factory::instance().create("A", "first parameter", 2);
+		std::shared_ptr<Base> a3 = Base::factory::instance().create(A::KEY(), "first parameter", 2);
 
 		// equivalent ways of create B
 		std::shared_ptr<Base> b1 = Base::factory::instance().create<B>("first parameter", 2);
 		std::shared_ptr<B> b2 = Base::factory::instance().create<B>("first parameter", 2);
-		std::shared_ptr<Base> b3 = Base::factory::instance().create("B", "first parameter", 2);
+		std::shared_ptr<Base> b3 = Base::factory::instance().create(B::KEY(), "first parameter", 2);
 
 		assert(a1 != a2);
 		assert(a3 != b1);

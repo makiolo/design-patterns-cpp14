@@ -26,7 +26,6 @@ public:
 	static typename T::factory& instance()
 	{
 		static typename T::factory factory;
-		std::cout << "reading singleton = " << &factory << std::endl;
 		return factory;
 	}
 

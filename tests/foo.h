@@ -24,7 +24,7 @@ class foo_API Base
 {
 public:
 	using factory = dp14::factory<Base, std::string, int>;
-	static foo_API Base::factory& get_factory();
+	static Base::factory& get_factory();
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
