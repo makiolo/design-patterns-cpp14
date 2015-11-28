@@ -8,23 +8,17 @@
     #ifdef foo_EXPORTS
         #define foo_API __declspec(dllexport)
     #else
-        #ifndef foo_STATIC
-            #define foo_API __declspec(dllimport)
-        #else
-            #define foo_API
-        #endif
+		#define foo_API __declspec(dllimport)
     #endif
 #else
     #ifdef foo_EXPORTS
-		#if __GNUC__ >= 4
-			#define foo_API __attribute__((visibility("default")))
-		#else
-			#define foo_API
-		#endif
+		#define foo_API __attribute__((visibility("default")))
     #else
         #define foo_API
     #endif
 #endif
+
+namespace foo {
 
 class foo_API Base
 {
@@ -44,8 +38,9 @@ protected:
 	int _q;
 };
 
-template class foo_API dp14::factory<Base, std::string, int>;
-// template class Base::factory;
+}
+
+foo_API dp14::factory<foo::Base, std::string, int>& get_factory();
 
 #endif
 

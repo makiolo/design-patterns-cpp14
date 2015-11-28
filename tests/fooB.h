@@ -25,13 +25,28 @@
     #endif
 #endif
 
-class fooB_API B : public Base
+namespace fooB {
+
+class fooB_API B : public foo::Base
 {
 public:
+	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
+
+}
+
+namespace std {
+
+template <>
+struct fooB_API hash<fooB::B>
+{
+public:
+	size_t operator()() const { return std::hash<std::string>()(fooB::B::KEY()); }
+};
+
+}
 
 #endif
 

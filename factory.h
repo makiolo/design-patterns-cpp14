@@ -26,6 +26,7 @@ public:
 	static typename T::factory& instance()
 	{
 		static typename T::factory factory;
+		std::cout << "reading singleton = " << &factory << std::endl;
 		return factory;
 	}
 
@@ -38,7 +39,6 @@ public:
 	template <typename U, typename F>
 	void register_type(F&& value)
 	{
-		std::cout << "registrando = " << get_key<U>() << std::endl;
 		_map_registrators[get_key<U>()] = std::forward<F>(value);
 	}
 
@@ -74,11 +74,14 @@ template <typename T, typename U, typename... Args>
 class factory_registrator
 {
 public:
-	explicit factory_registrator() { register_to_singleton(make_int_sequence<sizeof...(Args)>{}); }
-
-	explicit factory_registrator(factory<T, Args...>& factory)
+	explicit factory_registrator()
 	{
-		register_in_a_factory(factory, make_int_sequence<sizeof...(Args)>{});
+		register_to_singleton(make_int_sequence<sizeof...(Args)>{});
+	}
+
+	explicit factory_registrator(factory<T, Args...>& f)
+	{
+		register_in_a_factory(f, make_int_sequence<sizeof...(Args)>{});
 	}
 
 	static std::shared_ptr<T> create(Args&&... data)
@@ -95,9 +98,9 @@ protected:
 	}
 
 	template <int... Is>
-	void register_in_a_factory(factory<T, Args...>& factory, int_sequence<Is...>)
+	void register_in_a_factory(factory<T, Args...>& f, int_sequence<Is...>)
 	{
-		factory.template register_type<U>(
+		f.template register_type<U>(
 			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
 };
