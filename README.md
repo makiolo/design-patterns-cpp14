@@ -40,9 +40,9 @@ $ cmake --build . --config release
 $ ctest . -C release
 ```
 ### Naming implementations
-** *option 1*: use DEFINE_KEY(classname or anything) inner class
-** *option 2*: use DEFINE_HASH(classname well qualified) outer class
-** *option 3*: specialization of std::hash<T>. This is equivalent to option 2 but without use macros:
+* *option 1*: use DEFINE_KEY(classname or anything) inner class
+* *option 2*: use DEFINE_HASH(classname well qualified) outer class
+* *option 3*: specialization of std::hash<T>. This is equivalent to option 2 but without use macros:
 ```CPP
 namespace std {
 	template <>
@@ -64,7 +64,7 @@ namespace std {
 class Base
 {
 public:
-	using Factory = dp14::Factory<Base, std::string, int>;
+	using factory = dp14::factory<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
