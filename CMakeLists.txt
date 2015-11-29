@@ -9,5 +9,6 @@ ENDIF()
 include(utils)
 ENABLE_MODERN_CPP()
 
+include_directories(metacommon)
 add_subdirectory(tests)
 
