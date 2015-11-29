@@ -7,8 +7,7 @@
 
 #include "common.h"
 
-namespace dp14
-{
+namespace dp14 {
 
 template <typename T, typename U, typename... Args>
 class factory_registrator;
@@ -17,9 +16,9 @@ template <typename T, typename... Args>
 class factory
 {
 public:
-	using KeyImpl = size_t;
-	using RegistratorFunction = std::function<std::shared_ptr<T>(Args...)>;
-	using registrator_container = std::unordered_map<KeyImpl, RegistratorFunction>;
+	using key_impl = size_t;
+	using registrator_function = std::function<std::shared_ptr<T>(Args...)>;
+	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
 
@@ -34,7 +33,7 @@ public:
 					(has_key<U>::value)
 				>::type
 			>
-	KeyImpl get_key(int=0) const
+	key_impl get_key(int=0) const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
@@ -44,7 +43,7 @@ public:
 					(!has_key<U>::value)
 				>::type
 			>
-	KeyImpl get_key(long=0) const
+	key_impl get_key(long=0) const
 	{
 		return std::hash<U>()();
 	}
@@ -57,8 +56,8 @@ public:
 
 	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data) const
 	{
-		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
-		return create(key_impl, std::forward<Args>(data)...);
+		key_impl keyimpl = std::hash<std::string>()(key_impl_str);
+		return create(keyimpl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -68,12 +67,12 @@ public:
 	}
 
 protected:
-	std::shared_ptr<T> create(const KeyImpl& key_impl, Args&&... data) const
+	std::shared_ptr<T> create(const key_impl& keyimpl, Args&&... data) const
 	{
-		auto it = _map_registrators.find(key_impl);
+		auto it = _map_registrators.find(keyimpl);
 		if (it == _map_registrators.end())
 		{
-			std::cout << "Can't found key in map: " << key_impl << std::endl;
+			std::cout << "Can't found key in map: " << keyimpl << std::endl;
 			throw std::exception();
 		}
 		return (it->second)(std::forward<Args>(data)...);

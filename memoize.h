@@ -3,8 +3,7 @@
 
 #include "common.h"
 
-namespace dp14
-{
+namespace dp14 {
 
 template <typename T, typename U, typename... Args>
 class memoize_registrator;
@@ -13,11 +12,11 @@ template <typename T, typename... Args>
 class memoize
 {
 public:
-	using KeyCache = size_t;
-	using KeyImpl = size_t;
-	using RegistratorFunction = std::function<std::shared_ptr<T>(Args...)>;
-	using cache_container = std::unordered_map<KeyCache, std::weak_ptr<T>>;
-	using registrator_container = std::unordered_map<KeyImpl, RegistratorFunction>;
+	using key_cache = size_t;
+	using key_impl = size_t;
+	using registrator_function = std::function<std::shared_ptr<T>(Args...)>;
+	using cache_container = std::unordered_map<key_cache, std::weak_ptr<T>>;
+	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	using cache_iterator = typename cache_container::const_iterator;
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
@@ -33,7 +32,7 @@ public:
 					(has_key<U>::value)
 				>::type
 			>
-	KeyImpl get_key(int=0) const
+	key_impl get_key(int=0) const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
@@ -43,14 +42,14 @@ public:
 					(!has_key<U>::value)
 				>::type
 			>
-	KeyImpl get_key(long=0) const
+	key_impl get_key(long=0) const
 	{
 		return std::hash<U>()();
 	}
 
-	inline KeyCache get_base_hash(const KeyImpl& key_impl, Args&&... data) const
+	inline key_cache get_base_hash(const key_impl& keyimpl, Args&&... data) const
 	{
-		return key_impl ^ dp14::hash<T>()(std::forward<Args>(data)...);
+		return keyimpl ^ dp14::hash<T>()(std::forward<Args>(data)...);
 	}
 
 	template <typename U, typename F>
@@ -59,10 +58,10 @@ public:
 		_map_registrators[get_key<U>()] = std::forward<F>(value);
 	}
 
-	inline bool exists(const std::string& key_impl_str, Args&&... data) const
+	inline bool exists(const std::string& keyimpl_str, Args&&... data) const
 	{
-		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
-		return exists(key_impl, std::forward<Args>(data)...);
+		key_impl keyimpl = std::hash<std::string>()(keyimpl_str);
+		return exists(keyimpl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -71,11 +70,11 @@ public:
 		return exists(get_key<U>(), std::forward<Args>(data)...);
 	}
 
-	std::shared_ptr<T> get(const std::string& key_impl_str, Args&&... data) const
+	std::shared_ptr<T> get(const std::string& keyimpl_str, Args&&... data) const
 	{
-		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
-		return get(key_impl, key, std::forward<Args>(data)...);
+		key_impl keyimpl = std::hash<std::string>()(keyimpl_str);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		return get(keyimpl, key, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -85,15 +84,15 @@ public:
 	}
 
 protected:
-	std::shared_ptr<T> get(const KeyImpl& key_impl, KeyCache key, Args&&... data) const
+	std::shared_ptr<T> get(const key_impl& keyimpl, key_cache key, Args&&... data) const
 	{
-		cache_iterator it = _exists(key_impl, std::forward<Args>(data)...);
+		cache_iterator it = _exists(keyimpl, std::forward<Args>(data)...);
 		if (it != _map_cache.end())
 		{
 			return it->second.lock();
 		}
 
-		auto itc = _map_registrators.find(key_impl);
+		auto itc = _map_registrators.find(keyimpl);
 		if (itc == _map_registrators.end())
 		{
 			std::cout << "Can't found key in map: " << key << std::endl;
@@ -105,20 +104,20 @@ protected:
 		return new_product;
 	}
 
-	std::shared_ptr<T> get(const KeyImpl& key_impl, Args&&... data) const
+	std::shared_ptr<T> get(const key_impl& keyimpl, Args&&... data) const
 	{
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
-		return get(key_impl, key, std::forward<Args>(data)...);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		return get(keyimpl, key, std::forward<Args>(data)...);
 	}
 
-	bool exists(const KeyImpl& key_impl, Args&&... data) const
+	bool exists(const key_impl& keyimpl, Args&&... data) const
 	{
-		return _exists(key_impl, std::forward<Args>(data)...) != _map_cache.end();
+		return _exists(keyimpl, std::forward<Args>(data)...) != _map_cache.end();
 	}
 
-	cache_iterator _exists(const KeyImpl& key_impl, Args&&... data) const
+	cache_iterator _exists(const key_impl& keyimpl, Args&&... data) const
 	{
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		cache_iterator it = _map_cache.find(key);
 		cache_iterator ite = _map_cache.end();
 		if (it != _map_cache.end())
@@ -168,6 +167,7 @@ protected:
 			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
 	}
 };
+
 }
 
 #endif
