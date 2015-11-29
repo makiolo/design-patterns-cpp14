@@ -56,8 +56,7 @@ struct placeholder_template
 {
 };
 
-namespace std
-{
+namespace std {
 template <int N>
 struct is_placeholder<placeholder_template<N>> : integral_constant<int, N + 1>
 {
@@ -79,8 +78,7 @@ struct gens<0, Is...> : seq<Is...>
 {
 };
 
-namespace dp14
-{
+namespace dp14 {
 
 template <typename T>
 class hash
@@ -114,6 +112,7 @@ protected:
 		_combine_hash<U>(h, std::forward<U>(parm));
 	}
 };
+
 }
 
 #endif
