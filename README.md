@@ -39,12 +39,27 @@ $ cmake ..
 $ cmake --build . --config release
 $ ctest . -C release
 ```
-
+### Naming implementations
+** *option 1*: use DEFINE_KEY(classname or anything) inner class
+** *option 2*: use DEFINE_HASH(classname well qualified) outer class
+** *option 3*: specialization of std::hash<T>. This is equivalent to option 2 but without use macros:
+```CPP
+namespace std {
+	template <>
+	struct hash<MyClass>
+	{
+		size_t operator()() const
+		{
+			return std::hash<std::string>()("MyClass");
+		}
+	};
+}
+```
 ### Example factory
 ```CPP
 #include <iostream>
 #include <assert.h>
-#include <design-patterns/factory.h>
+#include <dp14/factory.h>
 
 class Base
 {
@@ -67,18 +82,30 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
 DEFINE_HASH(A)
 
+// if you dont like macro DEFINE_KEY(class), can use this:
 class B : public Base
 {
 public:
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
+
+namespace std {
+	template <>
+	struct hash<B>
+	{
+		size_t operator()() const
+		{
+			return std::hash<std::string>()("B");
+		}
+	};
+}
 
 int main()
 {
@@ -111,7 +138,7 @@ int main()
 #include <iostream>
 #include <sstream>
 #include <assert.h>
-#include <design-patterns/memoize.h>
+#include <dp14/memoize.h>
 
 class Base
 {
@@ -134,18 +161,18 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
-DEFINE_HASH(A)
 
 class B : public Base
 {
 public:
+	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
 
 int main()
 {

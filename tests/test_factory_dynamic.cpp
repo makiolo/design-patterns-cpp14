@@ -29,14 +29,24 @@ public:
 };
 DEFINE_HASH(A)
 
+// if you dont like macro DEFINE_KEY(class), can use this:
 class B : public Base
 {
 public:
-	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
+
+namespace std {
+	template <>
+	struct hash<B>
+	{
+		size_t operator()() const
+		{
+			return std::hash<std::string>()("B");
+		}
+	};
+}
 
 int main()
 {
@@ -48,12 +58,12 @@ int main()
 		// equivalent ways of create A
 		std::shared_ptr<Base> a1 = f.create<A>("first parameter", 2);
 		std::shared_ptr<A> a2 = f.create<A>("first parameter", 2);
-		std::shared_ptr<Base> a3 = f.create(A::KEY(), "first parameter", 2);
+		std::shared_ptr<Base> a3 = f.create("A", "first parameter", 2);
 
 		// equivalent ways of create B
 		std::shared_ptr<Base> b1 = f.create<B>("first parameter", 2);
 		std::shared_ptr<B> b2 = f.create<B>("first parameter", 2);
-		std::shared_ptr<Base> b3 = f.create(B::KEY(), "first parameter", 2);
+		std::shared_ptr<Base> b3 = f.create("B", "first parameter", 2);
 
 		assert(a1 != a2);
 		assert(a3 != b1);

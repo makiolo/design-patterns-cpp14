@@ -27,7 +27,6 @@ public:
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
-DEFINE_HASH(A)
 
 class B : public Base
 {
@@ -36,7 +35,6 @@ public:
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
 
 // register implementations to static factory
 namespace regA
@@ -59,7 +57,7 @@ int main()
 		// equivalent ways of create B
 		std::shared_ptr<Base> b1 = Base::factory::instance().create<B>("first parameter", 2);
 		std::shared_ptr<B> b2 = Base::factory::instance().create<B>("first parameter", 2);
-		std::shared_ptr<Base> b3 = Base::factory::instance().create(B::KEY(), "first parameter", 2);
+		std::shared_ptr<Base> b3 = Base::factory::instance().create("B", "first parameter", 2);
 
 		assert(a1 != a2);
 		assert(a3 != b1);

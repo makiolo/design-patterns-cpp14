@@ -28,7 +28,6 @@ public:
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
-DEFINE_HASH(A)
 
 class B : public Base
 {
@@ -37,7 +36,6 @@ public:
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
 
 int main()
 {

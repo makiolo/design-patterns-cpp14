@@ -7,21 +7,34 @@
 #include <unordered_map>
 #include <exception>
 
+// method macros
 #define DEFINE_KEY(__CLASS__) \
 	static const std::string& KEY() { static std::string key = #__CLASS__; return key; } \
 	virtual const std::string& getKEY() const { static std::string key = #__CLASS__; return key; } \
 
+// method non-macros (yes, exists optional macro :D)
 #define DEFINE_HASH(__CLASS__)  \
 	namespace std {             \
 	template <>                 \
 	struct hash<__CLASS__>      \
-	{ size_t operator()() const { static size_t h = std::hash<std::string>()(__CLASS__::KEY()); return h; }	}; }			\
+	{ size_t operator()() const { static size_t h = std::hash<std::string>()(#__CLASS__); return h; }	}; }			\
 
 #define DEFINE_HASH_API(__API__, __CLASS__)  \
 	namespace std {             \
 	template <>                 \
 	struct __API__ hash<__CLASS__>      \
-	{ size_t operator()() const { static size_t h = std::hash<std::string>()(__CLASS__::KEY()); return h; }	}; }			\
+	{ size_t operator()() const { static size_t h = std::hash<std::string>()(#__CLASS__); return h; }	}; }			\
+
+template<typename T>
+class has_key
+{
+	using no = char;
+	using yes = char[2];
+	template<class C> static yes& test(char (*)[sizeof(&C::KEY)]);
+	template<class C> static no& test(...);
+public:
+	enum{value = bool(sizeof(test<T>(0)) == sizeof(yes&))};
+};
 
 template <int...>
 struct int_sequence

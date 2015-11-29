@@ -1,7 +1,3 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a Creative Commons
-// Reconocimiento 4.0 Internacional License.
-// http://creativecommons.org/licenses/by/4.0/
-//
 #ifndef _MEMOIZE_H_
 #define _MEMOIZE_H_
 
@@ -32,8 +28,22 @@ public:
 		return memoize;
 	}
 
-	template <typename U>
-	inline KeyImpl get_impl_hash() const
+	template <typename U,
+				class = typename std::enable_if<
+					(has_key<U>::value)
+				>::type
+			>
+	KeyImpl get_key(int=0) const
+	{
+		return std::hash<std::string>()(U::KEY());
+	}
+
+	template <typename U,
+				class = typename std::enable_if<
+					(!has_key<U>::value)
+				>::type
+			>
+	KeyImpl get_key(long=0) const
 	{
 		return std::hash<U>()();
 	}
@@ -46,7 +56,7 @@ public:
 	template <typename U, typename F>
 	void register_type(F&& value)
 	{
-		_map_registrators[get_impl_hash<U>()] = std::forward<F>(value);
+		_map_registrators[get_key<U>()] = std::forward<F>(value);
 	}
 
 	inline bool exists(const std::string& key_impl_str, Args&&... data) const
@@ -58,7 +68,7 @@ public:
 	template <typename U>
 	inline bool exists(Args&&... data) const
 	{
-		return exists(get_impl_hash<U>(), std::forward<Args>(data)...);
+		return exists(get_key<U>(), std::forward<Args>(data)...);
 	}
 
 	std::shared_ptr<T> get(const std::string& key_impl_str, Args&&... data) const
@@ -71,7 +81,7 @@ public:
 	template <typename U>
 	inline std::shared_ptr<U> get(Args&&... data) const
 	{
-		return std::dynamic_pointer_cast<U>(get(get_impl_hash<U>(), std::forward<Args>(data)...));
+		return std::dynamic_pointer_cast<U>(get(get_key<U>(), std::forward<Args>(data)...));
 	}
 
 protected:

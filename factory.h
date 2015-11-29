@@ -29,8 +29,22 @@ public:
 		return factory;
 	}
 
-	template <typename U>
-	KeyImpl get_key() const
+	template <typename U,
+				class = typename std::enable_if<
+					(has_key<U>::value)
+				>::type
+			>
+	KeyImpl get_key(int=0) const
+	{
+		return std::hash<std::string>()(U::KEY());
+	}
+
+	template <typename U,
+				class = typename std::enable_if<
+					(!has_key<U>::value)
+				>::type
+			>
+	KeyImpl get_key(long=0) const
 	{
 		return std::hash<U>()();
 	}
