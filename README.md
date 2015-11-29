@@ -64,7 +64,7 @@ namespace std {
 class Base
 {
 public:
-	using Factory = dp14::Factory<Base, std::string, int>;
+	using factory = dp14::factory<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
