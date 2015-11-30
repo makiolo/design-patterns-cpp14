@@ -200,7 +200,7 @@ protected:
 	template <int... Is>
 	void _register(int_sequence<Is...>)
 	{
-		T::memoize::instance().template register_type<U>(
+		_m.template register_type<U>(
 			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
 	}
 protected:
