@@ -27,9 +27,7 @@ public:
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
-DEFINE_HASH(A)
 
-// if you dont like macro DEFINE_KEY(class), can use this:
 class B : public Base
 {
 public:
@@ -37,6 +35,7 @@ public:
 	virtual ~B() = default;
 };
 
+// no-macros option
 namespace std {
 	template <>
 	struct hash<B>
