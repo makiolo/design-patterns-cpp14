@@ -9,7 +9,8 @@ class load_library
 public:
 	load_library(const std::string& libname)
 	{
-		_handle = dlopen(libname.c_str(), RTLD_NOW);
+		//_handle = dlopen(libname.c_str(), RTLD_NOW);
+		_handle = dlopen(libname.c_str(), RTLD_LAZY);
 		if (!_handle)
 		{
 			fputs (dlerror(), stderr);
