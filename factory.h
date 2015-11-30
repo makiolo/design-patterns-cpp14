@@ -117,17 +117,15 @@ public:
 					(has_instance<typename T::factory>::value)
 				>::type>
 	explicit factory_registrator()
-		: _f(nullptr)
+		: _f(T::factory::instance())
 	{
-		register_to_singleton(make_int_sequence<sizeof...(Args)>{});
-		std::cout << "register implementation (singleton)" << std::endl;
+		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
 	explicit factory_registrator(factory<T, Args...>& f)
-		: _f(nullptr)
+		: _f(f)
 	{
-		register_in_a_factory(f, make_int_sequence<sizeof...(Args)>{});
-		std::cout << "register implementation" << std::endl;
+		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
 	static std::shared_ptr<T> create(Args&&... data)
@@ -137,36 +135,18 @@ public:
 	
 	~factory_registrator()
 	{
-		if(_f != nullptr)
-		{
-			std::cout << "unregistering implementation" << std::endl;
-			_f->template unregister_type<U>();
-		}
-		else
-		{
-			std::cout << "unregistering implementation (singleton)" << std::endl;
-			T::factory::instance().template unregister_type<U>();
-		}
+		_f.template unregister_type<U>();
 	}
 
 protected:
 	template <int... Is>
-	void register_to_singleton(int_sequence<Is...>)
+	void _register(int_sequence<Is...>)
 	{
-		T::factory::instance().template register_type<U>(
-			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
-	}
-
-	template <int... Is>
-	void register_in_a_factory(factory<T, Args...>& f, int_sequence<Is...>)
-	{
-		// life factory is always greater than implementation
-		_f = &f;
-		f.template register_type<U>(
+		_f.template register_type<U>(
 			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
 protected:
-	factory<T, Args...>* _f;
+	factory<T, Args...>& _f;
 };
 
 }
