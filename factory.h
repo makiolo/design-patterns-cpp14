@@ -23,6 +23,9 @@ public:
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
 
+	template <class = typename std::enable_if<
+					(has_factory<T>::value)
+				>::type>
 	static typename T::factory& instance()
 	{
 		static typename T::factory factory;
@@ -113,6 +116,9 @@ template <typename T, typename U, typename... Args>
 class factory_registrator
 {
 public:
+	template <class = typename std::enable_if<
+					(has_factory<T>::value)
+				>::type>
 	explicit factory_registrator()
 		: _f(nullptr)
 	{
