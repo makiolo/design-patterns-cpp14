@@ -32,7 +32,7 @@ public:
 					(has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(int=0 /* tricky :( */) const
+	key_impl get_key(int=0) const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
@@ -42,7 +42,7 @@ public:
 					(!has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(long=0 /* tricky :( */) const
+	key_impl get_key(long=0) const
 	{
 		return std::hash<U>()();
 	}
@@ -175,15 +175,15 @@ public:
 					(has_instance<typename T::memoize>::value)
 				>::type>
 	explicit memoize_registrator()
+		: _m(T::memoize::instance())
 	{
-		register_to_singleton(make_int_sequence<sizeof...(Args)>{});
-		std::cout << "register implementation (singleton)" << std::endl;
+		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
-	explicit memoize_registrator(memoize<T, Args...>& memoize)
+	explicit memoize_registrator(memoize<T, Args...>& m)
+		: _m(m)
 	{
-		register_in_a_memoize(memoize, make_int_sequence<sizeof...(Args)>{});
-		std::cout << "register implementation" << std::endl;
+		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
 	static std::shared_ptr<T> get(Args&&... data)
@@ -193,36 +193,18 @@ public:
 	
 	~memoize_registrator()
 	{
-		if(_m != nullptr)
-		{
-			std::cout << "unregistering implementation" << std::endl;
-			_m->template unregister_type<U>();
-		}
-		else
-		{
-			std::cout << "unregistering implementation (singleton)" << std::endl;
-			T::memoize::instance().template unregister_type<U>();
-		}
+		_m.template unregister_type<U>();
 	}
 
 protected:
 	template <int... Is>
-	void register_to_singleton(int_sequence<Is...>)
+	void _register(int_sequence<Is...>)
 	{
 		T::memoize::instance().template register_type<U>(
 			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
 	}
-
-	template <int... Is>
-	void register_in_a_memoize(memoize<T, Args...>& m, int_sequence<Is...>)
-	{
-		// life memoize is always greater than implementation
-		_m = &m;
-		m.template register_type<U>(
-			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
-	}
 protected:
-	memoize<T, Args...>* _m;
+	memoize<T, Args...>& _m;
 };
 
 }
