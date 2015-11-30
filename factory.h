@@ -34,7 +34,7 @@ public:
 					(has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(int=0 /* tricky :( */) const
+	key_impl get_key(int=0) const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
@@ -44,7 +44,7 @@ public:
 					(!has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(long=0 /* tricky :( */) const
+	key_impl get_key(long=0) const
 	{
 		return std::hash<U>()();
 	}
