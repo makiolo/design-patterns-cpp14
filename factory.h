@@ -1,10 +1,11 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a
+// design-patterns-cpp14 by Ricardo Marmolejo GarcÃ­a is licensed under a
 // Creative Commons Reconocimiento 4.0 Internacional License.
 // http://creativecommons.org/licenses/by/4.0/
 //
 #ifndef _FACTORY_H_
 #define _FACTORY_H_
 
+#include <iostream>
 #include "common.h"
 
 namespace dp14 {
@@ -51,7 +52,33 @@ public:
 	template <typename U, typename F>
 	void register_type(F&& value)
 	{
-		_map_registrators[get_key<U>()] = std::forward<F>(value);
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			std::cout << "Already registered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
+		else
+		{
+			_map_registrators[keyimpl] = std::forward<F>(value);
+		}
+	}
+	
+	template <typename U>
+	void unregister_type()
+	{
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			_map_registrators.erase(get_key<U>());
+		}
+		else
+		{
+			std::cout << "Already unregistered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
 	}
 
 	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data) const
@@ -87,18 +114,36 @@ class factory_registrator
 {
 public:
 	explicit factory_registrator()
+		: _f(nullptr)
 	{
 		register_to_singleton(make_int_sequence<sizeof...(Args)>{});
+		std::cout << "register implementation (singleton)" << std::endl;
 	}
 
 	explicit factory_registrator(factory<T, Args...>& f)
+		: _f(nullptr)
 	{
 		register_in_a_factory(f, make_int_sequence<sizeof...(Args)>{});
+		std::cout << "register implementation" << std::endl;
 	}
 
 	static std::shared_ptr<T> create(Args&&... data)
 	{
 		return std::make_shared<U>(std::forward<Args>(data)...);
+	}
+	
+	~factory_registrator()
+	{
+		if(_f != nullptr)
+		{
+			std::cout << "unregistering implementation" << std::endl;
+			_f->template unregister_type<U>();
+		}
+		else
+		{
+			std::cout << "unregistering implementation (singleton)" << std::endl;
+			T::factory::instance().template unregister_type<U>();
+		}
 	}
 
 protected:
@@ -112,9 +157,13 @@ protected:
 	template <int... Is>
 	void register_in_a_factory(factory<T, Args...>& f, int_sequence<Is...>)
 	{
+		// life factory is always greater (TODO: use weak_ptr)
+		_f = &f;
 		f.template register_type<U>(
 			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
+protected:
+	factory<T, Args...>* _f;
 };
 
 }
