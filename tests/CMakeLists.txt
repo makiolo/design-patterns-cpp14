@@ -14,5 +14,5 @@ CREATE_TEST("test_factory_static" "")
 CREATE_TEST("test_memoize_dynamic" "")
 CREATE_TEST("test_memoize_static" "")
 CREATE_TEST("test_factory_linking" "")
-target_link_libraries(test_factory_linking dl fooA fooB)
+target_link_libraries(test_factory_linking dl foo)
 
