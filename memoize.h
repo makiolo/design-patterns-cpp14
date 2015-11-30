@@ -21,6 +21,9 @@ public:
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
 
+	template <class = typename std::enable_if<
+					(has_memoize<T>::value)
+				>::type>
 	static typename T::memoize& instance()
 	{
 		static typename T::memoize memoize;
@@ -171,6 +174,9 @@ template <typename T, typename U, typename... Args>
 class memoize_registrator
 {
 public:
+	template <class = typename std::enable_if<
+					(has_memoize<T>::value)
+				>::type>
 	explicit memoize_registrator()
 	{
 		register_to_singleton(make_int_sequence<sizeof...(Args)>{});
