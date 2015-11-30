@@ -109,9 +109,9 @@ namespace std {
 
 int main()
 {
-	Base::Factory factory;
-	Base::Factory::Registrator<A> reg1(factory);
-	Base::Factory::Registrator<B> reg2(factory);
+	Base::factory factory;
+	Base::factory::registrator<A> reg1(factory);
+	Base::factory::registrator<B> reg2(factory);
 
 	{
 		// equivalent ways of create A
