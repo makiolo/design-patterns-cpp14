@@ -32,7 +32,7 @@ public:
 					(has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(int=0) const
+	key_impl get_key(int=0 /* tricky :( */) const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
@@ -42,7 +42,7 @@ public:
 					(!has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(long=0) const
+	key_impl get_key(long=0 /* tricky :( */) const
 	{
 		return std::hash<U>()();
 	}
@@ -55,7 +55,33 @@ public:
 	template <typename U, typename F>
 	void register_type(F&& value)
 	{
-		_map_registrators[get_key<U>()] = std::forward<F>(value);
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			std::cout << "Already registered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
+		else
+		{
+			_map_registrators.emplace(keyimpl, std::forward<F>(value));
+		}
+	}
+	
+	template <typename U>
+	void unregister_type()
+	{
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			_map_registrators.erase(get_key<U>());
+		}
+		else
+		{
+			std::cout << "Already unregistered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
 	}
 
 	inline bool exists(const std::string& keyimpl_str, Args&&... data) const
@@ -100,7 +126,7 @@ protected:
 		}
 
 		std::shared_ptr<T> new_product = (itc->second)(std::forward<Args>(data)...);
-		_map_cache[key] = std::weak_ptr<T>(new_product);
+		_map_cache.emplace(key, std::weak_ptr<T>(new_product));
 		return new_product;
 	}
 
@@ -127,6 +153,11 @@ protected:
 			{
 				return it;
 			}
+			else
+			{
+				// remove expired dangled pointer
+				_map_cache.erase(key);
+			}
 		}
 		return ite;
 	}
@@ -140,16 +171,35 @@ template <typename T, typename U, typename... Args>
 class memoize_registrator
 {
 public:
-	explicit memoize_registrator() { register_to_singleton(make_int_sequence<sizeof...(Args)>{}); }
+	explicit memoize_registrator()
+	{
+		register_to_singleton(make_int_sequence<sizeof...(Args)>{});
+		std::cout << "register implementation (singleton)" << std::endl;
+	}
 
 	explicit memoize_registrator(memoize<T, Args...>& memoize)
 	{
 		register_in_a_memoize(memoize, make_int_sequence<sizeof...(Args)>{});
+		std::cout << "register implementation" << std::endl;
 	}
 
 	static std::shared_ptr<T> get(Args&&... data)
 	{
 		return std::make_shared<U>(std::forward<Args>(data)...);
+	}
+	
+	~memoize_registrator()
+	{
+		if(_f != nullptr)
+		{
+			std::cout << "unregistering implementation" << std::endl;
+			_f->template unregister_type<U>();
+		}
+		else
+		{
+			std::cout << "unregistering implementation (singleton)" << std::endl;
+			T::memoize::instance().template unregister_type<U>();
+		}
 	}
 
 protected:
@@ -161,11 +211,15 @@ protected:
 	}
 
 	template <int... Is>
-	void register_in_a_memoize(memoize<T, Args...>& memoize, int_sequence<Is...>)
+	void register_in_a_memoize(memoize<T, Args...>& m, int_sequence<Is...>)
 	{
-		memoize.template register_type<U>(
+		// life memoize is always greater than implementation
+		_m = &m;
+		m.template register_type<U>(
 			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
 	}
+protected:
+	memoize<T, Args...>* _m;
 };
 
 }
