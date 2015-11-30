@@ -34,7 +34,7 @@ public:
 					(has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(int=0) const
+	key_impl get_key(int=0 /* tricky :( */) const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
@@ -44,7 +44,7 @@ public:
 					(!has_key<U>::value)
 				>::type
 			>
-	key_impl get_key(long=0) const
+	key_impl get_key(long=0 /* tricky :( */) const
 	{
 		return std::hash<U>()();
 	}
@@ -61,7 +61,7 @@ public:
 		}
 		else
 		{
-			_map_registrators[keyimpl] = std::forward<F>(value);
+			_map_registrators.emplace(keyimpl, std::forward<F>(value));
 		}
 	}
 	
@@ -157,7 +157,7 @@ protected:
 	template <int... Is>
 	void register_in_a_factory(factory<T, Args...>& f, int_sequence<Is...>)
 	{
-		// life factory is always greater (TODO: use weak_ptr)
+		// life factory is always greater than implementation
 		_f = &f;
 		f.template register_type<U>(
 			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
