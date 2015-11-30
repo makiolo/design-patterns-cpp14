@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "common.h"
+#include "FSBAllocator.hh"
 
 namespace dp14 {
 
@@ -130,7 +131,9 @@ public:
 
 	static std::shared_ptr<T> create(Args&&... data)
 	{
-		return std::make_shared<U>(std::forward<Args>(data)...);
+		static FSBAllocator<U> alloc;
+		return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
+		// return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 	
 	~factory_registrator()
