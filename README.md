@@ -40,8 +40,8 @@ $ cmake --build . --config release
 $ ctest . -C release
 ```
 ### Naming implementations
-* *option 1*: use DEFINE_KEY(classname or anything) inner class
-* *option 2*: use DEFINE_HASH(classname well qualified) outer class
+* *option 1*: use DEFINE_KEY(classname or anything) within the class
+* *option 2*: use DEFINE_HASH(classname well qualified) outside of class
 * *option 3*: specialization of std::hash<T>. This is equivalent to option 2 but without use macros:
 ```CPP
 namespace std {
