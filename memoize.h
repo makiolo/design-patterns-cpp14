@@ -21,9 +21,6 @@ public:
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
 
-	template <class = typename std::enable_if<
-					(has_memoize<T>::value)
-				>::type>
 	static typename T::memoize& instance()
 	{
 		static typename T::memoize memoize;
@@ -175,7 +172,7 @@ class memoize_registrator
 {
 public:
 	template <class = typename std::enable_if<
-					(has_memoize<T>::value)
+					(has_instance<typename T::memoize>::value)
 				>::type>
 	explicit memoize_registrator()
 	{
@@ -196,10 +193,10 @@ public:
 	
 	~memoize_registrator()
 	{
-		if(_f != nullptr)
+		if(_m != nullptr)
 		{
 			std::cout << "unregistering implementation" << std::endl;
-			_f->template unregister_type<U>();
+			_m->template unregister_type<U>();
 		}
 		else
 		{
