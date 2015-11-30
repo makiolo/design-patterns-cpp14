@@ -31,8 +31,8 @@ int main()
 	using namespace fooA;
 	using namespace fooB;
 
-	//load_library fooA("libfooA.so");
-	//load_library fooB("libfooB.so");
+	load_library fooA("libfooA.so");
+	load_library fooB("libfooB.so");
 
 	// equivalent ways of create A
 	std::shared_ptr<Base> a1 = Base::get_factory().create<A>("first parameter", 2);
