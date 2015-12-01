@@ -1,7 +1,11 @@
 #include "foo.h"
 
-foo::Base::factory& foo::Base::get_factory()
+namespace foo {
+
+Base::factory& get_factory()
 {
-	return foo::Base::factory::instance();
+	return Base::factory::instance();
+}
+
 }
 
