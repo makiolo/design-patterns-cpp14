@@ -7,11 +7,13 @@ This is a header-only library with some of the most common design patterns imple
 * Can assume variadic templates supported by your compiler.
 * Use perfect forwarding and new features from C++11/14 when possible.
 * Prefer header only code, but it is not a must.
+* Allocations and deallocations of memory are centralized in a allocator selectable by client. (TODO: now allocator is FSBAllocator, and require some change.)
 
 ## Quality assurance
 
 * Code tested in travis on gcc (4.7, 4.8, 4.9), clang (3.3, 3.4 and 3.6) and Visual Studio (2013).
 * Test cases relationated with problems crossing boundaries of dynamic libraries.
+* Side dark is optional (no macros, no singletons).
 
 ## License
 

@@ -24,7 +24,12 @@ class foo_API Base
 {
 public:
 	using factory = dp14::factory<Base, std::string, int>;
-	static Base::factory& get_factory();
+
+	// this let registrations since externals libraries
+	static Base::factory& get_factory()
+	{
+		return foo::Base::factory::instance();
+	}
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)

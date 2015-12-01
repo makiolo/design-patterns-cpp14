@@ -68,7 +68,7 @@ public:
 			_map_registrators.emplace(keyimpl, std::forward<F>(value));
 		}
 	}
-	
+
 	template <typename U>
 	void unregister_type()
 	{
@@ -191,9 +191,8 @@ public:
 	{
 		static FSBAllocator<U> alloc;
 		return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
-		//return std::make_shared<U>(std::forward<Args>(data)...);
 	}
-	
+
 	~memoize_registrator()
 	{
 		_m.template unregister_type<U>();
