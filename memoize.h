@@ -2,7 +2,7 @@
 #define _MEMOIZE_H_
 
 #include "common.h"
-#include "FSBAllocator.hh"
+// #include "FSBAllocator.hh"
 
 namespace dp14 {
 
@@ -21,12 +21,6 @@ public:
 	using cache_iterator = typename cache_container::const_iterator;
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
-
-	static typename T::memoize& instance()
-	{
-		static typename T::memoize memoize;
-		return memoize;
-	}
 
 	template <typename U,
 				class = typename std::enable_if<
@@ -110,6 +104,12 @@ public:
 		return std::dynamic_pointer_cast<U>(get(get_key<U>(), std::forward<Args>(data)...));
 	}
 
+	static typename T::memoize& instance()
+	{
+		static typename T::memoize memoize;
+		return memoize;
+	}
+
 protected:
 	std::shared_ptr<T> get(const key_impl& keyimpl, key_cache key, Args&&... data) const
 	{
@@ -147,7 +147,7 @@ protected:
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		cache_iterator it = _map_cache.find(key);
 		cache_iterator ite = _map_cache.end();
-		if (it != _map_cache.end())
+		if (it != ite)
 		{
 			// pointer cached can be dangled
 			if (!it->second.expired())
@@ -189,8 +189,9 @@ public:
 
 	static std::shared_ptr<T> get(Args&&... data)
 	{
-		static FSBAllocator<U> alloc;
-		return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
+		// static FSBAllocator<U> alloc;
+		// return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
+		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 
 	~memoize_registrator()

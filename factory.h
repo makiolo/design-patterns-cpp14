@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "common.h"
-#include "FSBAllocator.hh"
+// #include "FSBAllocator.hh"
 
 namespace dp14 {
 
@@ -23,12 +23,6 @@ public:
 	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
-
-	static typename T::factory& instance()
-	{
-		static typename T::factory factory;
-		return factory;
-	}
 
 	template <typename U,
 				class = typename std::enable_if<
@@ -94,6 +88,12 @@ public:
 		return std::dynamic_pointer_cast<U>(create(get_key<U>(), std::forward<Args>(data)...));
 	}
 
+	static typename T::factory& instance()
+	{
+		static typename T::factory factory;
+		return factory;
+	}
+
 protected:
 	std::shared_ptr<T> create(const key_impl& keyimpl, Args&&... data) const
 	{
@@ -131,8 +131,9 @@ public:
 
 	static std::shared_ptr<T> create(Args&&... data)
 	{
-		static FSBAllocator<U> alloc;
-		return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
+		// static FSBAllocator<U> alloc;
+		// return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
+		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 
 	~factory_registrator()
