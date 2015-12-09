@@ -2,6 +2,33 @@
 #include "foo.h"
 #include "fooA.h"
 #include "fooB.h"
+
+#ifdef _WIN32
+
+#include "Windows.h"
+
+class load_library
+{
+public:
+	load_library(const std::string& libname)
+	{
+		_handle = LoadLibrary((libname + ".dll").c_str());
+		if (!_handle)
+		{
+			throw std::runtime_error("error loading library");
+		}
+	}
+
+	~load_library()
+	{
+		FreeLibrary(_handle);
+	}
+protected:
+	HMODULE _handle;
+};
+
+#else
+
 #include <dlfcn.h>
 
 class load_library
@@ -9,8 +36,7 @@ class load_library
 public:
 	load_library(const std::string& libname)
 	{
-		//_handle = dlopen(libname.c_str(), RTLD_NOW);
-		_handle = dlopen(libname.c_str(), RTLD_LAZY);
+		_handle = dlopen(("lib" + libname + ".so").c_str(), RTLD_NOW); // RTLD_LAZY
 		if (!_handle)
 		{
 			fputs (dlerror(), stderr);
@@ -26,14 +52,16 @@ protected:
 	void* _handle;
 };
 
+#endif
+
 int main()
 {
 	using namespace foo;
 	using namespace fooA;
 	using namespace fooB;
 
-	load_library fooA("libfooA.so");
-	load_library fooB("libfooB.so");
+	load_library fooA("fooA");
+	load_library fooB("fooB");
 
 	// equivalent ways of create A
 	std::shared_ptr<Base> a1 = Base::get_factory().create<A>("first parameter", 2);

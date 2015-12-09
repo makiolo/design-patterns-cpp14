@@ -7,7 +7,8 @@
     #ifdef fooA_EXPORTS
         #define fooA_API __declspec(dllexport)
     #else
-		#define fooA_API __declspec(dllimport)
+		//#define fooA_API __declspec(dllimport)
+		#define fooA_API
     #endif
 #else
     #ifdef fooA_EXPORTS
