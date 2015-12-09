@@ -29,7 +29,6 @@ public:
 };
 
 }
-DEFINE_HASH_API(fooA_API, fooA::A)
 
 #endif
 
