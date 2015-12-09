@@ -7,12 +7,12 @@
     #ifdef fooA_EXPORTS
         #define fooA_API __declspec(dllexport)
     #else
-		//#define fooA_API __declspec(dllimport)
-		#define fooA_API
+	// no import if you want a load delayed and uncoupled of library
+	#define fooA_API
     #endif
 #else
     #ifdef fooA_EXPORTS
-		#define fooA_API __attribute__((visibility("default")))
+	#define fooA_API __attribute__((visibility("default")))
     #else
         #define fooA_API
     #endif
