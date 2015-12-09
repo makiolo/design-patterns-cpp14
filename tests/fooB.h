@@ -7,12 +7,12 @@
     #ifdef fooB_EXPORTS
         #define fooB_API __declspec(dllexport)
     #else
-		//#define fooB_API __declspec(dllimport)
-		#define fooB_API
+	// no import if you want a load delayed and uncoupled of library
+	#define fooB_API
     #endif
 #else
     #ifdef fooB_EXPORTS
-		#define fooB_API __attribute__((visibility("default")))
+	#define fooB_API __attribute__((visibility("default")))
     #else
         #define fooB_API
     #endif
@@ -29,8 +29,6 @@ public:
 };
 
 }
-
-DEFINE_HASH_API(fooB_API, fooB::B)
 
 #endif
 
