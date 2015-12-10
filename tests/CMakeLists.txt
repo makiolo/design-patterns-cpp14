@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-enable_testing()
-
 add_library(foo SHARED foo.cpp)
 add_library(fooA SHARED fooA.cpp)
 add_library(fooB SHARED fooB.cpp)
