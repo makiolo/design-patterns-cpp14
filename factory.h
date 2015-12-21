@@ -82,6 +82,8 @@ public:
 		return create(keyimpl, std::forward<Args>(data)...);
 	}
 
+	// template <typename ... Decorations>
+	// can implement recursion for implement decorator in creation time
 	template <typename U>
 	std::shared_ptr<U> create(Args&&... data) const
 	{
