@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include "common.h"
-// #include "FSBAllocator.hh"
 
 namespace dp14 {
 
@@ -82,8 +81,6 @@ public:
 		return create(keyimpl, std::forward<Args>(data)...);
 	}
 
-	// template <typename ... Decorations>
-	// can implement recursion for implement decorator in creation time
 	template <typename U>
 	std::shared_ptr<U> create(Args&&... data) const
 	{
@@ -133,8 +130,6 @@ public:
 
 	static std::shared_ptr<T> create(Args&&... data)
 	{
-		// static FSBAllocator<U> alloc;
-		// return std::allocate_shared<U>(alloc, std::forward<Args>(data)...);
 		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 
