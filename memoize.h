@@ -193,7 +193,7 @@ public:
 
 	~memoize_registrator()
 	{
-		_m.template unregister_type<U>();
+		// _m.template unregister_type<U>();
 	}
 
 protected:

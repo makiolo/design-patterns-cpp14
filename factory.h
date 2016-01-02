@@ -135,7 +135,7 @@ public:
 
 	~factory_registrator()
 	{
-		_f.template unregister_type<U>();
+		// _f.template unregister_type<U>();
 	}
 
 protected:
