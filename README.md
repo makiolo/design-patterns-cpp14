@@ -1,4 +1,4 @@
-# Design patterns C++14 [![Build Status](https://img.shields.io/shippable/55f433501895ca447414d611/master.svg)](https://app.shippable.com/projects/55f433501895ca447414d611)
+# Design patterns C++14 [![Build Status](https://travis-ci.org/makiolo/design-patterns-cpp14.svg?branch=master)](https://travis-ci.org/makiolo/design-patterns-cpp14)
 
 This is a header-only library with some of the most common design patterns implemmented in C++11/14.
 
