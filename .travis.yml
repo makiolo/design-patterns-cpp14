@@ -50,4 +50,4 @@ matrix:
   
 script:
   - (cd cmaki && git pull origin master)
-  - ./cmaki/run.sh
+  - ./cmaki/run.sh $MODE
