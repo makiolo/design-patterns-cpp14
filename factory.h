@@ -23,22 +23,14 @@ public:
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
 
-	template <typename U,
-				typename = typename std::enable_if<
-					(has_key<U>::value)
-				>::type
-			>
-	key_impl get_key(int=0) const
+	template <typename U>					
+	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
 		return std::hash<std::string>()(U::KEY());
 	}
 
-	template <typename U,
-				typename = typename std::enable_if<
-					(!has_key<U>::value)
-				>::type
-			>
-	key_impl get_key(long=0) const
+	template <typename U>
+	typename std::enable_if<(!has_key<U>::value), key_impl>::type get_key() const
 	{
 		return std::hash<U>()();
 	}
