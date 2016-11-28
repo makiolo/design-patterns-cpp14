@@ -24,7 +24,7 @@ public:
 	using registrator = factory_registrator<T, U, Args...>;
 
 	template <typename U,
-				class = typename std::enable_if<
+				typename = typename std::enable_if<
 					(has_key<U>::value)
 				>::type
 			>
@@ -34,7 +34,7 @@ public:
 	}
 
 	template <typename U,
-				class = typename std::enable_if<
+				typename = typename std::enable_if<
 					(!has_key<U>::value)
 				>::type
 			>
