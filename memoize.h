@@ -1,7 +1,7 @@
 #ifndef _MEMOIZE_H_
 #define _MEMOIZE_H_
 
-#include "common.h"
+#include "metacommon/common.h"
 
 namespace dp14 {
 
