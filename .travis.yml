@@ -50,4 +50,8 @@ matrix:
 
 script:
   - ./cmaki/run.sh $MODE
+  - |
+    if [[ $CXX == "g++-4.9" && $MODE == "Release" ]]; then
+        (cd cmaki_generator && ./build design-patterns-cpp14 --server=http://artifacts.myftp.biz:8080)
+    fi
 
