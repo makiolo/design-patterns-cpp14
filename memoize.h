@@ -1,14 +1,9 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a Creative Commons
-// Reconocimiento 4.0 Internacional License.
-// http://creativecommons.org/licenses/by/4.0/
-//
 #ifndef _MEMOIZE_H_
 #define _MEMOIZE_H_
 
-#include "common.h"
+#include "metacommon/common.h"
 
-namespace dp14
-{
+namespace dp14 {
 
 template <typename T, typename U, typename... Args>
 class memoize_registrator;
@@ -17,14 +12,96 @@ template <typename T, typename... Args>
 class memoize
 {
 public:
-	using KeyCache = size_t;
-	using KeyImpl = size_t;
-	using RegistratorFunction = std::function<std::shared_ptr<T>(Args...)>;
-	using cache_container = std::unordered_map<KeyCache, std::weak_ptr<T>>;
-	using registrator_container = std::unordered_map<KeyImpl, RegistratorFunction>;
+	using key_cache = size_t;
+	using key_impl = size_t;
+	using registrator_function = std::function<std::shared_ptr<T>(Args...)>;
+	using cache_container = std::unordered_map<key_cache, std::weak_ptr<T>>;
+	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	using cache_iterator = typename cache_container::const_iterator;
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
+
+	template <typename U,
+				class = typename std::enable_if<
+					(has_key<U>::value)
+				>::type
+			>
+	key_impl get_key(int=0) const
+	{
+		return std::hash<std::string>()(U::KEY());
+	}
+
+	template <typename U,
+				class = typename std::enable_if<
+					(!has_key<U>::value)
+				>::type
+			>
+	key_impl get_key(long=0) const
+	{
+		return std::hash<U>()();
+	}
+
+	inline key_cache get_base_hash(const key_impl& keyimpl, Args&&... data) const
+	{
+		return keyimpl ^ dp14::hash<T>()(std::forward<Args>(data)...);
+	}
+
+	template <typename U, typename F>
+	void register_type(F&& value)
+	{
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			std::cout << "Already registered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
+		else
+		{
+			_map_registrators.emplace(keyimpl, std::forward<F>(value));
+		}
+	}
+
+	template <typename U>
+	void unregister_type()
+	{
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			_map_registrators.erase(get_key<U>());
+		}
+		else
+		{
+			std::cout << "Already unregistered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
+	}
+
+	inline bool exists(const std::string& keyimpl_str, Args&&... data) const
+	{
+		key_impl keyimpl = std::hash<std::string>()(keyimpl_str);
+		return exists(keyimpl, std::forward<Args>(data)...);
+	}
+
+	template <typename U>
+	inline bool exists(Args&&... data) const
+	{
+		return exists(get_key<U>(), std::forward<Args>(data)...);
+	}
+
+	std::shared_ptr<T> get(const std::string& keyimpl_str, Args&&... data) const
+	{
+		key_impl keyimpl = std::hash<std::string>()(keyimpl_str);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		return get(keyimpl, key, std::forward<Args>(data)...);
+	}
+
+	template <typename U>
+	inline std::shared_ptr<U> get(Args&&... data) const
+	{
+		return std::dynamic_pointer_cast<U>(get(get_key<U>(), std::forward<Args>(data)...));
+	}
 
 	static typename T::memoize& instance()
 	{
@@ -32,58 +109,16 @@ public:
 		return memoize;
 	}
 
-	template <typename U>
-	inline KeyImpl get_impl_hash() const
-	{
-		return std::hash<U>()();
-	}
-
-	inline KeyCache get_base_hash(const KeyImpl& key_impl, Args&&... data) const
-	{
-		return key_impl ^ dp14::hash<T>()(std::forward<Args>(data)...);
-	}
-
-	template <typename U, typename F>
-	void register_type(F&& value)
-	{
-		_map_registrators[get_impl_hash<U>()] = std::forward<F>(value);
-	}
-
-	inline bool exists(const std::string& key_impl_str, Args&&... data) const
-	{
-		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
-		return exists(key_impl, std::forward<Args>(data)...);
-	}
-
-	template <typename U>
-	inline bool exists(Args&&... data) const
-	{
-		return exists(get_impl_hash<U>(), std::forward<Args>(data)...);
-	}
-
-	std::shared_ptr<T> get(const std::string& key_impl_str, Args&&... data) const
-	{
-		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
-		return get(key_impl, key, std::forward<Args>(data)...);
-	}
-
-	template <typename U>
-	inline std::shared_ptr<U> get(Args&&... data) const
-	{
-		return std::dynamic_pointer_cast<U>(get(get_impl_hash<U>(), std::forward<Args>(data)...));
-	}
-
 protected:
-	std::shared_ptr<T> get(const KeyImpl& key_impl, KeyCache key, Args&&... data) const
+	std::shared_ptr<T> get(const key_impl& keyimpl, key_cache key, Args&&... data) const
 	{
-		cache_iterator it = _exists(key_impl, std::forward<Args>(data)...);
+		cache_iterator it = _exists(keyimpl, std::forward<Args>(data)...);
 		if (it != _map_cache.end())
 		{
 			return it->second.lock();
 		}
 
-		auto itc = _map_registrators.find(key_impl);
+		auto itc = _map_registrators.find(keyimpl);
 		if (itc == _map_registrators.end())
 		{
 			std::cout << "Can't found key in map: " << key << std::endl;
@@ -91,32 +126,37 @@ protected:
 		}
 
 		std::shared_ptr<T> new_product = (itc->second)(std::forward<Args>(data)...);
-		_map_cache[key] = std::weak_ptr<T>(new_product);
+		_map_cache.emplace(key, std::weak_ptr<T>(new_product));
 		return new_product;
 	}
 
-	std::shared_ptr<T> get(const KeyImpl& key_impl, Args&&... data) const
+	std::shared_ptr<T> get(const key_impl& keyimpl, Args&&... data) const
 	{
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
-		return get(key_impl, key, std::forward<Args>(data)...);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		return get(keyimpl, key, std::forward<Args>(data)...);
 	}
 
-	bool exists(const KeyImpl& key_impl, Args&&... data) const
+	bool exists(const key_impl& keyimpl, Args&&... data) const
 	{
-		return _exists(key_impl, std::forward<Args>(data)...) != _map_cache.end();
+		return _exists(keyimpl, std::forward<Args>(data)...) != _map_cache.end();
 	}
 
-	cache_iterator _exists(const KeyImpl& key_impl, Args&&... data) const
+	cache_iterator _exists(const key_impl& keyimpl, Args&&... data) const
 	{
-		KeyCache key = get_base_hash(key_impl, std::forward<Args>(data)...);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		cache_iterator it = _map_cache.find(key);
 		cache_iterator ite = _map_cache.end();
-		if (it != _map_cache.end())
+		if (it != ite)
 		{
 			// pointer cached can be dangled
 			if (!it->second.expired())
 			{
 				return it;
+			}
+			else
+			{
+				// remove expired dangled pointer
+				_map_cache.erase(key);
 			}
 		}
 		return ite;
@@ -131,11 +171,19 @@ template <typename T, typename U, typename... Args>
 class memoize_registrator
 {
 public:
-	explicit memoize_registrator() { register_to_singleton(make_int_sequence<sizeof...(Args)>{}); }
-
-	explicit memoize_registrator(memoize<T, Args...>& memoize)
+	template <class = typename std::enable_if<
+					(has_instance<typename T::memoize>::value)
+				>::type>
+	explicit memoize_registrator()
+		: _m(T::memoize::instance())
 	{
-		register_in_a_memoize(memoize, make_int_sequence<sizeof...(Args)>{});
+		_register(make_int_sequence<sizeof...(Args)>{});
+	}
+
+	explicit memoize_registrator(memoize<T, Args...>& m)
+		: _m(m)
+	{
+		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
 	static std::shared_ptr<T> get(Args&&... data)
@@ -143,21 +191,22 @@ public:
 		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 
-protected:
-	template <int... Is>
-	void register_to_singleton(int_sequence<Is...>)
+	~memoize_registrator()
 	{
-		T::memoize::instance().template register_type<U>(
-			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
+		_m.template unregister_type<U>();
 	}
 
+protected:
 	template <int... Is>
-	void register_in_a_memoize(memoize<T, Args...>& memoize, int_sequence<Is...>)
+	void _register(int_sequence<Is...>)
 	{
-		memoize.template register_type<U>(
+		_m.template register_type<U>(
 			std::bind(&memoize_registrator<T, U, Args...>::get, placeholder_template<Is>{}...));
 	}
+protected:
+	memoize<T, Args...>& _m;
 };
+
 }
 
 #endif

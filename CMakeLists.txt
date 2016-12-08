@@ -1,13 +1,10 @@
-PROJECT(DESIGN-PATTERNS CXX)
-cmake_minimum_required(VERSION 2.8)
-enable_testing()
+project(design-patterns-cpp14 CXX)
+cmake_minimum_required(VERSION 3.2.2)
 
-IF(NOT DEFINED CMAKE_MODULE_PATH)
-	set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmaki)
-ENDIF()
+set(CMAKI_REPOSITORY "http://artifacts.myftp.biz:8080")
+include("${CMAKE_SOURCE_DIR}/cmaki/cmaki.cmake")
+cmaki_setup()
 
-include(utils)
-ENABLE_MODERN_CPP()
+# no library, is header only
 
 add_subdirectory(tests)
-

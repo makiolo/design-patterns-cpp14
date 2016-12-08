@@ -23,10 +23,10 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
-DEFINE_HASH(A)
 
 class B : public Base
 {
@@ -34,7 +34,18 @@ public:
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
+
+// no-macros option
+namespace std {
+	template <>
+	struct hash<B>
+	{
+		size_t operator()() const
+		{
+			return std::hash<std::string>()("B");
+		}
+	};
+}
 
 int main()
 {

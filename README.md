@@ -1,4 +1,8 @@
-# Design patterns C++14 [![Build Status](https://img.shields.io/shippable/55f433501895ca447414d611/master.svg)](https://app.shippable.com/projects/55f433501895ca447414d611)
+# Design patterns C++14
+
+gcc 4.9 / clang 3.6: [![Build Status](https://travis-ci.org/makiolo/design-patterns-cpp14.svg?branch=master)](https://travis-ci.org/makiolo/design-patterns-cpp14)
+
+MSVC 2015: [![Build status](https://ci.appveyor.com/api/projects/status/3ouxeirkgwi8nmyq?svg=true)](https://ci.appveyor.com/project/makiolo/design-patterns-cpp14)
 
 This is a header-only library with some of the most common design patterns implemmented in C++11/14.
 
@@ -7,11 +11,13 @@ This is a header-only library with some of the most common design patterns imple
 * Can assume variadic templates supported by your compiler.
 * Use perfect forwarding and new features from C++11/14 when possible.
 * Prefer header only code, but it is not a must.
+* Allocations and deallocations of memory are centralized in a allocator selectable by client. (TODO: now allocator is FSBAllocator, and require some change.)
 
 ## Quality assurance
 
 * Code tested in travis on gcc (4.7, 4.8, 4.9), clang (3.3, 3.4 and 3.6) and Visual Studio (2013).
 * Test cases relationated with problems crossing boundaries of dynamic libraries.
+* Side dark is optional (no macros, no singletons).
 
 ## License
 
@@ -30,25 +36,37 @@ It's a header-only library. Only need an include.
 
 ### Compile tests
 You will need cmake (and a compiler).
-
+```bash
+$ git clone --recursive https://github.com/makiolo/design-patterns-cpp14.git dp14
+$ cd dp14
+$ ./cmaki/run.sh
 ```
-$ git clone https://github.com/makiolo/design-patterns-cpp14.git
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make (in unix) or compile generated solution (in windows)
+### Naming implementations
+* *option 1*: use DEFINE_KEY(classname or anything) within the class
+* *option 2*: use DEFINE_HASH(classname well qualified) outside of class
+* *option 3*: specialization of std::hash<T>. This is equivalent to option 2 but without use macros:
+```CPP
+namespace std {
+	template <>
+	struct hash<MyClass>
+	{
+		size_t operator()() const
+		{
+			return std::hash<std::string>()("MyClass");
+		}
+	};
+}
 ```
-
 ### Example factory
 ```CPP
 #include <iostream>
 #include <assert.h>
-#include <design-patterns/factory.h>
+#include <dp14/factory.h>
 
 class Base
 {
 public:
-	using Factory = dp14::Factory<Base, std::string, int>;
+	using factory = dp14::factory<Base, std::string, int>;
 
 	explicit Base(const std::string& name, int q)
 		: _name(name)
@@ -66,24 +84,36 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
 DEFINE_HASH(A)
 
+// if you dont like macro DEFINE_KEY(class), can use this:
 class B : public Base
 {
 public:
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
+
+namespace std {
+	template <>
+	struct hash<B>
+	{
+		size_t operator()() const
+		{
+			return std::hash<std::string>()("B");
+		}
+	};
+}
 
 int main()
 {
-	Base::Factory factory;
-	Base::Factory::Registrator<A> reg1(factory);
-	Base::Factory::Registrator<B> reg2(factory);
+	Base::factory factory;
+	Base::factory::registrator<A> reg1(factory);
+	Base::factory::registrator<B> reg2(factory);
 
 	{
 		// equivalent ways of create A
@@ -110,7 +140,7 @@ int main()
 #include <iostream>
 #include <sstream>
 #include <assert.h>
-#include <design-patterns/memoize.h>
+#include <dp14/memoize.h>
 
 class Base
 {
@@ -133,18 +163,18 @@ protected:
 class A : public Base
 {
 public:
+	DEFINE_KEY(A)
 	explicit A(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~A() = default;
 };
-DEFINE_HASH(A)
 
 class B : public Base
 {
 public:
+	DEFINE_KEY(B)
 	explicit B(const std::string& name, int q) : Base(name, q) { ; }
 	virtual ~B() = default;
 };
-DEFINE_HASH(B)
 
 int main()
 {

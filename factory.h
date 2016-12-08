@@ -1,14 +1,14 @@
-// design-patterns-cpp14 by Ricardo Marmolejo García is licensed under a
+// design-patterns-cpp14 by Ricardo Marmolejo GarcÃ­a is licensed under a
 // Creative Commons Reconocimiento 4.0 Internacional License.
 // http://creativecommons.org/licenses/by/4.0/
 //
 #ifndef _FACTORY_H_
 #define _FACTORY_H_
 
-#include "common.h"
+#include <iostream>
+#include "metacommon/common.h"
 
-namespace dp14
-{
+namespace dp14 {
 
 template <typename T, typename U, typename... Args>
 class factory_registrator;
@@ -17,20 +17,20 @@ template <typename T, typename... Args>
 class factory
 {
 public:
-	using KeyImpl = size_t;
-	using RegistratorFunction = std::function<std::shared_ptr<T>(Args...)>;
-	using registrator_container = std::unordered_map<KeyImpl, RegistratorFunction>;
+	using key_impl = size_t;
+	using registrator_function = std::function<std::shared_ptr<T>(Args...)>;
+	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
 
-	static typename T::factory& instance()
+	template <typename U>					
+	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		static typename T::factory factory;
-		return factory;
+		return std::hash<std::string>()(U::KEY());
 	}
 
 	template <typename U>
-	KeyImpl get_key() const
+	typename std::enable_if<(!has_key<U>::value), key_impl>::type get_key() const
 	{
 		return std::hash<U>()();
 	}
@@ -38,13 +38,39 @@ public:
 	template <typename U, typename F>
 	void register_type(F&& value)
 	{
-		_map_registrators[get_key<U>()] = std::forward<F>(value);
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			std::cout << "Already registered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
+		else
+		{
+			_map_registrators.emplace(keyimpl, std::forward<F>(value));
+		}
+	}
+
+	template <typename U>
+	void unregister_type()
+	{
+		key_impl keyimpl = get_key<U>();
+		auto it = _map_registrators.find(keyimpl);
+		if (it != _map_registrators.end())
+		{
+			_map_registrators.erase(get_key<U>());
+		}
+		else
+		{
+			std::cout << "Already unregistered key " << keyimpl << std::endl;
+			throw std::exception();
+		}
 	}
 
 	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data) const
 	{
-		KeyImpl key_impl = std::hash<std::string>()(key_impl_str);
-		return create(key_impl, std::forward<Args>(data)...);
+		key_impl keyimpl = std::hash<std::string>()(key_impl_str);
+		return create(keyimpl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -53,13 +79,19 @@ public:
 		return std::dynamic_pointer_cast<U>(create(get_key<U>(), std::forward<Args>(data)...));
 	}
 
-protected:
-	std::shared_ptr<T> create(const KeyImpl& key_impl, Args&&... data) const
+	static typename T::factory& instance()
 	{
-		auto it = _map_registrators.find(key_impl);
+		static typename T::factory factory;
+		return factory;
+	}
+
+protected:
+	std::shared_ptr<T> create(const key_impl& keyimpl, Args&&... data) const
+	{
+		auto it = _map_registrators.find(keyimpl);
 		if (it == _map_registrators.end())
 		{
-			std::cout << "Can't found key in map: " << key_impl << std::endl;
+			std::cout << "Can't found key in map: " << keyimpl << std::endl;
 			throw std::exception();
 		}
 		return (it->second)(std::forward<Args>(data)...);
@@ -73,11 +105,19 @@ template <typename T, typename U, typename... Args>
 class factory_registrator
 {
 public:
-	explicit factory_registrator() { register_to_singleton(make_int_sequence<sizeof...(Args)>{}); }
-
-	explicit factory_registrator(factory<T, Args...>& factory)
+	template <class = typename std::enable_if<
+					(has_instance<typename T::factory>::value)
+				>::type>
+	explicit factory_registrator()
+		: _f(T::factory::instance())
 	{
-		register_in_a_factory(factory, make_int_sequence<sizeof...(Args)>{});
+		_register(make_int_sequence<sizeof...(Args)>{});
+	}
+
+	explicit factory_registrator(factory<T, Args...>& f)
+		: _f(f)
+	{
+		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
 	static std::shared_ptr<T> create(Args&&... data)
@@ -85,20 +125,20 @@ public:
 		return std::make_shared<U>(std::forward<Args>(data)...);
 	}
 
-protected:
-	template <int... Is>
-	void register_to_singleton(int_sequence<Is...>)
+	~factory_registrator()
 	{
-		T::factory::instance().template register_type<U>(
-			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
+		_f.template unregister_type<U>();
 	}
 
+protected:
 	template <int... Is>
-	void register_in_a_factory(factory<T, Args...>& factory, int_sequence<Is...>)
+	void _register(int_sequence<Is...>)
 	{
-		factory.template register_type<U>(
+		_f.template register_type<U>(
 			std::bind(&factory_registrator<T, U, Args...>::create, placeholder_template<Is>{}...));
 	}
+protected:
+	factory<T, Args...>& _f;
 };
 
 }

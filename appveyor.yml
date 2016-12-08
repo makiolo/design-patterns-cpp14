@@ -1,0 +1,22 @@
+version: 0.1.{build}
+
+platform:
+  - x64
+
+install:
+  - cmd: git submodule update --init --recursive
+  - cmd: pip install pyyaml
+  - cmd: pip install poster
+
+build_script:
+  - cmd: set || exit 0
+  - cmd: cd cmaki && git pull origin master && cd ..
+  - cmd: cd cmaki_generator && git pull origin master && cd ..
+  - cmd: .\cmaki\run.cmd
+
+test_script:
+  - cmd: ctest . --no-compress-output --output-on-failure -T Test -C Release -V
+
+on_success:
+    - cmd: echo APPVEYOR_REPO_NAME=$(APPVEYOR_REPO_NAME)
+    - cmd: cd cmaki_generator && build github://makiolo/design-patterns-cpp14 -o --server=http://artifacts.myftp.biz:8080 && cd ..

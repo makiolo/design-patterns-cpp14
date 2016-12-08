@@ -1,0 +1,29 @@
+- design-patterns-cpp14:
+    <<: *thirdparty_defaults
+    version: 0.0.0.0
+    version_manager: git
+    cmake_target: null
+    post_install:
+        - ./*.h include/dp14/
+        - ./*.hh include/dp14/
+        - ./metacommon/*.h include/dp14/metacommon/
+    mode: dr
+    source: https://github.com/makiolo/design-patterns-cpp14.git
+    targets:
+        - dummy:
+            info:
+                <<: *library_dynamic
+            extra:
+                win32:
+                    include:
+                        - include/dp14/metacommon
+                win64:
+                    include:
+                        - include/dp14/metacommon
+                default:
+                    include:
+                        - include/dp14/metacommon
+                emscripten:
+                    include:
+                        - include/dp14/metacommon
+
