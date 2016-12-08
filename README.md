@@ -39,11 +39,7 @@ You will need cmake (and a compiler).
 ```bash
 $ git clone --recursive https://github.com/makiolo/design-patterns-cpp14.git dp14
 $ cd dp14
-$ mkdir release
-$ cd release
-$ cmake ..
-$ cmake --build . --config release
-$ ctest . -C release
+$ ./cmaki/run.sh
 ```
 ### Naming implementations
 * *option 1*: use DEFINE_KEY(classname or anything) within the class
