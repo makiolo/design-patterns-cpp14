@@ -54,6 +54,7 @@ install:
   - pip install --user poster
 
 script:
+  - (cd metacommon && git pull origin master)
   - ./cmaki/run.sh $MODE
 
 after_success:
