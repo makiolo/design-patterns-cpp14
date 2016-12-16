@@ -10,6 +10,7 @@ install:
 
 build_script:
   - cmd: set || exit 0
+  - cmd: cd metacommon && git pull origin master && cd ..
   - cmd: cd cmaki && git pull origin master && cd ..
   - cmd: cd cmaki_generator && git pull origin master && cd ..
   - cmd: .\cmaki\run.cmd
