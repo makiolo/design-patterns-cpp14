@@ -26,7 +26,8 @@ public:
 	template <typename U>					
 	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		return ctti::str_type<U>::hash();
+		// return ctti::str_type<U>::hash();
+		return std::hash<std::string>()(ctti::str_type<U>()::get());
 	}
 
 	template <typename U>
