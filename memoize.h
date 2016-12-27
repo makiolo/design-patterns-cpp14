@@ -21,26 +21,19 @@ public:
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
 
-	template <typename U,
-				class = typename std::enable_if<
-					(has_key<U>::value)
-				>::type
-			>
-	key_impl get_key(int=0) const
+	template <typename U>					
+	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		return std::hash<std::string>()(U::KEY());
+		// return ctti::str_type<U>::hash();
+		return std::hash<std::string>()(ctti::str_type<U>::get());
 	}
 
-	template <typename U,
-				class = typename std::enable_if<
-					(!has_key<U>::value)
-				>::type
-			>
-	key_impl get_key(long=0) const
+	template <typename U>
+	typename std::enable_if<(!has_key<U>::value), key_impl>::type get_key() const
 	{
 		return std::hash<U>()();
 	}
-
+	
 	inline key_cache get_base_hash(const key_impl& keyimpl, Args&&... data) const
 	{
 		return keyimpl ^ dp14::hash<T>()(std::forward<Args>(data)...);

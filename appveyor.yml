@@ -5,14 +5,19 @@ platform:
 
 install:
   - cmd: git submodule update --init --recursive
+  - cmd: pip install pyyaml
+  - cmd: pip install poster
 
 build_script:
+  - cmd: set || exit 0
+  - cmd: cd metacommon && git pull origin master && cd ..
   - cmd: cd cmaki && git pull origin master && cd ..
-  - cmd: mkdir release
-  - cmd: cd release
-  - cmd: cmake .. -DCMAKE_BUILD_TYPE=Release -DFIRST_ERROR=1 -G "Visual Studio 14 2015 Win64"
-  - cmd: cmake --build . --config Release --target install
+  - cmd: cd cmaki_generator && git pull origin master && cd ..
+  - cmd: .\cmaki\run.cmd
 
 test_script:
   - cmd: ctest . --no-compress-output --output-on-failure -T Test -C Release -V
 
+on_success:
+    - cmd: echo APPVEYOR_REPO_NAME=$(APPVEYOR_REPO_NAME)
+    - cmd: cd cmaki_generator && build github://makiolo/design-patterns-cpp14 -o --server=http://artifacts.myftp.biz:8080 && cd ..

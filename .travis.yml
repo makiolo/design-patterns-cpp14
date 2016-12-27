@@ -54,11 +54,12 @@ install:
   - pip install --user poster
 
 script:
+  - (cd metacommon && git pull origin master)
   - ./cmaki/run.sh $MODE
-
-after_success:
   - |
     if [[ $CXX == "g++-4.9" && $MODE == "Release" ]]; then
         (cd cmaki_generator && ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
     fi
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
