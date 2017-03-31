@@ -54,8 +54,10 @@ install:
   - pip install --user poster
 
 script:
-  - (cd metacommon && git pull origin master)
+  - set -e
+  - (cd cmaki && git pull origin master)
   - ./cmaki/run.sh
   - export NOCACHE_LOCAL=TRUE
   - export NOCACHE_REMOTE=FALSE
   - (cd cmaki_generator && ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
+  - set +e
