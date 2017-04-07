@@ -14,6 +14,7 @@ matrix:
           packages:
             - cmake
             - g++-4.9
+            - lcov
       env:
         - CXX=g++-4.9 CC=gcc-4.9 MODE=Debug
     - compiler: clang
@@ -36,7 +37,6 @@ matrix:
             - cmake
             - g++-4.9
             - valgrind
-            - cppcheck
       env:
         - CXX=g++-4.9 CC=gcc-4.9 MODE=Release
     - compiler: clang
@@ -49,7 +49,6 @@ matrix:
             - cmake
             - clang-3.6
             - valgrind
-            - cppcheck
       env:
         - CXX=clang++-3.6 CC=clang-3.6 MODE=Release
 
@@ -59,9 +58,9 @@ install:
   - pip install --user poster
   - pip install --user codecov
   # Installing lcov
-  - wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.13.orig.tar.gz
-  - tar xf lcov_1.13.orig.tar.gz
-  - (cd lcov-1.13/ && sudo make install && rm -Rf lcov-1.13/)
+  # - wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.13.orig.tar.gz
+  # - tar xf lcov_1.13.orig.tar.gz
+  # - (cd lcov-1.13/ && sudo make install && rm -Rf lcov-1.13/)
 
 script:
   - set -e
@@ -75,3 +74,4 @@ script:
 notifications:
   email:
     - makiolo@gmail.com
+
