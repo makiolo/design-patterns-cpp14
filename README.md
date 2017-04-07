@@ -1,5 +1,7 @@
 # Design patterns C++14
 
+Coverage: [![codecov](https://codecov.io/gh/makiolo/design-patterns-cpp14/branch/master/graph/badge.svg)](https://codecov.io/gh/makiolo/design-patterns-cpp14)
+
 gcc 4.9 / clang 3.6: [![Build Status](https://travis-ci.org/makiolo/design-patterns-cpp14.svg?branch=master)](https://travis-ci.org/makiolo/design-patterns-cpp14)
 
 MSVC 2015: [![Build status](https://ci.appveyor.com/api/projects/status/3ouxeirkgwi8nmyq?svg=true)](https://ci.appveyor.com/project/makiolo/design-patterns-cpp14)
