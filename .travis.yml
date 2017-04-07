@@ -56,8 +56,7 @@ install:
   # Installing lcov
   - wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.13.orig.tar.gz
   - tar xf lcov_1.13.orig.tar.gz
-  - cd lcov-1.13/
-  - sudo make install
+  - (cd lcov-1.13/ && sudo make install)
   # Checking versions
   - lcov --version
   - $CXX --version
