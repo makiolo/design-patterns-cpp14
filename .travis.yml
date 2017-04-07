@@ -61,3 +61,6 @@ script:
   - export NOCACHE_REMOTE=FALSE
   - (cd cmaki_generator && ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
   - set +e
+
+after_success: 
+  - bash <(curl -s https://codecov.io/bash)
