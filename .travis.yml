@@ -35,6 +35,7 @@ matrix:
           packages:
             - cmake
             - g++-4.9
+            - valgrind
       env:
         - CXX=g++-4.9 CC=gcc-4.9 MODE=Release
     - compiler: clang
@@ -46,6 +47,7 @@ matrix:
           packages:
             - cmake
             - clang-3.6
+            - valgrind
       env:
         - CXX=clang++-3.6 CC=clang-3.6 MODE=Release
 
@@ -63,9 +65,7 @@ script:
   - set -e
   - (cd cmaki && git pull origin master)
   - ./cmaki/run.sh
-  # avoid cache local
   - export NOCACHE_LOCAL=TRUE
-  # use cache remote
   - export NOCACHE_REMOTE=FALSE
   - (cd cmaki_generator && ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
   - set +e
