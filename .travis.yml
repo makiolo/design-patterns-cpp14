@@ -72,13 +72,13 @@ script:
   - export NOCACHE_REMOTE=FALSE
   - (cd cmaki_generator && ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
   - set +e
+  - find . -name "*.gcno" -o -name "*.gcda"
 
 after_success:
   # Creating report
-  - cd ${TRAVIS_BUILD_DIR}
-  - lcov --directory . --capture --output-file coverage.info # capture coverage info
-  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
-  - lcov --list coverage.info #debug info
+  - lcov --directory . --capture --output-file coverage.info  # capture coverage info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info  # filter out system
+  - lcov --list coverage.info  # debug info
   # Uploading report to CodeCov
   - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
 
