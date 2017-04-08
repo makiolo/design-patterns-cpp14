@@ -36,7 +36,6 @@ matrix:
           packages:
             - cmake
             - g++-4.9
-            - valgrind
       env:
         - CXX=g++-4.9 CC=gcc-4.9 MODE=Release
     - compiler: clang
