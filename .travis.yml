@@ -71,6 +71,9 @@ script:
   - set +e
 
 notifications:
-  email:
-    - makiolo@gmail.com
-
+  webhooks: http://artifacts.myftp.biz:3000/api/todos
+  on_start: always   # default: never
+  on_success: always # default: always
+  on_failure: always # default: always
+  on_error: always # default: always
+  on_cancel: always # default: always
