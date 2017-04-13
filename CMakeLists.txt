@@ -6,3 +6,4 @@ include("${CMAKE_SOURCE_DIR}/cmaki/cmaki.cmake")
 cmaki_setup()
 
 add_subdirectory(tests)
+
