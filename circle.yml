@@ -1,0 +1,12 @@
+checkout:
+  post:
+    - git submodule update --recursive --init
+dependencies:
+  pre:
+    - ./cmaki/setup.sh
+  override:
+    - ./cmaki/compile.sh
+test:
+  override:
+    - ./cmaki/tests.sh
+
