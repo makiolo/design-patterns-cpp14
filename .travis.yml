@@ -56,7 +56,7 @@ install:
   - pip install --user pyyaml
   - pip install --user poster
   - pip install --user codecov
-  - curl http://npmjs.org/install.sh | sudo sh
+  # - curl http://npmjs.org/install.sh | sudo sh
 
 script:
   - set -e
@@ -74,4 +74,3 @@ notifications:
   on_failure: always # default: always
   on_error: always # default: always
   on_cancel: always # default: always
-
