@@ -1,21 +1,29 @@
 {
-"name": "design-patterns-cpp14",
-"version": "1.0.0",
-"description": "Design patterns implemented in C++14",
-"scripts": 
-{ "preinstall" : "./cmaki/setup.sh"
-, "install" : "./cmaki/compile.sh"
-, "test" : "./cmaki/tests.sh"
-},
-"keywords": [
-"c++",
-"design patterns"
-],
-"author": "Ricardo Marmolejo García",
-"license": "MIT",
-"repository": {
-"type": "git",
-"url": "https://github.com/makiolo/design-patterns-cpp14"
-},
-"devDependencies": {}
+  "name": "design-patterns-cpp14",
+  "version": "1.0.1",
+  "description": "Design patterns implemented in C++14",
+  "scripts": {
+    "preinstall": "./cmaki/setup.sh",
+    "install": "./cmaki/compile.sh",
+    "test": "./cmaki/tests.sh"
+  },
+  "keywords": [
+    "c++",
+    "design patterns"
+  ],
+  "author": "Ricardo Marmolejo García",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/makiolo/design-patterns-cpp14.git"
+  },
+  "devDependencies": {},
+  "bugs": {
+    "url": "https://github.com/makiolo/design-patterns-cpp14/issues"
+  },
+  "homepage": "https://github.com/makiolo/design-patterns-cpp14#readme",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  }
 }
