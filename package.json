@@ -5,7 +5,7 @@
   "scripts": {
     "prepublish": "bash ./cmaki/clean.sh",
     "preinstall": "curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/bootstrap.sh | bash",
-    "install": "bash ./cmaki/setup.s",
+    "install": "bash ./cmaki/setup.sh",
     "postinstall": "bash ./cmaki/compile.sh",
     "test": "bash ./cmaki/tests.sh"
   },
