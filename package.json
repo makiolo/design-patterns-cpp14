@@ -3,8 +3,10 @@
   "version": "1.0.6",
   "description": "Design patterns implemented in C++14",
   "scripts": {
+    "prepublish": "bash ./cmaki/clean.sh",
     "preinstall": "curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/bootstrap.sh | bash",
-    "install": "bash ./cmaki/clean.sh && bash ./cmaki/setup.sh && bash ./cmaki/compile.sh",
+    "install": "bash ./cmaki/setup.s",
+    "postinstall": "bash ./cmaki/compile.sh",
     "test": "bash ./cmaki/tests.sh"
   },
   "keywords": [
