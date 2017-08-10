@@ -3,9 +3,9 @@
   "version": "1.0.6",
   "description": "Design patterns implemented in C++14",
   "scripts": {
-    "prepublishOnly": "bash ./node_modules/cmaki/clean.sh",
-    "install": "bash ./node_modules/cmaki/clean.sh && bash ./node_modules/cmaki/setup.sh && bash ./node_modules/cmaki/compile.sh",
-    "test": "bash ./cmaki/tests.sh"
+    "prepublishOnly": "node node_modules/cmaki/call.js clean",
+    "install": "node node_modules/cmaki/call.js clean && node node_modules/cmaki/call.js setup && node node_modules/cmaki/call.js compile",
+    "test": "node node_modules/cmaki/call.js tests"
   },
   "keywords": [
     "c++",
@@ -28,6 +28,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "cmaki": "^1.0.2",
     "metacommon": "^1.0.0"
   }
 }
