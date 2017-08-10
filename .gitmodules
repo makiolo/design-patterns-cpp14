@@ -1,6 +1,3 @@
-[submodule "metacommon"]
-	path = metacommon
-	url = https://github.com/makiolo/metacommon.git
 [submodule "cmaki_generator"]
 	path = cmaki_generator
 	url = https://github.com/makiolo/cmaki_generator.git

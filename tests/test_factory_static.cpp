@@ -1,6 +1,6 @@
 #include <iostream>
 #include <assert.h>
-#include "../factory.h"
+#include <factory.h>
 
 class Base
 {
