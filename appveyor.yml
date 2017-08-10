@@ -14,9 +14,4 @@ install:
   - cmd: pip install poster
 
 build_script:
-  - cmd: set || exit 0
   - cmd: npm install
-
-on_success:
-    - cmd: echo APPVEYOR_REPO_NAME=$(APPVEYOR_REPO_NAME)
-    - cmd: cd cmaki_generator && build github://makiolo/design-patterns-cpp14 -o --server=http://artifacts.myftp.biz:8080 && cd ..
