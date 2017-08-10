@@ -56,17 +56,10 @@ install:
   - pip install --user pyyaml
   - pip install --user poster
   - pip install --user codecov
-  # - curl http://npmjs.org/install.sh | sudo sh
 
 script:
-  - set -e
-  # - (cd cmaki && git pull origin master)
-  # - ./cmaki/run.sh
   - npm install
-  - export NOCACHE_LOCAL=TRUE
-  - export NOCACHE_REMOTE=FALSE
-  - (cd cmaki_generator && ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
-  - set +e
+  - (cd cmaki_generator && NOCACHE_LOCAL=TRUE NOCACHE_REMOTE=FALSE ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/todos
