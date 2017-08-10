@@ -22,12 +22,11 @@
     "url": "https://github.com/makiolo/design-patterns-cpp14/issues"
   },
   "homepage": "https://github.com/makiolo/design-patterns-cpp14#readme",
-  "main": "index.js",
   "directories": {
     "test": "tests"
   },
   "dependencies": {
-    "cmaki": "^1.0.0",
+    "cmaki": "^1.0.1",
     "metacommon": "^1.0.0"
   }
 }
