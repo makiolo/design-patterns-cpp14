@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 cmaki_test(factory_dynamic test_factory_dynamic.cpp)
 cmaki_test(factory_static test_factory_static.cpp)
