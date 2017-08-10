@@ -17,11 +17,7 @@ build_script:
   - cmd: set || exit 0
   - cmd: cd cmaki && git pull origin master && cd ..
   - cmd: cd cmaki_generator && git pull origin master && cd ..
-  - cmd: set MODE=Release
   - cmd: .\cmaki\run.cmd
-
-test_script:
-  - cmd: ctest . --no-compress-output --output-on-failure -T Test -C Release -V
 
 on_success:
     - cmd: echo APPVEYOR_REPO_NAME=$(APPVEYOR_REPO_NAME)
