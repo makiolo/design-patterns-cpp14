@@ -59,7 +59,6 @@ install:
 
 script:
   - npm install
-  - (cd cmaki_generator && NOCACHE_LOCAL=TRUE NOCACHE_REMOTE=FALSE ./build github://$TRAVIS_REPO_SLUG -o --server=http://artifacts.myftp.biz:8080)
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/todos
@@ -68,3 +67,4 @@ notifications:
   on_failure: always # default: always
   on_error: always # default: always
   on_cancel: always # default: always
+
