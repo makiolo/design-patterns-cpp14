@@ -52,13 +52,13 @@ matrix:
         - CXX=clang++-3.6 CC=clang-3.6 MODE=Release
 
 install:
-  # python deps
   - pip install --user pyyaml
   - pip install --user poster
   - pip install --user codecov
 
 script:
   - npm install
+  - npm test
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/todos
@@ -67,4 +67,3 @@ notifications:
   on_failure: always # default: always
   on_error: always # default: always
   on_cancel: always # default: always
-
