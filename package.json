@@ -17,7 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/makiolo/design-patterns-cpp14.git"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "cmaki": "^1.0.1"
+  },
   "bugs": {
     "url": "https://github.com/makiolo/design-patterns-cpp14/issues"
   },
@@ -26,7 +28,6 @@
     "test": "tests"
   },
   "dependencies": {
-    "cmaki": "^1.0.1",
     "metacommon": "^1.0.0"
   }
 }
