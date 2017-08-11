@@ -11,8 +11,10 @@ configuration:
 install:
   - cmd: pip install pyyaml
   - cmd: pip install poster
+  - cmd: npm install -g npm-check-updates
 
 build_script:
+  - cmd: npm-check-updates -u
   - cmd: npm install
 
 test_script:
