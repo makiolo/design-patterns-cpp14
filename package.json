@@ -4,7 +4,7 @@
   "description": "Design patterns implemented in C++14",
   "scripts": {
     "prepublishOnly": "node node_modules/cmaki/call.js clean",
-    "install": "node node_modules/cmaki/call.js clean,setup,compile",
+    "install": "node node_modules/cmaki/call.js clean && node node_modules/cmaki/call.js setup && node node_modules/cmaki/call.js compile",
     "test": "node node_modules/cmaki/call.js tests"
   },
   "keywords": [
