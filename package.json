@@ -4,7 +4,7 @@
   "description": "Design patterns implemented in C++14",
   "scripts": {
     "prepublishOnly": "node node_modules/cmaki/call.js clean",
-    "install": "node node_modules/cmaki/call.js clean && node node_modules/cmaki/call.js setup && node node_modules/cmaki/call.js compile",
+    "install": "node node_modules/cmaki/call.js clean,setup,compile",
     "test": "node node_modules/cmaki/call.js tests"
   },
   "keywords": [
@@ -17,9 +17,7 @@
     "type": "git",
     "url": "git+https://github.com/makiolo/design-patterns-cpp14.git"
   },
-  "devDependencies": {
-    "cmaki": "^1.0.1"
-  },
+  "devDependencies": {},
   "bugs": {
     "url": "https://github.com/makiolo/design-patterns-cpp14/issues"
   },
@@ -28,7 +26,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "cmaki": "^1.0.2",
+    "cmaki": "^1.0.4",
+    "fibers": "^2.0.0",
     "metacommon": "^1.0.0"
   }
 }
