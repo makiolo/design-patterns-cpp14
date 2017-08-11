@@ -1,4 +1,4 @@
-# Design patterns C++14
+# Design patterns C++14 [![npm version](https://badge.fury.io/js/design-patterns-cpp14.svg)](https://badge.fury.io/js/design-patterns-cpp14)
 
 Coverage: [![codecov](https://codecov.io/gh/makiolo/design-patterns-cpp14/branch/master/graph/badge.svg)](https://codecov.io/gh/makiolo/design-patterns-cpp14)
 
