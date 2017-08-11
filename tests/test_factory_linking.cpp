@@ -27,7 +27,32 @@ protected:
 	HMODULE _handle;
 };
 
-#else
+#elif __APPLE__
+
+#include <dlfcn.h>
+
+class load_library
+{
+public:
+	load_library(const std::string& libname)
+	{
+		_handle = dlopen(("lib" + libname + ".dylib").c_str(), RTLD_NOW); // RTLD_LAZY
+		if (!_handle)
+		{
+			fputs (dlerror(), stderr);
+			throw std::runtime_error("error loading library");
+		}
+	}
+
+	~load_library()
+	{
+		dlclose(_handle);
+	}
+protected:
+	void* _handle;
+};
+
+#elif __linux__
 
 #include <dlfcn.h>
 
