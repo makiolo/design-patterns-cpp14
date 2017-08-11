@@ -3,7 +3,6 @@ dist: trusty
 language: c
 cache: ccache
 services: docker
-osx_image: xcode6.4
 
 matrix:
   include:
@@ -55,10 +54,24 @@ matrix:
             - valgrind
       env:
         - CXX=clang++-3.6 CC=clang-3.6 MODE=Release
+        
+    # Xcode 6.4
     - os: osx
       compiler: clang
-      env:
-        - CXX=clang++-3.6 CC=clang-3.6 MODE=Release
+      env: CXX=clang++ CC=clang MODE=Release
+      osx_image: xcode6.4
+
+    # Xcode 7.3
+    - os: osx
+      compiler: clang
+      env: CXX=clang++ CC=clang MODE=Release
+      osx_image: xcode7.3
+
+    # Xcode 8
+    - os: osx
+      compiler: clang
+      env: CXX=clang++ CC=clang MODE=Release
+      osx_image: xcode8
 
 install:
   - pip install --user pyyaml
