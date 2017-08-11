@@ -3,8 +3,11 @@
   "version": "1.0.6",
   "description": "Design patterns implemented in C++14",
   "scripts": {
+    // clean, maybe upload
     "prepublishOnly": "node node_modules/cmaki/call.js clean",
+    // clean, setup (BUILD_TESTS=FALSE), compile
     "install": "node node_modules/cmaki/call.js clean && node node_modules/cmaki/call.js setup && node node_modules/cmaki/call.js compile",
+    // clean, setup (BUILD_TESTS=TRUE), compile, tests
     "test": "node node_modules/cmaki/call.js tests"
   },
   "keywords": [
