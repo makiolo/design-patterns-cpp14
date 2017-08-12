@@ -1,6 +1,6 @@
 {
   "name": "design-patterns-cpp14",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Design patterns implemented in C++14",
   "scripts": {
 	"preinstall": "curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/bootstrap.sh | bash",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "cmaki": "^1.0.12",
+    "cmaki": "^1.0.13",
     "metacommon": "^1.0.0"
   }
 }
