@@ -1,6 +1,6 @@
 {
   "name": "design-patterns-cpp14",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Design patterns implemented in C++14",
   "scripts": {
     "clean": "node node_modules/cmaki/call.js clean",
