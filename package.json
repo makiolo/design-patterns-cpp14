@@ -27,7 +27,7 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "cmaki": "^1.0.13",
+    "cmaki": "^1.0.14",
     "metacommon": "^1.0.0"
   }
 }
