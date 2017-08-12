@@ -17,7 +17,7 @@ matrix:
             - g++-4.9
             - lcov
       env:
-        - CXX=g++-4.9 CC=gcc-4.9 MODE=Debug
+        - CXX=g++-4.9 CC=gcc-4.9 MODE=Debug COVERAGE=TRUE
     - os: linux
       compiler: clang
       addons:
@@ -60,7 +60,7 @@ matrix:
       compiler: clang
       env: CXX=g++ CC=gcc MODE=Debug
       osx_image: xcode7.3
-      
+
     - os: osx
       compiler: clang
       env: CXX=g++ CC=gcc MODE=Release
@@ -71,7 +71,7 @@ matrix:
       compiler: clang
       env: CXX=clang++ CC=clang MODE=Debug
       osx_image: xcode7.3
-      
+
     - os: osx
       compiler: clang
       env: CXX=clang++ CC=clang MODE=Release
@@ -90,3 +90,4 @@ script:
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/webhooks
+
