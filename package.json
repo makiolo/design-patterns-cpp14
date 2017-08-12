@@ -1,11 +1,11 @@
 {
   "name": "design-patterns-cpp14",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Design patterns implemented in C++14",
   "scripts": {
-    "clean": "node node_modules/cmaki/call.js clean",
-    "install": "node node_modules/cmaki/call.js install",
-    "test": "node node_modules/cmaki/call.js tests"
+    "clean": "node node_modules/cmaki/call.js clean || node ../cmaki/call.js clean",
+    "install": "node node_modules/cmaki/call.js install || node ../cmaki/call.js install",
+    "test": "node node_modules/cmaki/call.js tests || node ../cmaki/call.js tests"
   },
   "keywords": [
     "c++",
@@ -30,3 +30,4 @@
     "metacommon": "^1.0.0"
   }
 }
+
