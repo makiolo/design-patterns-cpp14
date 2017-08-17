@@ -71,6 +71,7 @@ install:
   - pip install --user poster
   - pip install --user codecov
   - npm install -g npm-check-updates
+  - npm install -g cmaki
 
 script:
   - npm-check-updates -u
