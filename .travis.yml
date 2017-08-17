@@ -77,7 +77,7 @@ script:
   - npm-check-updates -u
   - npm install
   - npm test
-  - npm publish
+  # - npm publish
 
 deploy:
   provider: npm
