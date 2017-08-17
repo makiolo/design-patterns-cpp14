@@ -3,7 +3,7 @@
   "version": "1.0.17",
   "description": "Design patterns implemented in C++14",
   "scripts": {
-	"preinstall": "curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/bootstrap.sh | bash",
+	"preinstall": "env | sort",
 	"clean": "node node_modules/cmaki/call.js clean",
 	"install": "node node_modules/cmaki/call.js install",
 	"test": "node node_modules/cmaki/call.js tests"
