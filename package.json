@@ -1,6 +1,6 @@
 {
   "name": "design-patterns-cpp14",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "Design patterns implemented in C++14",
   "scripts": {
     "clean": "call clean",
@@ -25,7 +25,7 @@
     "test": "tests"
   },
   "devDependencies": {
-    "cmaki": "^1.0.23"
+    "cmaki": "^1.0.25"
   },
   "dependencies": {
     "metacommon": "^1.0.0"
