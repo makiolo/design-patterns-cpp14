@@ -1,6 +1,6 @@
 {
   "name": "design-patterns-cpp14",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Design patterns implemented in C++14",
   "scripts": {
     "clean": "call clean",
