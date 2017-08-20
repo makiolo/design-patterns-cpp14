@@ -5,7 +5,8 @@
   "scripts": {
     "clean": "call clean",
     "install": "call install",
-    "test": "call tests"
+    "test": "call tests",
+    "upload": "call upload"
   },
   "keywords": [
     "c++",
@@ -25,10 +26,10 @@
     "test": "tests"
   },
   "devDependencies": {
-    "cmaki": "^1.0.27",
+    "cmaki": "^1.0.28",
     "cmaki_generator": "^1.0.0"
   },
   "dependencies": {
-    "metacommon": "^1.0.0"
+    "metacommon": "^1.0.1"
   }
 }
