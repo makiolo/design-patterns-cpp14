@@ -71,13 +71,12 @@ install:
   - pip install --user poster
   - pip install --user codecov
   - npm install -g npm-check-updates
-  - npm install -g cmaki
 
 script:
-  - npm-check-updates -u
-  - npm install
+  - ncu -u
+  - CMAKI_PWD=$(pwd) npm install
   - npm test
-  - ./node_modules/cmaki/upload.sh
+  - npm run upload
 
 deploy:
   provider: npm
@@ -88,3 +87,4 @@ deploy:
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/webhooks
+
