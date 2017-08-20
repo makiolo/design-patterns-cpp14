@@ -1,10 +1,10 @@
 {
   "name": "design-patterns-cpp14",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
   "scripts": {
     "clean": "call clean",
-    "install": "CMAKI_PWD=$(pwd) call install",
+    "install": "call install",
     "test": "call tests",
     "upload": "call upload"
   },
