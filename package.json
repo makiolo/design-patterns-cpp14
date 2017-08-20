@@ -25,7 +25,8 @@
     "test": "tests"
   },
   "devDependencies": {
-    "cmaki": "^1.0.25"
+    "cmaki": "^1.0.27",
+    "cmaki_generator": "^1.0.0"
   },
   "dependencies": {
     "metacommon": "^1.0.0"
