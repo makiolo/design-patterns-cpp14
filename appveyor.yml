@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 1.0.0.{build}
 
 platform:
   - x86
@@ -9,13 +9,7 @@ configuration:
   - Release
 
 install:
-  - cmd: pip install pyyaml
-  - cmd: pip install poster
-  - cmd: npm install -g npm-check-updates
+  - cmd: git clone https://github.com/boostorg/predef.git boostorg_predef
 
 build_script:
-  - cmd: npm-check-updates -u
-  - cmd: npm install
-
-test_script:
-  - cmd: npm test
+  - ps: $source = "https://raw.githubusercontent.com/makiolo/cmaki/master/ci.cmd"; $dest = $env:TEMP + "\ci.cmd"; $WebClient = New-Object System.Net.WebClient; $WebClient.DownloadFile($source,$dest); Invoke-Expression $dest
