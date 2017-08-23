@@ -71,3 +71,4 @@ script:
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/webhooks
+
