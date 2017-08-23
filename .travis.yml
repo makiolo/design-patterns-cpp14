@@ -66,24 +66,8 @@ matrix:
       env: CXX=clang++ CC=clang MODE=Release
       osx_image: xcode7.3
 
-install:
-  - pip install --user pyyaml
-  - pip install --user poster
-  - pip install --user codecov
-  - npm install -g npm-check-updates
-
 script:
-  - ncu -u
-  - CMAKI_PWD=$(pwd) npm install
-  - npm test
-  # - npm run upload
-
-deploy:
-  provider: npm
-  email: "makiolo@gmail.com"
-  api_key: "token encrypted with 'travis encrypt YOUR_AUTH_TOKEN --add deploy.api_key'"
-  on:
-    tags: true
+  - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
 
 notifications:
   webhooks: http://artifacts.myftp.biz:3000/api/webhooks
