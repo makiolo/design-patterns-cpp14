@@ -61,3 +61,4 @@ matrix:
 
 script:
   - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
+
