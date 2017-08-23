@@ -3,10 +3,10 @@
   "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
   "scripts": {
-    "clean": "call clean",
-    "install": "call install",
-    "test": "call tests",
-    "upload": "call upload"
+    "clean": "cmaki clean",
+    "install": "cmaki install",
+    "test": "cmaki tests",
+    "upload": "cmaki upload"
   },
   "keywords": [
     "c++",
