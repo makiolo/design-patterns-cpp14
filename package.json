@@ -26,8 +26,8 @@
     "test": "tests"
   },
   "devDependencies": {
-    "cmaki": "^1.0.28",
-    "cmaki_generator": "^1.0.0"
+    "cmaki": "https://github.com/makiolo/cmaki",
+    "cmaki_generator": "https://github.com/makiolo/cmaki_generator"
   },
   "dependencies": {
     "metacommon": "^1.0.1"
