@@ -141,6 +141,16 @@ protected:
 	factory<T, Args...>& _f;
 };
 
+template <typename ... Args>
+struct code
+{
+	using factory = factory<code, Args...>;
+	virtual ~code() { ; }
+};
+
+template <typename ... Args>
+using repository = typename code<Args...>::factory;
+
 }
 
 #endif
