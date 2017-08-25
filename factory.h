@@ -22,11 +22,13 @@ public:
 	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
+	template <typename U>
+	using reg = factory_registrator<T, U, Args...>;
 
 	template <typename U>
 	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		return std::hash<std::string>()(ctti::str_type<U>::get());
+		return std::hash<const char*>()(ctti::str_type<U>::get());
 	}
 
 	template <typename U>
@@ -66,15 +68,16 @@ public:
 			throw std::exception();
 		}
 	}
-
-	std::shared_ptr<T> create(const std::string& key_impl_str, Args&&... data) const
+	
+	template <typename TYPE_KEY = const char*>
+	std::shared_ptr<T> create(TYPE_KEY key_impl_str, Args&&... data) const
 	{
-		key_impl keyimpl = std::hash<std::string>()(key_impl_str);
+		key_impl keyimpl = std::hash<TYPE_KEY>()(key_impl_str);
 		return create(keyimpl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
-	std::shared_ptr<U> create(Args&&... data) const
+	std::shared_ptr<U> create_specialized(Args&&... data) const
 	{
 		return std::dynamic_pointer_cast<U>(create(get_key<U>(), std::forward<Args>(data)...));
 	}
