@@ -14,6 +14,25 @@ template <typename T, typename U, typename... Args>
 class factory_registrator;
 
 template <typename T, typename... Args>
+class factory;
+
+namespace detail {
+
+	template <typename TYPE_KEY>
+	size_t get_hash(TYPE_KEY key_impl_str)
+	{
+		return std::hash<TYPE_KEY>()(key_impl_str);
+	}
+
+	template <>
+	size_t get_hash<const char*>(const char* key_impl_str)
+	{
+		return std::hash<std::string>()(std::string(key_impl_str));
+	}
+
+}
+
+template <typename T, typename... Args>
 class factory
 {
 public:
@@ -28,7 +47,7 @@ public:
 	template <typename U>
 	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		return std::hash<const char*>()(ctti::str_type<U>::get());
+		return std::hash<std::string>()(ctti::str_type<U>::get());
 	}
 
 	template <typename U>
@@ -69,11 +88,11 @@ public:
 		}
 	}
 	
-	template <typename TYPE_KEY = const char*>
+	template <typename TYPE_KEY>
 	std::shared_ptr<T> create(TYPE_KEY key_impl_str, Args&&... data) const
 	{
-		key_impl keyimpl = std::hash<TYPE_KEY>()(key_impl_str);
-		return create(keyimpl, std::forward<Args>(data)...);
+		auto keyimpl = detail::get_hash(key_impl_str);
+		return _create(keyimpl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
@@ -89,7 +108,7 @@ public:
 	}
 
 protected:
-	std::shared_ptr<T> create(const key_impl& keyimpl, Args&&... data) const
+	std::shared_ptr<T> _create(const key_impl& keyimpl, Args&&... data) const
 	{
 		auto it = _map_registrators.find(keyimpl);
 		if (it == _map_registrators.end())
@@ -147,12 +166,12 @@ protected:
 template <typename ... Args>
 struct code
 {
-	using factory = factory<code, Args...>;
+	using factory = dp14::factory<code, Args...>;
 	virtual ~code() { ; }
 };
 
 template <typename ... Args>
-using repository = typename code<Args...>::factory;
+using repository = typename dp14::code<Args...>::factory;
 
 }
 

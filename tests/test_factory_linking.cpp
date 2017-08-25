@@ -91,14 +91,14 @@ int main()
 		load_library foo("foo");
 
 		// equivalent ways of create A
-		std::shared_ptr<Base> a1 = Base::get_factory().create<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = Base::get_factory().create<A>("first parameter", 2);
-		std::shared_ptr<Base> a3 = Base::get_factory().create(A::KEY(), "first parameter", 2);
+		std::shared_ptr<Base> a1 = Base::get_factory().create_specialized<A>("first parameter", 2);
+		std::shared_ptr<A> a2 = Base::get_factory().create_specialized<A>("first parameter", 33);
+		std::shared_ptr<Base> a3 = Base::get_factory().create(A::KEY(), "first parameter", 444);
 
 		// equivalent ways of create B
-		std::shared_ptr<Base> b1 = Base::get_factory().create<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = Base::get_factory().create<B>("first parameter", 2);
-		std::shared_ptr<Base> b3 = Base::get_factory().create(B::KEY(), "first parameter", 2);
+		std::shared_ptr<Base> b1 = Base::get_factory().create_specialized<B>("first parameter", 7);
+		std::shared_ptr<B> b2 = Base::get_factory().create_specialized<B>("first parameter", 88);
+		std::shared_ptr<Base> b3 = Base::get_factory().create(B::KEY(), "first parameter", 999);
 
 		assert(a1 != a2);
 		assert(a3 != b1);

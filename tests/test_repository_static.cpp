@@ -2,40 +2,60 @@
 #include <tuple>
 #include <map>
 #include <functional>
+#include <metacommon/common.h>
 #include "../factory.h"
 
-struct foo : dp14::code<float>
+using repo = dp14::repository<std::string, std::string>;
+
+struct foo : dp14::code<std::string, std::string>
 {
-    DEFINE_KEY(foo)
-    foo(float value)
+    foo(const std::string& topic, const std::string& payload)
     {
-        std::cout << "code 1 with value: " << value << std::endl;
+		std::cout << "foo: topic: " << topic << ", payload = " << payload << std::endl;
     }
 };
+// DEFINE_HASH_CUSTOM(foo, float, 1.0f)
+DEFINE_HASH(foo)
 
-struct reb : dp14::code<float>
+
+struct reb : dp14::code<std::string, std::string>
 {
-    DEFINE_KEY(reb)
-    reb(float value)
+    reb(const std::string& topic, const std::string& payload)
     {
-        std::cout << "code 2 with value: " << value << std::endl;
+		std::cout << "reb: topic: " << topic << ", payload = " << payload << std::endl;
     }
 };
+// DEFINE_HASH_CUSTOM(reb, float, 2.0f)
+DEFINE_HASH(reb)
 
-namespace regs
+
+struct tol : dp14::code<std::string, std::string>
 {
-    dp14::repository<float>::registrator<foo> reg1;
-    dp14::repository<float>::registrator<reb> reg2;
+    tol(const std::string& topic, const std::string& payload)
+    {
+		std::cout << "tol: topic: " << topic << ", payload = " << payload << std::endl;
+    }
+};
+// DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature")
+// DEFINE_HASH(tol)
+namespace std
+{
+	template <>
+	struct hash<tol>
+	{
+		size_t operator()() const { static size_t h = std::hash<std::string>()("/homie/salon/temperature"); return h; }
+	};
 }
+
 
 int main()
 {
-    auto t = std::make_tuple(1.0, 2.0, 3.0, 4.0, 5.0);
-    mc::foreach_tuple(t, [&](auto elem)
-    {
-        dp14::repository<float>::instance().create("foo", elem);
-        dp14::repository<float>::instance().create("reb", elem);
-    });
+    repo r;
+    repo::reg<foo> r1(r);
+    repo::reg<reb> r2(r);
+    repo::reg<tol> r3(r);
+    r.create("/homie/salon/temperature", "tol", "24.0");
 
     return 0;
 }
+

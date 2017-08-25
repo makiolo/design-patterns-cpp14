@@ -9,6 +9,25 @@ template <typename T, typename U, typename... Args>
 class memoize_registrator;
 
 template <typename T, typename... Args>
+class memoize;
+
+namespace detail {
+
+	template <typename TYPE_KEY>
+	size_t get_hash(TYPE_KEY key_impl_str)
+	{
+		return std::hash<TYPE_KEY>()(key_impl_str);
+	}
+
+	template <>
+	size_t get_hash<const char*>(const char* key_impl_str)
+	{
+		return std::hash<std::string>()(std::string(key_impl_str));
+	}
+
+}
+
+template <typename T, typename... Args>
 class memoize
 {
 public:
@@ -70,9 +89,10 @@ public:
 		}
 	}
 
-	inline bool exists(const std::string& keyimpl_str, Args&&... data) const
+	template <typename TYPE_KEY = const char*>
+	inline bool exists(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
-		key_impl keyimpl = std::hash<std::string>()(keyimpl_str);
+		auto keyimpl = detail::get_hash(keyimpl_str);
 		return exists(keyimpl, std::forward<Args>(data)...);
 	}
 
@@ -82,9 +102,10 @@ public:
 		return exists(get_key<U>(), std::forward<Args>(data)...);
 	}
 
-	std::shared_ptr<T> get(const std::string& keyimpl_str, Args&&... data) const
+	template <typename TYPE_KEY = const char*>
+	std::shared_ptr<T> get(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
-		key_impl keyimpl = std::hash<std::string>()(keyimpl_str);
+		auto keyimpl = detail::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		return get(keyimpl, key, std::forward<Args>(data)...);
 	}

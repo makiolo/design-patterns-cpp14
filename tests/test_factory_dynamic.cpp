@@ -36,7 +36,8 @@ public:
 };
 
 // no-macros option
-namespace std {
+namespace std
+{
 	template <>
 	struct hash<B>
 	{
@@ -55,13 +56,13 @@ int main()
 
 	{
 		// equivalent ways of create A
-		std::shared_ptr<Base> a1 = f.create<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = f.create<A>("first parameter", 2);
+		std::shared_ptr<Base> a1 = f.create_specialized<A>("first parameter", 2);
+		std::shared_ptr<A> a2 = f.create_specialized<A>("first parameter", 2);
 		std::shared_ptr<Base> a3 = f.create("A", "first parameter", 2);
 
 		// equivalent ways of create B
-		std::shared_ptr<Base> b1 = f.create<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = f.create<B>("first parameter", 2);
+		std::shared_ptr<Base> b1 = f.create_specialized<B>("first parameter", 2);
+		std::shared_ptr<B> b2 = f.create_specialized<B>("first parameter", 2);
 		std::shared_ptr<Base> b3 = f.create("B", "first parameter", 2);
 
 		assert(a1 != a2);

@@ -8,11 +8,11 @@
     #ifdef foo_EXPORTS
         #define foo_API __declspec(dllexport)
     #else
-	#define foo_API __declspec(dllimport)
+		#define foo_API __declspec(dllimport)
     #endif
 #else
     #ifdef foo_EXPORTS
-	#define foo_API __attribute__((visibility("default")))
+		#define foo_API __attribute__((visibility("default")))
     #else
         #define foo_API
     #endif

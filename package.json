@@ -3,7 +3,10 @@
   "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
   "scripts": {
+    "ci": "cmaki ci",
     "clean": "cmaki clean",
+    "setup": "cmaki setup",
+    "compile": "cmaki compile",
     "install": "cmaki install",
     "test": "cmaki tests",
     "upload": "cmaki upload"
@@ -26,10 +29,10 @@
     "test": "tests"
   },
   "devDependencies": {
-    "cmaki": "https://github.com/makiolo/cmaki",
-    "cmaki_generator": "https://github.com/makiolo/cmaki_generator"
+    "cmaki": "makiolo/cmaki",
+    "cmaki_generator": "makiolo/cmaki_generator"
   },
   "dependencies": {
-    "metacommon": "^1.0.1"
+    "metacommon": "makiolo/metacommon"
   }
 }
