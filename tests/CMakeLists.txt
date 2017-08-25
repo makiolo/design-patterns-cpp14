@@ -12,4 +12,4 @@ if(WIN32)
 else()
 	cmaki_test(factory_linking test_factory_linking.cpp DEPENDS foo dl)
 endif()
-
+cmaki_test(repository_static test_repository_static.cpp)
