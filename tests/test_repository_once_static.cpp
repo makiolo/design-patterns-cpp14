@@ -9,7 +9,7 @@ using repo = dp14::repository_once<float, std::string>;
 
 struct foo : dp14::code_once<float, std::string>
 {
-    virtual float execute(const std::string& payload)
+    virtual float execute(const std::string& payload) const
     {
 	std::cout << "foo: payload = " << payload << std::endl;
 	return 1.0f;
@@ -19,7 +19,7 @@ DEFINE_HASH_CUSTOM(foo, float, 1.0f)
 
 struct reb : dp14::code_once<float, std::string>
 {   
-    virtual float execute(const std::string& payload)
+    virtual float execute(const std::string& payload) const
     {
     	std::cout << "reb: payload = " << payload << std::endl;
 	return 2.0f;
@@ -29,7 +29,7 @@ DEFINE_HASH_CUSTOM(reb, float, 2.0f)
 
 struct tol : dp14::code_once<float, std::string>
 {
-    virtual float execute(const std::string& payload)
+    virtual float execute(const std::string& payload) const
     {
 	std::cout << "tol: payload = " << payload << std::endl;
 	return 3.0f;
