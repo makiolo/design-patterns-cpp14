@@ -5,31 +5,34 @@
 #include <metacommon/common.h>
 #include "../factory.h"
 
-using repo = dp14::repository<std::string, std::string>;
+using repo = dp14::repository<float, std::string, std::string>;
 
-struct foo : dp14::code<std::string, std::string>
+struct foo : dp14::code<float, std::string, std::string>
 {
-    foo(const std::string& topic, const std::string& payload)
+    virtual float execute(const std::string& topic, const std::string& payload) const
     {
-		std::cout << "foo: topic: " << topic << ", payload = " << payload << std::endl;
+	std::cout << "foo: topic: " << topic << ", payload = " << payload << std::endl;
+	return 1.0f;
     }
 };
 DEFINE_HASH_CUSTOM(foo, float, 1.0f)
 
-struct reb : dp14::code<std::string, std::string>
+struct reb : dp14::code<float, std::string, std::string>
 {
-    reb(const std::string& topic, const std::string& payload)
+    virtual float execute(const std::string& topic, const std::string& payload) const
     {
-		std::cout << "reb: topic: " << topic << ", payload = " << payload << std::endl;
+	std::cout << "reb: topic: " << topic << ", payload = " << payload << std::endl;
+	return 2.0f;
     }
 };
 DEFINE_HASH_CUSTOM(reb, float, 2.0f)
 
-struct tol : dp14::code<std::string, std::string>
+struct tol : dp14::code<float, std::string, std::string>
 {
-    tol(const std::string& topic, const std::string& payload)
+    virtual float execute(const std::string& topic, const std::string& payload) const
     {
-		std::cout << "tol: topic: " << topic << ", payload = " << payload << std::endl;
+	std::cout << "tol: topic: " << topic << ", payload = " << payload << std::endl;
+	return 3.0f;
     }
 };
 DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature")
