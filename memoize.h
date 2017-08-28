@@ -120,12 +120,7 @@ public:
 	{
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
-		bool preexists = exists(keyimpl, std::forward<Args>(data)...);
 		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
-		if(!preexists)
-		{
-			code->set( code->execute(std::forward<Args>(data)...) );
-		}
 		// TODO: meterlo con timestamp, para caducarlo por tiempo
 		// TODO: o usar un async_delay para caducar por tiempo
 		_map_cache_shared.emplace(key, code);
@@ -256,8 +251,7 @@ struct code_once
 		: _r(execute(std::forward<Args>(data)...))
 	{ ; }
 	virtual ~code_once() { ; }
-	void set(Result r) {_r = std::move(r);}
-	Result get() const {return _r;}
+	const Result& get() const {return _r;}
 	virtual Result execute(const Args&...) const = 0;
 protected:
 	Result _r;
