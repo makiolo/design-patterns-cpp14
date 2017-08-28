@@ -112,13 +112,14 @@ public:
 	{
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
-		return get(keyimpl, key, std::forward<Args>(data)...);
+		return _get(keyimpl, key, std::forward<Args>(data)...);
 	}
 
 	template <typename TYPE_KEY>
 	void execute(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
-		_map_cache_shared.emplace(key, get(keyimpl, std::forward<Args>(data)...));
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		_map_cache_shared.emplace(key, _get(keyimpl, key, std::forward<Args>(data)...));
 	}
 	
 	void clear()
@@ -139,7 +140,7 @@ public:
 	}
 
 protected:
-	std::shared_ptr<T> get(const key_impl& keyimpl, key_cache key, Args&&... data) const
+	std::shared_ptr<T> _get(const key_impl& keyimpl, key_cache key, Args&&... data) const
 	{
 		cache_iterator it = _exists(keyimpl, std::forward<Args>(data)...);
 		if (it != _map_cache.end())
@@ -162,7 +163,7 @@ protected:
 	std::shared_ptr<T> get(const key_impl& keyimpl, Args&&... data) const
 	{
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
-		return get(keyimpl, key, std::forward<Args>(data)...);
+		return _get(keyimpl, key, std::forward<Args>(data)...);
 	}
 
 	bool exists(const key_impl& keyimpl, Args&&... data) const
