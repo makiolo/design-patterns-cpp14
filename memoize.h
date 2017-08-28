@@ -240,15 +240,18 @@ protected:
 	memoize<T, Args...>& _m;
 };
 
-template <typename ... Args>
+template <typename Result, typename ... Args>
 struct code_once
 {
 	using memoize = dp14::memoize<code_once, Args...>;
 	virtual ~code_once() { ; }
+	
+protected:
+	Result _r;
 };
 
-template <typename ... Args>
-using repository_once = typename dp14::code_once<Args...>::memoize;
+template <typename Result, typename ... Args>
+using repository_once = typename dp14::code_once<Result, Args...>::memoize;
 
 }
 
