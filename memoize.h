@@ -116,16 +116,16 @@ public:
 	}
 
 	template <typename TYPE_KEY>
-	void execute(TYPE_KEY keyimpl_str, Args&&... data) const
+	auto execute(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		bool preexists = exists(keyimpl, std::forward<Args>(data)...);
 		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
-		auto result = code->execute(std::forward<Args>(data)...);
 		if(!preexists)
-			code->set_result(result);
+			code->set( code->execute(std::forward<Args>(data)...) );
 		_map_cache_shared.emplace(key, code);
+		return code->get();
 	}
 	
 	void clear()
@@ -249,9 +249,9 @@ struct code_once
 {
 	using memoize = dp14::memoize<code_once, Args...>;
 	virtual ~code_once() { ; }
-	void set_result(Result r) {_r = std::move(r);}
+	void set(Result r) {_r = std::move(r);}
+	Result get() const {return _r;}
 	virtual Result execute(Args&&... args) = 0;
-	
 protected:
 	Result _r;
 };
