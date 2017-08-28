@@ -163,15 +163,20 @@ protected:
 	factory<T, Args...>& _f;
 };
 
-template <typename ... Args>
+template <typename Result, typename ... Args>
 struct code
 {
 	using factory = dp14::factory<code, Args...>;
 	virtual ~code() { ; }
+	void set(Result r) {_r = std::move(r);}
+	Result get() const {return _r;}
+	virtual Result execute(Args&&... args) = 0;
+protected:
+	Result _r;
 };
 
-template <typename ... Args>
-using repository = typename dp14::code<Args...>::factory;
+template <typename Result, typename ... Args>
+using repository = typename dp14::code<Result, Args...>::factory;
 
 }
 
