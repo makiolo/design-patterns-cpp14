@@ -176,7 +176,7 @@ struct code
 {
 	using factory = dp14::factory<code, Args...>;
 	explicit code(const Args&... data)
-		: _r(execute(std::forward<Args>(data)...))
+		: _r(execute(data...))
 	{ ; }
 	virtual ~code() { ; }
 	const Result& get() const {return _r;}
