@@ -248,7 +248,7 @@ struct code_once
 {
 	using memoize = dp14::memoize<code_once, Args...>;
 	explicit code_once(const Args&... data)
-		: _r(execute(std::forward<Args>(data)...))
+		: _r(execute(data...))
 	{ ; }
 	virtual ~code_once() { ; }
 	const Result& get() const {return _r;}
