@@ -121,9 +121,9 @@ public:
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		bool preexists = exists(keyimpl, std::forward<Args>(data)...);
-		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
+		auto code = _get(keyimpl, key, data...);
 		if(!preexists)
-			code->set( code->execute(std::forward<Args>(data)...) );
+			code->set( code->execute(data...) );
 		// TODO: meterlo con timestamp, para caducarlo por tiempo
 		_map_cache_shared.emplace(key, code);
 		return code->get();
