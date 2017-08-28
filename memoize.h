@@ -118,8 +118,10 @@ public:
 	template <typename TYPE_KEY>
 	void execute(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
+		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		_map_cache_shared.emplace(key, _get(keyimpl, key, std::forward<Args>(data)...));
+		// TODO: return cached result
 	}
 	
 	void clear()
