@@ -124,6 +124,7 @@ public:
 		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
 		if(!preexists)
 			code->set( code->execute(std::forward<Args>(data)...) );
+		// TODO: meterlo con timestamp, para caducarlo por tiempo
 		_map_cache_shared.emplace(key, code);
 		return code->get();
 	}
