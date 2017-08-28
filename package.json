@@ -33,6 +33,7 @@
     "cmaki_generator": "makiolo/cmaki_generator"
   },
   "dependencies": {
-    "metacommon": "makiolo/metacommon"
+    "metacommon": "makiolo/metacommon",
+    "boost-headers": "git@github.com:makiolo/cmaki_generator.git/packages/boost"
   }
 }
