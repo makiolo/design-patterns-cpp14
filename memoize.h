@@ -251,7 +251,7 @@ struct code_once
 	virtual ~code_once() { ; }
 	void set(Result r) {_r = std::move(r);}
 	Result get() const {return _r;}
-	virtual Result execute(Args&&... args) = 0;
+	virtual Result execute(Args&&... args) const = 0;
 protected:
 	Result _r;
 };
