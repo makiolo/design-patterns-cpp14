@@ -176,7 +176,7 @@ struct code
 {
 	using factory = dp14::factory<code, Args...>;
 	virtual ~code() { ; }
-	virtual Result execute(Args&&... args) const = 0;
+	virtual Result execute(const Args&... args) const = 0;
 };
 
 template <typename Result, typename ... Args>
