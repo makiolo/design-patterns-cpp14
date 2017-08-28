@@ -100,6 +100,14 @@ public:
 	{
 		return std::dynamic_pointer_cast<U>(_create(get_key<U>(), std::forward<Args>(data)...));
 	}
+	
+	template <typename TYPE_KEY>
+	auto execute(TYPE_KEY keyimpl_str, Args&&... data) const
+	{
+		auto keyimpl = detail::factory::get_hash(keyimpl_str);
+		auto code = _create(keyimpl, std::forward<Args>(data)...);
+		return code->execute(std::forward<Args>(data)...);
+	}
 
 	static typename T::factory& instance()
 	{
@@ -168,11 +176,7 @@ struct code
 {
 	using factory = dp14::factory<code, Args...>;
 	virtual ~code() { ; }
-	void set(Result r) {_r = std::move(r);}
-	Result get() const {return _r;}
 	virtual Result execute(Args&&... args) const = 0;
-protected:
-	Result _r;
 };
 
 template <typename Result, typename ... Args>
