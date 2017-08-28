@@ -105,8 +105,8 @@ public:
 	auto execute(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
 		auto keyimpl = detail::factory::get_hash(keyimpl_str);
-		auto code = _create(keyimpl, std::forward<Args>(data)...);
-		return code->execute(std::forward<Args>(data)...);
+		auto code = _create(keyimpl, data...);
+		return code->execute(data...);
 	}
 
 	static typename T::factory& instance()
