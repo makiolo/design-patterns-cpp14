@@ -58,11 +58,11 @@ int main()
 	repo::reg<foo> r1(r);
 	repo::reg<reb> r2(r);
 	repo::reg<tol> r3(r);
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute("/homie/salon/temperature", "25.0");
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
 	return 0;
 }
