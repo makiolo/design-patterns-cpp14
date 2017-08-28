@@ -175,12 +175,9 @@ template <typename Result, typename ... Args>
 struct code
 {
 	using factory = dp14::factory<code, Args...>;
-	explicit code(const Args&... data)
-		: _r(execute(data...))
-	{ ; }
 	virtual ~code() { ; }
+	void set(Result r) {_r = std::move(r);}
 	const Result& get() const {return _r;}
-	virtual Result execute(const Args&...) const = 0;
 protected:
 	Result _r;
 };
