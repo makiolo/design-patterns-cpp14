@@ -106,7 +106,7 @@ public:
 	{
 		auto keyimpl = detail::factory::get_hash(keyimpl_str);
 		auto code = _create(keyimpl, std::forward<Args>(data)...);
-		return code->execute(std::forward<Args>(data)...);
+		return code->get();
 	}
 
 	static typename T::factory& instance()
@@ -179,7 +179,6 @@ struct code
 		: _r(execute(std::forward<Args>(data)...))
 	{ ; }
 	virtual ~code() { ; }
-	void set(Result r) {_r = std::move(r);}
 	Result get() const {return _r;}
 	virtual Result execute(const Args&...) const = 0;
 protected:
