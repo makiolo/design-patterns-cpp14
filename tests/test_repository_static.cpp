@@ -9,6 +9,7 @@ using repo = dp14::repository<float, std::string>;
 
 struct foo : dp14::code<float, std::string>
 {
+	explicit foo(const std::string& payload) : dp14::code<float, std::string>(payload) { ; }
 	float execute(const std::string& payload) const override
 	{
 		std::cout << "foo: payload = " << payload << std::endl;
@@ -19,6 +20,7 @@ DEFINE_HASH_CUSTOM(foo, float, 1.0f);
 
 struct reb : dp14::code<float, std::string>
 {
+	explicit reb(const std::string& payload) : dp14::code<float, std::string>(payload) { ; }
 	float execute(const std::string& payload) const override
 	{	
 		std::cout << "reb: payload = " << payload << std::endl;	
@@ -29,6 +31,7 @@ DEFINE_HASH_CUSTOM(reb, float, 2.0f);
 
 struct tol : dp14::code<float, std::string>
 {
+	explicit tol(const std::string& payload) : dp14::code<float, std::string>(payload) { ; }
 	float execute(const std::string& payload) const override
 	{
 		std::cout << "tol: payload = " << payload << std::endl;
