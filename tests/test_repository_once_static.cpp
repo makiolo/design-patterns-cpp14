@@ -5,9 +5,9 @@
 #include <metacommon/common.h>
 #include "../memoize.h"
 
-using repo = dp14::repository_once<std::string>;
+using repo = dp14::repository_once<float, std::string>;
 
-struct foo : dp14::code_once<std::string>
+struct foo : dp14::code_once<float, std::string>
 {
     foo(const std::string& payload)
     {
@@ -16,7 +16,7 @@ struct foo : dp14::code_once<std::string>
 };
 DEFINE_HASH_CUSTOM(foo, float, 1.0f)
 
-struct reb : dp14::code_once<std::string>
+struct reb : dp14::code_once<float, std::string>
 {
     reb(const std::string& payload)
     {
@@ -25,7 +25,7 @@ struct reb : dp14::code_once<std::string>
 };
 DEFINE_HASH_CUSTOM(reb, float, 2.0f)
 
-struct tol : dp14::code_once<std::string>
+struct tol : dp14::code_once<float, std::string>
 {
     tol(const std::string& payload)
     {
