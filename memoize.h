@@ -247,7 +247,7 @@ template <typename Result, typename ... Args>
 struct code_once
 {
 	using memoize = dp14::memoize<code_once, Args...>;
-	explicit code_once(Args&&... data)
+	explicit code_once(const Args&... data)
 		: _r(execute(std::forward<Args>(data)...))
 	{ ; }
 	virtual ~code_once() { ; }
