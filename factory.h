@@ -105,8 +105,8 @@ public:
 	auto execute(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
 		auto keyimpl = detail::factory::get_hash(keyimpl_str);
-		auto code = _create(keyimpl, data...);
-		return code->execute(data...);
+		auto code = _create(keyimpl, std::forward<Args>(data)...);
+		return code->execute(std::forward<Args>(data)...);
 	}
 
 	static typename T::factory& instance()
@@ -175,8 +175,15 @@ template <typename Result, typename ... Args>
 struct code
 {
 	using factory = dp14::factory<code, Args...>;
+	explicit code(Args&&... data)
+		: _r(execute(std::forward<Args>(data)...))
+	{ ; }
 	virtual ~code() { ; }
+	void set(Result r) {_r = std::move(r);}
+	Result get() const {return _r;}
 	virtual Result execute(Args&&...) const = 0;
+protected:
+	Result _r;
 };
 
 template <typename Result, typename ... Args>
