@@ -175,7 +175,7 @@ template <typename Result, typename ... Args>
 struct code
 {
 	using factory = dp14::factory<code, Args...>;
-	explicit code(Args&&... data)
+	explicit code(const Args&... data)
 		: _r(execute(std::forward<Args>(data)...))
 	{ ; }
 	virtual ~code() { ; }
