@@ -9,27 +9,30 @@ using repo = dp14::repository_once<float, std::string>;
 
 struct foo : dp14::code_once<float, std::string>
 {
-    foo(const std::string& payload)
+    virtual float execute(const std::string& payload)
     {
-		std::cout << "foo: payload = " << payload << std::endl;
+	std::cout << "foo: payload = " << payload << std::endl;
+	return 1.0f;
     }
 };
 DEFINE_HASH_CUSTOM(foo, float, 1.0f)
 
 struct reb : dp14::code_once<float, std::string>
-{
-    reb(const std::string& payload)
+{   
+    virtual float execute(const std::string& payload)
     {
-		std::cout << "reb: payload = " << payload << std::endl;
+    	std::cout << "reb: payload = " << payload << std::endl;
+	return 2.0f;
     }
 };
 DEFINE_HASH_CUSTOM(reb, float, 2.0f)
 
 struct tol : dp14::code_once<float, std::string>
 {
-    tol(const std::string& payload)
+    virtual float execute(const std::string& payload)
     {
-		std::cout << "tol: payload = " << payload << std::endl;
+	std::cout << "tol: payload = " << payload << std::endl;
+	retrurn 3.0f;
     }
 };
 DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature")
@@ -40,23 +43,23 @@ int main()
 	repo::reg<foo> r1(r);
 	repo::reg<reb> r2(r);
 	repo::reg<tol> r3(r);
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute("/homie/salon/temperature", "25.0");
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
 	std::cout << "clearing cache" << std::endl;
 	r.clear();
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "24.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute("/homie/salon/temperature", "25.0");
-	r.execute(1.0f, "register with 1.0f");
-	r.execute(1.0f, "register with 1.0f");
-	r.execute(2.0f, "register with 2.0f");
-	r.execute(2.0f, "register with 2.0f");
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
+	std::cout << r.execute(1.0f, "register with 1.0f") << std::endl;
+	std::cout << r.execute(1.0f, "register with 1.0f") << std::endl;
+	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
+	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
 	return 0;
 }
