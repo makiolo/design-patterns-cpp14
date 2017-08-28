@@ -48,7 +48,7 @@ public:
 	template <typename U>					
 	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		return std::hash<std::string>()(ctti::str_type<U>::get());
+		return detail::memoize::get_hash(ctti::str_type<U>::get());
 	}
 
 	template <typename U>
@@ -120,8 +120,12 @@ public:
 	{
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
-		_map_cache_shared.emplace(key, _get(keyimpl, key, std::forward<Args>(data)...));
-		// TODO: return cached result
+		bool preexists = exists(keyimpl, std::forward<Args>(data)...);
+		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
+		auto result = code->execute(std::forward<Args>(data)...);
+		if(!preexists)
+			code->set_result(result);
+		_map_cache_shared.emplace(key, code);
 	}
 	
 	void clear()
@@ -245,6 +249,8 @@ struct code_once
 {
 	using memoize = dp14::memoize<code_once, Args...>;
 	virtual ~code_once() { ; }
+	void set_result(Result r) {_r = std::move(r);}
+	virtual Result execute(Args&&... args) = 0;
 	
 protected:
 	Result _r;
