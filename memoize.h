@@ -12,19 +12,21 @@ template <typename T, typename... Args>
 class memoize;
 
 namespace detail {
+	namespace memoize {
 
-	template <typename TYPE_KEY>
-	size_t get_hash(TYPE_KEY key_impl_str)
-	{
-		return std::hash<TYPE_KEY>()(key_impl_str);
+		template <typename TYPE_KEY>
+		size_t get_hash(TYPE_KEY key_impl_str)
+		{
+			return std::hash<TYPE_KEY>()(key_impl_str);
+		}
+
+		template <>
+		size_t get_hash<const char*>(const char* key_impl_str)
+		{
+			return std::hash<std::string>()(std::string(key_impl_str));
+		}
+
 	}
-
-	template <>
-	size_t get_hash<const char*>(const char* key_impl_str)
-	{
-		return std::hash<std::string>()(std::string(key_impl_str));
-	}
-
 }
 
 template <typename T, typename... Args>
@@ -39,6 +41,8 @@ public:
 	using cache_iterator = typename cache_container::const_iterator;
 	template <typename U>
 	using registrator = memoize_registrator<T, U, Args...>;
+	template <typename U>
+	using reg = memoize_registrator<T, U, Args...>;
 
 	template <typename U>					
 	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
@@ -89,10 +93,10 @@ public:
 		}
 	}
 
-	template <typename TYPE_KEY = const char*>
+	template <typename TYPE_KEY>
 	inline bool exists(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
-		auto keyimpl = detail::get_hash(keyimpl_str);
+		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		return exists(keyimpl, std::forward<Args>(data)...);
 	}
 
@@ -102,10 +106,10 @@ public:
 		return exists(get_key<U>(), std::forward<Args>(data)...);
 	}
 
-	template <typename TYPE_KEY = const char*>
+	template <typename TYPE_KEY>
 	std::shared_ptr<T> get(TYPE_KEY keyimpl_str, Args&&... data) const
 	{
-		auto keyimpl = detail::get_hash(keyimpl_str);
+		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		return get(keyimpl, key, std::forward<Args>(data)...);
 	}
@@ -219,6 +223,16 @@ protected:
 protected:
 	memoize<T, Args...>& _m;
 };
+
+template <typename ... Args>
+struct code_once
+{
+	using memoize = dp14::memoize<code_once, Args...>;
+	virtual ~code_once() { ; }
+};
+
+template <typename ... Args>
+using repository_once = typename dp14::code_once<Args...>::memoize;
 
 }
 

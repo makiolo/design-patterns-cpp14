@@ -17,19 +17,19 @@ template <typename T, typename... Args>
 class factory;
 
 namespace detail {
+	namespace factory {
+		template <typename TYPE_KEY>
+		size_t get_hash(TYPE_KEY key_impl_str)
+		{
+			return std::hash<TYPE_KEY>()(key_impl_str);
+		}
 
-	template <typename TYPE_KEY>
-	size_t get_hash(TYPE_KEY key_impl_str)
-	{
-		return std::hash<TYPE_KEY>()(key_impl_str);
+		template <>
+		size_t get_hash<const char*>(const char* key_impl_str)
+		{
+			return std::hash<std::string>()(std::string(key_impl_str));
+		}
 	}
-
-	template <>
-	size_t get_hash<const char*>(const char* key_impl_str)
-	{
-		return std::hash<std::string>()(std::string(key_impl_str));
-	}
-
 }
 
 template <typename T, typename... Args>
@@ -47,7 +47,7 @@ public:
 	template <typename U>
 	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
-		return std::hash<std::string>()(ctti::str_type<U>::get());
+		return detail::factory::get_hash(ctti::str_type<U>::get());
 	}
 
 	template <typename U>
@@ -91,14 +91,14 @@ public:
 	template <typename TYPE_KEY>
 	std::shared_ptr<T> create(TYPE_KEY key_impl_str, Args&&... data) const
 	{
-		auto keyimpl = detail::get_hash(key_impl_str);
+		auto keyimpl = detail::factory::get_hash(key_impl_str);
 		return _create(keyimpl, std::forward<Args>(data)...);
 	}
 
 	template <typename U>
 	std::shared_ptr<U> create_specialized(Args&&... data) const
 	{
-		return std::dynamic_pointer_cast<U>(create(get_key<U>(), std::forward<Args>(data)...));
+		return std::dynamic_pointer_cast<U>(_create(get_key<U>(), std::forward<Args>(data)...));
 	}
 
 	static typename T::factory& instance()
