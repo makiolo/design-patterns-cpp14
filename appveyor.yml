@@ -8,5 +8,5 @@ configuration:
   - Debug
   - Release
 
-build_script:
+install:
   - ps: $source = "https://raw.githubusercontent.com/makiolo/cmaki/master/ci.cmd"; $dest = $env:TEMP + "\ci.cmd"; $WebClient = New-Object System.Net.WebClient; $WebClient.DownloadFile($source,$dest); Invoke-Expression $dest
