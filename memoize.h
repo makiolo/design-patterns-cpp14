@@ -252,6 +252,9 @@ template <typename Result, typename ... Args>
 struct code_once
 {
 	using memoize = dp14::memoize<code_once, Args...>;
+	explicit code_once(Args&&... data)
+		: _r(execute(std::forward<Args>(data)...))
+	{ ; }
 	virtual ~code_once() { ; }
 	void set(Result r) {_r = std::move(r);}
 	Result get() const {return _r;}
