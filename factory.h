@@ -181,7 +181,7 @@ struct code
 	virtual ~code() { ; }
 	void set(Result r) {_r = std::move(r);}
 	Result get() const {return _r;}
-	virtual Result execute(Args&&...) const = 0;
+	virtual Result execute(const Args&...) const = 0;
 protected:
 	Result _r;
 };
