@@ -179,7 +179,7 @@ struct code
 		: _r(execute(std::forward<Args>(data)...))
 	{ ; }
 	virtual ~code() { ; }
-	Result get() const {return _r;}
+	const Result& get() const {return _r;}
 	virtual Result execute(const Args&...) const = 0;
 protected:
 	Result _r;
