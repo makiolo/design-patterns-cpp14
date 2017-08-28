@@ -32,7 +32,7 @@ struct tol : dp14::code_once<float, std::string>
     virtual float execute(const std::string& payload)
     {
 	std::cout << "tol: payload = " << payload << std::endl;
-	retrurn 3.0f;
+	return 3.0f;
     }
 };
 DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature")
