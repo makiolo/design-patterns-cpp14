@@ -9,33 +9,30 @@ using repo = dp14::repository_once<float, std::string>;
 
 struct foo : dp14::code_once<float, std::string>
 {
-	explicit foo(const std::string& payload) : dp14::code_once<float, std::string>(payload) { ; }
-	float execute(const std::string& payload) const override
+	explicit foo(const std::string& payload)
 	{
 		std::cout << "foo: payload = " << payload << std::endl;
-		return 1.0f;
+		set(1.0f);
 	}
 };
 DEFINE_HASH_CUSTOM(foo, float, 1.0f)
 
 struct reb : dp14::code_once<float, std::string>
 {
-	explicit reb(const std::string& payload) : dp14::code_once<float, std::string>(payload) { ; }
-	float execute(const std::string& payload) const override
+	explicit reb(const std::string& payload)
 	{
-		std::cout << "reb: payload = " << payload << std::endl;
-		return 2.0f;
+		std::cout << "reb: payload = " << payload << std::endl;	
+		set(2.0f);
 	}
 };
 DEFINE_HASH_CUSTOM(reb, float, 2.0f)
 
 struct tol : dp14::code_once<float, std::string>
 {
-	explicit tol(const std::string& payload) : dp14::code_once<float, std::string>(payload) { ; }
-	float execute(const std::string& payload) const override
+	explicit tol(const std::string& payload)
 	{
 		std::cout << "tol: payload = " << payload << std::endl;
-		return 3.0f;
+		set(3.0f);
 	}
 };
 DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature")
