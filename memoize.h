@@ -37,6 +37,7 @@ public:
 	using key_impl = size_t;
 	using registrator_function = std::function<std::shared_ptr<T>(Args...)>;
 	using cache_container = std::unordered_map<key_cache, std::weak_ptr<T>>;
+	using cache_shared_container = std::unordered_map<key_cache, std::shared_ptr<T>>;
 	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	using cache_iterator = typename cache_container::const_iterator;
 	template <typename U>
@@ -114,6 +115,17 @@ public:
 		return get(keyimpl, key, std::forward<Args>(data)...);
 	}
 
+	template <typename TYPE_KEY>
+	void execute(TYPE_KEY keyimpl_str, Args&&... data) const
+	{
+		_map_cache_shared.emplace(key, get(keyimpl, std::forward<Args>(data)...));
+	}
+	
+	void clear()
+	{
+		_map_cache_shared.clear();
+	}
+	
 	template <typename U>
 	inline std::shared_ptr<U> get(Args&&... data) const
 	{
@@ -182,6 +194,7 @@ protected:
 protected:
 	registrator_container _map_registrators;
 	mutable cache_container _map_cache;
+	mutable cache_shared_container _map_cache_shared;
 };
 
 template <typename T, typename U, typename... Args>
