@@ -16,8 +16,8 @@ struct foo : dp14::code<float, std::string>
 
 	float execute(const std::string& payload) const override
 	{
-	std::cout << "foo: payload = " << payload << std::endl;
-	return 1.0f;
+		std::cout << "foo: payload = " << payload << std::endl;
+		return 1.0f;
 	}
 };
 DEFINE_HASH_CUSTOM(foo, float, 1.0f);
