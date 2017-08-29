@@ -4,6 +4,8 @@
 #include <functional>
 #include <metacommon/common.h>
 #include "../factory.h"
+#include <gmock/gmock.h>
+class RepositoryStaticTests : testing::Test {};
 
 using repo = dp14::repository<float, std::string>;
 
@@ -37,7 +39,7 @@ struct tol : dp14::code<float, std::string>
 };
 DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature");
 
-int main()
+TEST(RepositoryStaticTests, Test1)
 {
 	repo r;
 	repo::reg<foo> r1(r);
@@ -51,5 +53,4 @@ int main()
 	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
 	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
 	std::cout << r.execute("/homie/salon/temperature", "25.0") << std::endl;
-	return 0;
 }
