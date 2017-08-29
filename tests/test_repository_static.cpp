@@ -22,21 +22,20 @@ struct reb : dp14::code<float, std::string>
 	DEFINE_KEY(reb)
 	explicit reb(const std::string& payload)
 	{
-		std::cout << "reb: payload = " << payload << std::endl;	
+		std::cout << "reb: payload = " << payload << std::endl;
 		set(2.0f);
 	}
 };
 
 struct tol : dp14::code<float, std::string>
 {
-	DEFINE_KEY("/homie/salon/temperature")
 	explicit tol(const std::string& payload)
 	{
 		std::cout << "tol: payload = " << payload << std::endl;
 		set(3.0f);
 	}
 };
-// DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature");
+DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature");
 
 int main()
 {
@@ -44,6 +43,8 @@ int main()
 	repo::reg<foo> r1(r);
 	repo::reg<reb> r2(r);
 	repo::reg<tol> r3(r);
+	std::cout << r.execute("foo", "foooooooooooo") << std::endl;
+	std::cout << r.execute("reb", "reeeeeeeeeeeb") << std::endl;
 	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
 	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
 	std::cout << r.execute("/homie/salon/temperature", "24.0") << std::endl;
