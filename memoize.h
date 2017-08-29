@@ -121,13 +121,19 @@ public:
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
-		// TODO: meterlo con timestamp, para caducarlo por tiempo
-		// TODO: o usar un async_delay para caducar por tiempo
 		_map_cache_shared.emplace(key, code);
 		return code->get();
 	}
 	
-	void clear()
+	template <typename TYPE_KEY>
+	void clear(TYPE_KEY keyimpl_str, Args&&... data) const
+	{
+		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
+		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		_map_cache_shared.erase(key);
+	}
+	
+	void clear() const
 	{
 		_map_cache_shared.clear();
 	}
