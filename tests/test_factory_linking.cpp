@@ -106,7 +106,4 @@ TEST(FactoryLinkingTests, Test1)
 		assert(a3 != b1);
 		assert(b1 != b2);
 	}
-
-	return(0);
 }
-
