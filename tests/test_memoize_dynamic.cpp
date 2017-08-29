@@ -2,6 +2,8 @@
 #include <sstream>
 #include <assert.h>
 #include <memoize.h>
+#include <gmock/gmock.h>
+class MemoizeDynamicTests : testing::Test {};
 
 class Base
 {
@@ -37,7 +39,7 @@ public:
 	virtual ~B() = default;
 };
 
-int main()
+TEST(MemoizeDynamicTests, Test1)
 {
 	Base::memoize m;
 	Base::memoize::registrator<A> reg1(m);
