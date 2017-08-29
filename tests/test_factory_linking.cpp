@@ -2,6 +2,8 @@
 #include "foo.h"
 #include "fooA.h"
 #include "fooB.h"
+#include <gmock/gmock.h>
+class FactoryLinkingTests : testing::Test {};
 
 #ifdef _WIN32
 
@@ -79,7 +81,7 @@ protected:
 
 #endif
 
-int main()
+TEST(FactoryLinkingTests, Test1)
 {
 	using namespace foo;
 	using namespace fooA;
