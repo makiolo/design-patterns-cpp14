@@ -46,13 +46,13 @@ public:
 	using reg = memoize_registrator<T, U, Args...>;
 
 	template <typename U>					
-	typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
+	static typename std::enable_if<(has_key<U>::value), key_impl>::type get_key() const
 	{
 		return detail::memoize::get_hash(ctti::str_type<U>::get());
 	}
 
 	template <typename U>
-	typename std::enable_if<(!has_key<U>::value), key_impl>::type get_key() const
+	static typename std::enable_if<(!has_key<U>::value), key_impl>::type get_key() const
 	{
 		return std::hash<U>()();
 	}
