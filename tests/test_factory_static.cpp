@@ -1,6 +1,8 @@
 #include <iostream>
 #include <assert.h>
 #include <factory.h>
+#include <gmock/gmock.h>
+class FactoryStaticTests : testing::Test {};
 
 class Base
 {
@@ -46,7 +48,7 @@ namespace regB
 	Base::factory::registrator<B> reg;
 }
 
-int main()
+TEST(FactoryStaticTests, Test1)
 {
 	{
 		// equivalent ways of create A
