@@ -1,6 +1,8 @@
 #include <iostream>
 #include <assert.h>
 #include <factory.h>
+#include <gmock/gmock.h>
+class FactoryDynamicTests : testing::Test {};
 
 class Base
 {
@@ -48,7 +50,7 @@ namespace std
 	};
 }
 
-int main()
+TEST(FactoryDynamicTests, Test1)
 {
 	Base::factory f;
 	Base::factory::registrator<A> reg1(f);
