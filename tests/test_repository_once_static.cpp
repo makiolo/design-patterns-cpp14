@@ -61,5 +61,9 @@ int main()
 	std::cout << r.execute(1.0f, "register with 1.0f") << std::endl;
 	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
 	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
+	r.clear();
+	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
+	r.clear(2.0f, "register with 2.0f");
+	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
 	return 0;
 }
