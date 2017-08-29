@@ -65,4 +65,4 @@ matrix:
 
 script:
   - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cppcheck --max-configs=10 --enable=warning,style,performance -j 4 --xml-version=2 --xml -UDEBUG --inline-suppr .; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cppcheck -i=./node_modules/cmaki_generator --max-configs=10 --enable=warning,style,performance -j 4 -UDEBUG --inline-suppr .; fi
