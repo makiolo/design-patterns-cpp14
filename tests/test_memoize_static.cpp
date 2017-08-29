@@ -2,6 +2,8 @@
 #include <sstream>
 #include <assert.h>
 #include <memoize.h>
+#include <gmock/gmock.h>
+class MemoizeStaticTests : testing::Test {};
 
 class Base
 {
@@ -49,25 +51,21 @@ namespace regB
 	Base::memoize::registrator<B> reg;
 }
 
-int main()
+TEST(MemoizeStaticTests, Test1)
 {
-	{
-		// equivalent ways of get A
-		std::shared_ptr<Base> a1 = Base::memoize::instance().get<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = Base::memoize::instance().get<A>("first parameter", 2);
-		std::shared_ptr<Base> a4 = Base::memoize::instance().get(A::KEY(), "first parameter", 4);
+	// equivalent ways of get A
+	std::shared_ptr<Base> a1 = Base::memoize::instance().get<A>("first parameter", 2);
+	std::shared_ptr<A> a2 = Base::memoize::instance().get<A>("first parameter", 2);
+	std::shared_ptr<Base> a4 = Base::memoize::instance().get(A::KEY(), "first parameter", 4);
 
-		// equivalent ways of get B
-		std::shared_ptr<Base> b1 = Base::memoize::instance().get<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = Base::memoize::instance().get<B>("first parameter", 2);
-		std::shared_ptr<Base> b4 = Base::memoize::instance().get(B::KEY(), "first parameter", 4);
+	// equivalent ways of get B
+	std::shared_ptr<Base> b1 = Base::memoize::instance().get<B>("first parameter", 2);
+	std::shared_ptr<B> b2 = Base::memoize::instance().get<B>("first parameter", 2);
+	std::shared_ptr<Base> b4 = Base::memoize::instance().get(B::KEY(), "first parameter", 4);
 
-		assert(a1 == a2);
-		assert(a2 != a4);
+	assert(a1 == a2);
+	assert(a2 != a4);
 
-		assert(b1 == b2);
-		assert(b2 != b4);
-	}
-
-	return(0);
+	assert(b1 == b2);
+	assert(b2 != b4);
 }
