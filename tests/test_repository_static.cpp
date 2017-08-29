@@ -9,33 +9,34 @@ using repo = dp14::repository<float, std::string>;
 
 struct foo : dp14::code<float, std::string>
 {
+	DEFINE_KEY(foo)
 	explicit foo(const std::string& payload)
 	{
 		std::cout << "foo: payload = " << payload << std::endl;
 		set(1.0f);
 	}
 };
-DEFINE_HASH_CUSTOM(foo, float, 1.0f);
 
 struct reb : dp14::code<float, std::string>
 {
+	DEFINE_KEY(reb)
 	explicit reb(const std::string& payload)
 	{
 		std::cout << "reb: payload = " << payload << std::endl;	
 		set(2.0f);
 	}
 };
-DEFINE_HASH_CUSTOM(reb, float, 2.0f);
 
 struct tol : dp14::code<float, std::string>
 {
+	DEFINE_KEY("/homie/salon/temperature")
 	explicit tol(const std::string& payload)
 	{
 		std::cout << "tol: payload = " << payload << std::endl;
 		set(3.0f);
 	}
 };
-DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature");
+// DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature");
 
 int main()
 {
