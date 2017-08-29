@@ -4,6 +4,8 @@
 #include <functional>
 #include <metacommon/common.h>
 #include "../memoize.h"
+#include <gmock/gmock.h>
+class RepositoryOnceStaticTests : testing::Test {};
 
 using repo = dp14::repository_once<float, std::string>;
 
@@ -37,7 +39,7 @@ struct tol : dp14::code_once<float, std::string>
 };
 DEFINE_HASH_CUSTOM(tol, std::string, "/homie/salon/temperature")
 
-int main()
+TEST(RepositoryOnceStaticTests, Test1)
 {
 	repo r;
 	repo::reg<foo> r1(r);
@@ -65,5 +67,4 @@ int main()
 	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
 	r.clear(2.0f, "register with 2.0f");
 	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
-	return 0;
 }
