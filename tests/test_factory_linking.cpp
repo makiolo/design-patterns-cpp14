@@ -12,10 +12,10 @@ class FactoryLinkingTests : testing::Test {};
 class load_library
 {
 public:
-	load_library(const std::string& libname)
+	explicit load_library(const std::string& libname)
 	{
 		_handle = LoadLibrary((libname + ".dll").c_str());
-		if (!_handle)
+		if (not _handle)
 		{
 			throw std::runtime_error("error loading library");
 		}
@@ -36,10 +36,10 @@ protected:
 class load_library
 {
 public:
-	load_library(const std::string& libname)
+	explicit load_library(const std::string& libname)
 	{
 		_handle = dlopen(("lib" + libname + ".dylib").c_str(), RTLD_NOW); // RTLD_LAZY
-		if (!_handle)
+		if (not _handle)
 		{
 			fputs (dlerror(), stderr);
 			throw std::runtime_error("error loading library");
@@ -61,10 +61,10 @@ protected:
 class load_library
 {
 public:
-	load_library(const std::string& libname)
+	explicit load_library(const std::string& libname)
 	{
 		_handle = dlopen(("lib" + libname + ".so").c_str(), RTLD_NOW); // RTLD_LAZY
-		if (!_handle)
+		if (not _handle)
 		{
 			fputs (dlerror(), stderr);
 			throw std::runtime_error("error loading library");
