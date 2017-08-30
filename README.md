@@ -5,7 +5,7 @@ gcc 4.9 / clang 3.6: [![Build Status](https://travis-ci.org/makiolo/design-patte
 
 MSVC 2015: [![Build status](https://ci.appveyor.com/api/projects/status/3ouxeirkgwi8nmyq?svg=true)](https://ci.appveyor.com/project/makiolo/design-patterns-cpp14)
 
-Coverage: [![codecov](https://codecov.io/gh/makiolo/design-patterns-cpp14/branch/master/graph/badge.svg)](https://codecov.io/gh/makiolo/design-patterns-cpp14)
+Quality: [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d20e7024cd0436a935df183c9951a22)](https://www.codacy.com/app/makiolo/design-patterns-cpp14?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=makiolo/design-patterns-cpp14&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/makiolo/design-patterns-cpp14/branch/master/graph/badge.svg)](https://codecov.io/gh/makiolo/design-patterns-cpp14)
 
 This is a header-only library with some of the most common design patterns implemmented in C++11/14.
 
