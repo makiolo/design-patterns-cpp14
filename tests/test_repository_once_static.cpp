@@ -68,3 +68,12 @@ TEST(RepositoryOnceStaticTests, Test1)
 	r.clear(2.0f, "register with 2.0f");
 	std::cout << r.execute(2.0f, "register with 2.0f") << std::endl;
 }
+
+TEST(RepositoryOnceStaticTests, TestMemoryLeak)
+{
+	// example memory leak
+	int* pn = new int(123);
+	pn = new int(567);
+	std::cout << "leak test number: " << *pn << std::endl;
+	ASSERT_EQ(*pn, 567);
+}
