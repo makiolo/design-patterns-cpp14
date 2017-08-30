@@ -73,7 +73,15 @@ TEST(RepositoryOnceStaticTests, TestMemoryLeak)
 {
 	// example memory leak
 	int* pn = new int(123);
+	std::cout << "leak test number: " << *pn << std::endl;
+	ASSERT_EQ(*pn, 123);
 	pn = new int(567);
 	std::cout << "leak test number: " << *pn << std::endl;
 	ASSERT_EQ(*pn, 567);
+	
+}
+
+TEST(RepositoryOnceStaticTests, TestMemoryLeak2)
+{
+	char *x = malloc(100); /* or, in C++, "char *x = new char[100] */
 }
