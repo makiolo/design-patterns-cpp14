@@ -61,4 +61,6 @@ matrix:
       osx_image: xcode7.3
 
 script:
+  - git clone git@github.com:makiolo/cmaki_identifier.git
+  - (cd cmaki_identifier && CMAKI_PWD=$(pwd) CMAKI_INSTALL=$(pwd)/../node_modules/cmaki/ci npm install)
   - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
