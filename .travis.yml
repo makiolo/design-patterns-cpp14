@@ -66,3 +66,4 @@ script:
   - cp $(pwd)/node_modules/cmaki/ci/$MODE/* $(pwd)/node_modules/cmaki/ci
   - find $(pwd)/node_modules/cmaki/ci
   - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
+
