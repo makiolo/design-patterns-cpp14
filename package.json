@@ -29,7 +29,6 @@
     "test": "tests"
   },
   "devDependencies": {
-    "cmaki": "makiolo/cmaki",
     "cmaki_generator": "makiolo/cmaki_generator"
   },
   "dependencies": {
