@@ -67,4 +67,3 @@ script:
   - find $(pwd)/node_modules/cmaki/ci
   - export USE_CMAKI_IDENTIFIER=TRUE
   - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
-
