@@ -61,5 +61,4 @@ matrix:
       osx_image: xcode7.3
 
 script:
-  # - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki/master/ci.sh)
-  - npm install
+  - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh)
