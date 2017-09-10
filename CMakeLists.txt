@@ -1,4 +1,6 @@
 project(design-patterns-cpp14 CXX)
 cmake_minimum_required(VERSION 3.0)
 include("$ENV{CMAKI_PWD}/node_modules/cmaki/cmaki.cmake")
+cmaki_find_package(boost-headers)
 add_subdirectory(tests)
+
