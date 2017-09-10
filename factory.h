@@ -94,12 +94,6 @@ public:
 		auto keyimpl = detail::factory::get_hash(key_impl_str);
 		return _create(keyimpl, std::forward<Args>(data)...);
 	}
-
-	// template <typename U>
-	// std::unique_ptr<U> create_specialized(Args&&... data) const
-	// {
-	// 	return std::dynamic_pointer_cast<U>(_create(get_key<U>(), std::forward<Args>(data)...));
-	// }
 	
 	template <typename TYPE_KEY>
 	auto execute(TYPE_KEY keyimpl_str, Args&&... data) const
