@@ -58,17 +58,18 @@ TEST(FactoryDynamicTests, Test1)
 
 	{
 		// equivalent ways of create A
-		std::shared_ptr<Base> a1 = f.create_specialized<A>("first parameter", 2);
-		std::shared_ptr<A> a2 = f.create_specialized<A>("first parameter", 2);
-		std::shared_ptr<Base> a3 = f.create("A", "first parameter", 2);
+		// std::unique_ptr<Base> a1 = f.create_specialized<A>("first parameter", 2);
+		// std::unique_ptr<A> a2 = f.create_specialized<A>("first parameter", 2);
+		std::unique_ptr<Base> a3 = f.create("A", "first parameter", 2);
 
 		// equivalent ways of create B
-		std::shared_ptr<Base> b1 = f.create_specialized<B>("first parameter", 2);
-		std::shared_ptr<B> b2 = f.create_specialized<B>("first parameter", 2);
-		std::shared_ptr<Base> b3 = f.create("B", "first parameter", 2);
+		// std::unique_ptr<Base> b1 = f.create_specialized<B>("first parameter", 2);
+		// std::unique_ptr<B> b2 = f.create_specialized<B>("first parameter", 2);
+		std::unique_ptr<Base> b3 = f.create("B", "first parameter", 2);
 
-		assert(a1 != a2);
-		assert(a3 != b1);
-		assert(b1 != b2);
+		// assert(a1 != a2);
+		// assert(a3 != b1);
+		// assert(b1 != b2);
+		assert(a3 != b3);
 	}
 }

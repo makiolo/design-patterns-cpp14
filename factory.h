@@ -37,7 +37,7 @@ class factory
 {
 public:
 	using key_impl = size_t;
-	using registrator_function = std::function<std::shared_ptr<T>(Args...)>;
+	using registrator_function = std::function<std::unique_ptr<T>(Args...)>;
 	using registrator_container = std::unordered_map<key_impl, registrator_function>;
 	template <typename U>
 	using registrator = factory_registrator<T, U, Args...>;
@@ -89,17 +89,17 @@ public:
 	}
 	
 	template <typename TYPE_KEY>
-	std::shared_ptr<T> create(TYPE_KEY key_impl_str, Args&&... data) const
+	std::unique_ptr<T> create(TYPE_KEY key_impl_str, Args&&... data) const
 	{
 		auto keyimpl = detail::factory::get_hash(key_impl_str);
 		return _create(keyimpl, std::forward<Args>(data)...);
 	}
 
-	template <typename U>
-	std::shared_ptr<U> create_specialized(Args&&... data) const
-	{
-		return std::dynamic_pointer_cast<U>(_create(get_key<U>(), std::forward<Args>(data)...));
-	}
+	// template <typename U>
+	// std::unique_ptr<U> create_specialized(Args&&... data) const
+	// {
+	// 	return std::dynamic_pointer_cast<U>(_create(get_key<U>(), std::forward<Args>(data)...));
+	// }
 	
 	template <typename TYPE_KEY>
 	auto execute(TYPE_KEY keyimpl_str, Args&&... data) const
@@ -116,7 +116,7 @@ public:
 	}
 
 protected:
-	std::shared_ptr<T> _create(const key_impl& keyimpl, Args&&... data) const
+	std::unique_ptr<T> _create(const key_impl& keyimpl, Args&&... data) const
 	{
 		auto it = _map_registrators.find(keyimpl);
 		if (it == _map_registrators.end())
@@ -150,9 +150,9 @@ public:
 		_register(make_int_sequence<sizeof...(Args)>{});
 	}
 
-	static std::shared_ptr<T> create(Args&&... data)
+	static std::unique_ptr<T> create(Args&&... data)
 	{
-		return std::make_shared<U>(std::forward<Args>(data)...);
+		return std::make_unique<U>(std::forward<Args>(data)...);
 	}
 
 	~factory_registrator()
