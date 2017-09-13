@@ -11,3 +11,4 @@ cmaki2_gtest(memoize_static test_memoize_static.cpp PTHREADS)
 cmaki2_gtest(factory_linking test_factory_linking.cpp DEPENDS foo dl PTHREADS)
 cmaki2_gtest(repository_static test_repository_static.cpp PTHREADS)
 cmaki2_gtest(repository_once_static test_repository_once_static.cpp PTHREADS)
+
