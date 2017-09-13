@@ -59,5 +59,15 @@ matrix:
       env: CXX=clang++ CC=clang MODE=Release
       osx_image: xcode7.3
 
+before_install:
+  - git clone https://github.com/dockcross/dockcross.git
+
 script:
-  - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh)
+  - echo -- compile for linux-x64 platform
+  - docker run --rm dockcross/linux-x64 > ./dockcross-linux-x64
+  - chmod +x ./dockcross-linux-x64
+  - ./dockcross-linux-x64 bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
+  - echo -- compile for linux-armv7 platform
+  - docker run --rm dockcross/linux-armv7 > ./dockcross-linux-armv7
+  - chmod +x ./dockcross-linux-armv7
+  - ./dockcross-linux-armv7 bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
