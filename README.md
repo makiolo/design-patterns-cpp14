@@ -40,9 +40,9 @@ It's a header-only library. Only need an include.
 ### Compile tests
 You will need cmake (and a compiler).
 ```bash
-$ git clone --recursive https://github.com/makiolo/design-patterns-cpp14.git dp14
-$ cd dp14
-$ ./cmaki/run.sh
+$ git clone https://github.com/makiolo/design-patterns-cpp14.git
+$ cd design-patterns-cpp14
+$ npm install
 ```
 ### Naming implementations
 * *option 1*: use DEFINE_KEY(classname or anything) within the class
@@ -213,4 +213,3 @@ int main()
 	return(0);
 }
 ```
-
