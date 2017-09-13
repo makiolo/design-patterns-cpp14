@@ -11,7 +11,4 @@ configuration:
 build: off
 install:
   - cmd: choco install curl
-  - cmd: curl --help
-  - cmd: curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.cmd
   - cmd: curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.cmd | cmd
-  # - ps: $source = "https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.cmd"; $dest = $env:TEMP + "\ci.cmd"; $WebClient = New-Object System.Net.WebClient; $WebClient.DownloadFile($source,$dest); Invoke-Expression $dest
