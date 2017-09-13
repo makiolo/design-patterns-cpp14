@@ -72,3 +72,4 @@ script:
         chmod +x ./dockcross-$image
         ./dockcross-$image bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
       done
+
