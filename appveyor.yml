@@ -11,5 +11,5 @@ configuration:
 build: off
 install:
   - cmd: choco install curl
-  - cmd: curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.cmd | cmd
-
+  - cmd: curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.cmd > ci.cmd
+  - cmd: call ci.cmd
