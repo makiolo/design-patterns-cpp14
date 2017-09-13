@@ -63,12 +63,12 @@ before_install:
   - git clone https://github.com/dockcross/dockcross.git
 
 script:
-  - echo -- compile for linux-x64 platform
-  - docker run --rm dockcross/linux-x64 > ./dockcross-linux-x64
-  - chmod +x ./dockcross-linux-x64
-  - ./dockcross-linux-x64 bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
-  - echo -- compile for linux-armv7 platform
-  - docker run --rm dockcross/linux-armv7 > ./dockcross-linux-armv7
-  - chmod +x ./dockcross-linux-armv7
-  - ./dockcross-linux-armv7 bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
-
+  - curl https://raw.githubusercontent.com/dockcross/dockcross/master/Makefile -o dockcross-Makefile
+  - 
+    |
+      for image in $(make -f dockcross-Makefile display_images); do
+        echo -- compile for $image platform
+        docker run --rm dockcross/$image > ./dockcross-$image
+        chmod +x ./dockcross-$image
+        ./dockcross-$image bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
+      done
