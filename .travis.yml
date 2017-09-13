@@ -71,3 +71,4 @@ script:
   - docker run --rm dockcross/linux-armv7 > ./dockcross-linux-armv7
   - chmod +x ./dockcross-linux-armv7
   - ./dockcross-linux-armv7 bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
+
