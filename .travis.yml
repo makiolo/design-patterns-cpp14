@@ -4,12 +4,12 @@ language: c
 services: docker
 os: linux
 env:
-  - IMAGE=android-arm MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-  - IMAGE=browser-asmjs MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-  - IMAGE=windows-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-  - IMAGE=windows-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-  - IMAGE=linux-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-  - IMAGE=linux-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=android-arm
+  - IMAGE=browser-asmjs
+  - IMAGE=windows-x86
+  - IMAGE=windows-x64
+  - IMAGE=linux-x86
+  - IMAGE=linux-x64
 
 before_install:
   - git clone https://github.com/dockcross/dockcross.git
@@ -17,7 +17,6 @@ before_install:
 script:
   - 
     |
-      echo -- compile for $IMAGE platform
       docker run --rm dockcross/$IMAGE > ./dockcross-$IMAGE
       echo ------------------
       cat ./dockcross-$IMAGE
