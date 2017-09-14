@@ -32,3 +32,4 @@ script:
       ./dockcross-$IMAGE bash -c 'echo DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE} && echo ---------------'
       ./dockcross-$IMAGE bash -c 'cat ${CMAKE_TOOLCHAIN_FILE}'
       ./dockcross-$IMAGE bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
+
