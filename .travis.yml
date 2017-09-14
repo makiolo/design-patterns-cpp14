@@ -2,23 +2,20 @@ sudo: required
 dist: trusty
 language: c
 services: docker
-
-matrix:
-  include:
-    - os: linux
-      env:
-        - IMAGE=windows-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-        - IMAGE=windows-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-        - IMAGE=android-arm MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-        - IMAGE=browser-asmjs MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-        - IMAGE=linux-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-        - IMAGE=linux-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-        - IMAGE=windows-x86 MODE=Release
-        - IMAGE=windows-x64 MODE=Release
-        - IMAGE=android-arm MODE=Release
-        - IMAGE=browser-asmjs MODE=Release
-        - IMAGE=linux-x86 MODE=Release
-        - IMAGE=linux-x64 MODE=Release
+os: linux
+env:
+  - IMAGE=windows-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=windows-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=android-arm MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=browser-asmjs MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=linux-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=linux-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+  - IMAGE=windows-x86 MODE=Release
+  - IMAGE=windows-x64 MODE=Release
+  - IMAGE=android-arm MODE=Release
+  - IMAGE=browser-asmjs MODE=Release
+  - IMAGE=linux-x86 MODE=Release
+  - IMAGE=linux-x64 MODE=Release
 
 before_install:
   - git clone https://github.com/dockcross/dockcross.git
@@ -32,4 +29,3 @@ script:
       ./dockcross-$IMAGE bash -c 'echo DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE} && echo ---------------'
       ./dockcross-$IMAGE bash -c 'cat ${CMAKE_TOOLCHAIN_FILE}'
       ./dockcross-$IMAGE bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
-
