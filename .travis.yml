@@ -6,58 +6,19 @@ services: docker
 matrix:
   include:
     - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - cmake
-            - g++-4.9
-            - lcov
-            - cppcheck
-      env: CXX=g++-4.9 CC=gcc-4.9 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - cmake
-            - clang-3.6
-      env: CXX=clang++-3.6 CC=clang-3.6 MODE=Debug
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - cmake
-            - g++-4.9
-      env: CXX=g++-4.9 CC=gcc-4.9 MODE=Release
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - cmake
-            - clang-3.6
-            - valgrind
-      env: CXX=clang++-3.6 CC=clang-3.6 MODE=Release TESTS_VALGRIND=TRUE
-    - os: osx
-      compiler: clang
-      env: CXX=clang++ CC=clang MODE=Debug
-      osx_image: xcode7.3
-    - os: osx
-      compiler: clang
-      env: CXX=clang++ CC=clang MODE=Release
-      osx_image: xcode7.3
+      env:
+        - IMAGE=windows-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+        - IMAGE=windows-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+        - IMAGE=android-arm MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+        - IMAGE=browser-asmjs MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+        - IMAGE=linux-x86 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+        - IMAGE=linux-x64 MODE=Debug COVERAGE=TRUE CPPCHECK=TRUE
+        - IMAGE=windows-x86 MODE=Release
+        - IMAGE=windows-x64 MODE=Release
+        - IMAGE=android-arm MODE=Release
+        - IMAGE=browser-asmjs MODE=Release
+        - IMAGE=linux-x86 MODE=Release
+        - IMAGE=linux-x64 MODE=Release
 
 before_install:
   - git clone https://github.com/dockcross/dockcross.git
@@ -65,11 +26,9 @@ before_install:
 script:
   - 
     |
-      for image in $(echo windows-x86 windows-x64 android-arm browser-asmjs linux-x86 linux-x64); do
-        echo -- compile for $image platform
-        docker run --rm dockcross/$image > ./dockcross-$image
-        chmod +x ./dockcross-$image
-        ./dockcross-$image bash -c 'echo DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE} && echo ---------------'
-        ./dockcross-$image bash -c 'cat ${CMAKE_TOOLCHAIN_FILE}'
-        ./dockcross-$image bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
-      done
+      echo -- compile for $IMAGE platform
+      docker run --rm dockcross/$IMAGE > ./dockcross-$IMAGE
+      chmod +x ./dockcross-$IMAGE
+      ./dockcross-$IMAGE bash -c 'echo DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE} && echo ---------------'
+      ./dockcross-$IMAGE bash -c 'cat ${CMAKE_TOOLCHAIN_FILE}'
+      ./dockcross-$IMAGE bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
