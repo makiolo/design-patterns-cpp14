@@ -18,9 +18,6 @@ script:
   - 
     |
       docker run --rm dockcross/$IMAGE > ./dockcross-$IMAGE
-      echo ------------------
-      cat ./dockcross-$IMAGE
-      echo ------------------
       chmod +x ./dockcross-$IMAGE
-      CMAKI_EMULATOR=$(./dockcross-$IMAGE bash -c 'echo "message(\${CMAKE_CROSSCOMPILING_EMULATOR})" >> ${CMAKE_TOOLCHAIN_FILE} && cmake -P ${CMAKE_TOOLCHAIN_FILE}')
+      export CMAKI_EMULATOR=$(./dockcross-$IMAGE bash -c 'echo "message(\${CMAKE_CROSSCOMPILING_EMULATOR})" >> ${CMAKE_TOOLCHAIN_FILE} && cmake -P ${CMAKE_TOOLCHAIN_FILE}')
       ./dockcross-$IMAGE -a "-e CMAKI_EMULATOR=$CMAKI_EMULATOR" bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
