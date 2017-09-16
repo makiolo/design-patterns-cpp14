@@ -4,12 +4,12 @@ language: c
 services: docker
 os: linux
 env:
-  - IMAGE=windows-x86
-  - IMAGE=windows-x64
-  - IMAGE=linux-x86
-  - IMAGE=linux-x64
-  - IMAGE=android-arm
-  - IMAGE=browser-asmjs
+  - IMAGE=windows-x86 MODE=Release
+  - IMAGE=windows-x64 MODE=Release
+  - IMAGE=linux-x86 MODE=Release
+  - IMAGE=linux-x64 MODE=Release
+  - IMAGE=android-arm MODE=Release
+  - IMAGE=browser-asmjs MODE=Release
 
 before_install:
   - git clone https://github.com/dockcross/dockcross.git
@@ -20,6 +20,5 @@ script:
       sudo docker run --rm dockcross/$IMAGE > ./dockcross-$IMAGE
       chmod +x ./dockcross-$IMAGE
       export CMAKI_EMULATOR=$(sudo ./dockcross-$IMAGE bash -c 'echo "message(\${CMAKE_CROSSCOMPILING_EMULATOR})" >> ${CMAKE_TOOLCHAIN_FILE} && cmake -P ${CMAKE_TOOLCHAIN_FILE}')
-      echo $CMAKI_EMULATOR
-      echo $(basename $CMAKI_EMULATOR)
-      # sudo ./dockcross-$IMAGE -a "-e CMAKI_EMULATOR=$CMAKI_EMULATOR" bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
+      echo emulator for $IMAGE: $CMAKI_EMULATOR
+      sudo ./dockcross-$IMAGE -a "-e CMAKI_EMULATOR=$CMAKI_EMULATOR -e MODE=$MODE -e NOCACHE_LOCAL=TRUE -e NOCACHE_REMOTE=FALSE" bash -c 'curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash'
