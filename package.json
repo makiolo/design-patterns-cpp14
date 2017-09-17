@@ -8,7 +8,7 @@
     "setup": "cmaki setup",
     "compile": "cmaki compile",
     "install": "cmaki setup && cmaki compile",
-    "test": "cmaki tests",
+    "test": "cmaki test",
     "upload": "cmaki upload"
   },
   "keywords": [
