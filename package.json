@@ -35,6 +35,6 @@
     "cmaki_scripts": "git+https://github.com/makiolo/cmaki_scripts.git"
   },
   "dependencies": {
-    "metacommon": "makiolo/metacommon"
+    "metacommon": "github:makiolo/metacommon"
   }
 }
