@@ -3,6 +3,11 @@
 #include <assert.h>
 #include <memoize.h>
 #include <gmock/gmock.h>
+#include <json.hpp>
+#include <fstream>
+
+using json = nlohmann::json;
+
 class MemoizeStaticTests : testing::Test {};
 
 class Base
@@ -69,3 +74,63 @@ TEST(MemoizeStaticTests, Test1)
 	assert(b1 == b2);
 	assert(b2 != b4);
 }
+
+bool exists(const char *fileName)
+{
+	std::ifstream infile(fileName);
+	return infile.good();
+}
+
+TEST(MemoizeStaticTests, DISABLED_TestJSON)
+{
+	json j3;
+	for(int i = 0; i < 2; ++i)
+	{
+		// default json
+		j3 = R"(
+		  {
+			"happy": true,
+			"happy2": false,
+			"pi": 3.141
+		  }
+		)"_json;
+		
+		std::ofstream out("example.json");
+		out << std::setw(4) << j3 << std::endl;
+
+		if(exists("example.bin"))
+		{
+			std::basic_ifstream<std::uint8_t> i("example.bin");
+			i.seekg(0, std::ios::end);
+			size_t len = i.tellg();
+			std::uint8_t* buffer = new std::uint8_t[len];
+			i.seekg(0, std::ios::beg);
+			i.read(buffer, len);
+			i.close();
+			std::vector<std::uint8_t> v_cbor(len);
+			for(int i=0;i<len; ++i)
+				v_cbor.push_back(buffer[i]);
+			std::cout << "read " << v_cbor.size() << " bytes (uint8)" << std::endl;
+			// j3 = json::from_cbor(v_cbor);
+			j3 = json::from_msgpack(v_cbor);
+			delete [] buffer;
+		}
+		else
+		{
+			std::ifstream i("example.json");
+			i >> j3;
+		}
+		std::cout << j3.dump(4) << std::endl;
+
+		std::ofstream o("example.bin");
+		// std::vector<std::uint8_t> v_cbor = json::to_cbor(j3);
+		std::vector<std::uint8_t> v_cbor = json::to_msgpack(j3);
+		size_t len = v_cbor.size();
+		std::cout << "write " << v_cbor.size() << " bytes (uint8)" << std::endl;
+		std::uint8_t* buffer = new std::uint8_t[len];
+		std::copy(v_cbor.begin(), v_cbor.end(), buffer);
+		o << buffer;
+		delete [] buffer;
+	}
+}
+
