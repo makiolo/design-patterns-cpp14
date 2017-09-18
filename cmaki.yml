@@ -1,22 +1,35 @@
 - design-patterns-cpp14:
     <<: *thirdparty_defaults
-    version: 0.0.0.0
-    version_manager: git
     depends:
         - metacommon
     post_install:
         - ./*.h include/design-patterns-cpp14/
         - ./*.hh include/design-patterns-cpp14/
-    mode: dr
     source: https://github.com/makiolo/design-patterns-cpp14.git
     build:
         |
             #!/bin/bash
-            source find.script
-            CMAKI_PWD=$(pwd) CMAKI_INSTALL=$SELFHOME/.. npm install
+            CMAKI_INSTALL=$SELFHOME npm install
     targets:
         # header only
         - dummy:
             info:
                 <<: *library_dynamic
-
+# 
+# {
+#     "name": "design-patterns-cpp14",
+#     "dependencies":
+#     {
+#         "metacommon": "1.0.0.0",
+#         "fast-event-system": "1.0.0.0"
+#     },
+#     "build": "cmaki setup && cmaki install -e CMAKI_INSTALL=SELFHOME",
+#     "install": {
+#         "**/*.h": "include/design-patterns-cpp14",
+#         "**/*.hh": "include/design-patterns-cpp14"
+#     },
+#     "targets": {
+#         "dummy": "library_dynamic"
+#     }
+# }
+# 
