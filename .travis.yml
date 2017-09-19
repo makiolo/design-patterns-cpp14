@@ -2,13 +2,11 @@ language: c
 services: docker
 os: linux
 env:
-  # funciona
   - IMAGE=linux-x64
-  # with problems
   # - IMAGE=windows-x86
   # - IMAGE=windows-x64
   # - IMAGE=linux-x86
   # - IMAGE=android-arm
   # - IMAGE=browser-asmjs
 script:
-  - bash <(curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/docker.sh)
+  - npm run docker
