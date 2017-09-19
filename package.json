@@ -3,7 +3,8 @@
   "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
   "scripts": {
-    "ci": "cmaki ci",
+    "ci": "curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash",
+    "docker": "curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/docker.sh | bash",
     "clean": "cmaki clean",
     "setup": "cmaki setup",
     "compile": "cmaki compile",
