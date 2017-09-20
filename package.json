@@ -29,13 +29,11 @@
   "directories": {
     "test": "tests"
   },
-  "devDependencies": {
+  "dependencies": {
     "cmaki": "https://github.com/makiolo/cmaki.git",
     "cmaki_generator": "https://github.com/makiolo/cmaki_generator.git",
     "cmaki_identifier": "https://github.com/makiolo/cmaki_identifier.git",
-    "cmaki_scripts": "https://github.com/makiolo/cmaki_scripts.git"
-  },
-  "dependencies": {
+    "cmaki_scripts": "https://github.com/makiolo/cmaki_scripts.git",
     "metacommon": "https://github.com/makiolo/metacommon.git"
   }
 }
