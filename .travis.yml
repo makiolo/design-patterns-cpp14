@@ -10,3 +10,4 @@ env:
   # - IMAGE=browser-asmjs
 script:
   - npm run docker
+
