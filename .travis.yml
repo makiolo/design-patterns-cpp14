@@ -2,7 +2,7 @@ language: c
 services: docker
 os: linux
 env:
-  - IMAGE=linux-x86
+  # - IMAGE=linux-x86
   - IMAGE=linux-x64
   - IMAGE=windows-x86
   - IMAGE=windows-x64
