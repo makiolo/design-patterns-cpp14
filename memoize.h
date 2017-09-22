@@ -112,7 +112,9 @@ public:
 	{
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
-		return _get(keyimpl, key, std::forward<Args>(data)...);
+		auto obj = _get(keyimpl, key, std::forward<Args>(data)...);
+		_map_cache_shared.emplace(key, obj);
+		return obj;
 	}
 
 	template <typename TYPE_KEY>
