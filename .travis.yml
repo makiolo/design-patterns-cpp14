@@ -12,7 +12,7 @@ env:
   - IMAGE=linux-x64 MODE=Release
   - IMAGE=windows-x86 MODE=Release
   - IMAGE=windows-x64 MODE=Release
-  # - IMAGE=android-arm
-  # - IMAGE=browser-asmjs
+  # - IMAGE=android-arm MODE=Release
+  # - IMAGE=browser-asmjs MODE=Release
 script:
   - npm run docker
