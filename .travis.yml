@@ -6,12 +6,14 @@ env:
   - IMAGE=linux-x64
   - IMAGE=windows-x86
   - IMAGE=windows-x64
+  - IMAGE=linux-armv6
   # - IMAGE=android-arm
   # - IMAGE=browser-asmjs
   # - IMAGE=linux-x86 MODE=Release
   - IMAGE=linux-x64 MODE=Release
   - IMAGE=windows-x86 MODE=Release
   - IMAGE=windows-x64 MODE=Release
+  # - IMAGE=linux-armv6 MODE=Release
   # - IMAGE=android-arm MODE=Release
   # - IMAGE=browser-asmjs MODE=Release
 script:
