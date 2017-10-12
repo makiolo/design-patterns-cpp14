@@ -6,15 +6,12 @@
         - ./*.h include/design-patterns-cpp14/
         - ./*.hh include/design-patterns-cpp14/
     source: https://github.com/makiolo/design-patterns-cpp14.git
-    build:
-        |
-            #!/bin/bash
-            CMAKI_INSTALL=$SELFHOME npm install
     targets:
         # header only
         - dummy:
             info:
                 <<: *library_dynamic
+
 # 
 # {
 #     "name": "design-patterns-cpp14",
