@@ -7,7 +7,6 @@
         - ./*.hh include/design-patterns-cpp14/
     source: https://github.com/makiolo/design-patterns-cpp14.git
     targets:
-        # header only
         - dummy:
             info:
                 <<: *library_dynamic
