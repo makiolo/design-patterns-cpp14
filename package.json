@@ -26,9 +26,6 @@
     "url": "https://github.com/makiolo/design-patterns-cpp14/issues"
   },
   "homepage": "https://github.com/makiolo/design-patterns-cpp14#readme",
-  "directories": {
-    "test": "tests"
-  },
   "dependencies": {
     "cmaki": "https://github.com/makiolo/cmaki.git",
     "cmaki_generator": "https://github.com/makiolo/cmaki_generator.git",
