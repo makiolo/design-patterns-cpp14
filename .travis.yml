@@ -1,21 +1,5 @@
 language: c
 services: docker
 os: linux
-env:
-  # - IMAGE=linux-x86 MODE=Debug
-  - IMAGE=linux-x64 MODE=Debug
-  - IMAGE=windows-x86 MODE=Debug
-  - IMAGE=windows-x64 MODE=Debug
-  - IMAGE=linux-armv7 MODE=Debug
-  # - IMAGE=android-arm MODE=Debug
-  # - IMAGE=browser-asmjs MODE=Debug
-  #
-  # - IMAGE=linux-x86 MODE=Release
-  - IMAGE=linux-x64 MODE=Release
-  - IMAGE=windows-x86 MODE=Release
-  - IMAGE=windows-x64 MODE=Release
-  - IMAGE=linux-armv7 MODE=Release
-  # - IMAGE=android-arm MODE=Release
-  # - IMAGE=browser-asmjs MODE=Release
 script:
   - npm run docker
