@@ -27,10 +27,10 @@
   },
   "homepage": "https://github.com/makiolo/design-patterns-cpp14#readme",
   "dependencies": {
-    "cmaki": "https://github.com/makiolo/cmaki.git",
-    "cmaki_generator": "https://github.com/makiolo/cmaki_generator.git",
-    "cmaki_identifier": "https://github.com/makiolo/cmaki_identifier.git",
-    "cmaki_scripts": "https://github.com/makiolo/cmaki_scripts.git",
-    "metacommon": "https://github.com/makiolo/metacommon.git"
+    "cmaki": "git+https://github.com/makiolo/cmaki.git",
+    "cmaki_generator": "git+https://github.com/makiolo/cmaki_generator.git",
+    "cmaki_identifier": "git+https://github.com/makiolo/cmaki_identifier.git",
+    "cmaki_scripts": "git+https://github.com/makiolo/cmaki_scripts.git",
+    "metacommon": "git+https://github.com/makiolo/metacommon.git"
   }
 }
