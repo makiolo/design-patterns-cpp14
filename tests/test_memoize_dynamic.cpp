@@ -49,7 +49,7 @@ TEST(MemoizeDynamicTests, Test1)
 		std::shared_ptr<Base> a1 = m.get<A>("first parameter", 2);
 		assert( m.exists<A>("first parameter", 2) == true );
 	}
-	assert( m.exists<A>("first parameter", 2) == true );
+	assert( m.exists<A>("first parameter", 2) == false );
 
 	{
 		std::shared_ptr<Base> a1 = m.get<A>("first parameter", 2);
@@ -68,5 +68,5 @@ TEST(MemoizeDynamicTests, Test1)
 
 		assert( m.exists<A>("first parameter", 2) == true );
 	}
-	assert( m.exists<A>("first parameter", 2) == true );
+	assert( m.exists<A>("first parameter", 2) == false );
 }
