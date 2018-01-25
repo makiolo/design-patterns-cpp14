@@ -70,3 +70,4 @@ TEST(MemoizeDynamicTests, Test1)
 	}
 	assert( m.exists<A>("first parameter", 2) == false );
 }
+
