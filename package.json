@@ -27,9 +27,7 @@
   },
   "homepage": "https://github.com/makiolo/design-patterns-cpp14#readme",
   "devDependencies": {
-    "npm-mas-mas": "git+https://github.com/makiolo/npm-mas-mas.git"
-  },
-  "dependencies": {
+    "npm-mas-mas": "git+https://github.com/makiolo/npm-mas-mas.git",
     "metacommon": "git+https://github.com/makiolo/metacommon.git"
   }
 }
