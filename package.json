@@ -2,6 +2,51 @@
   "name": "design-patterns-cpp14",
   "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
+  "npm-mas-mas": {
+    "depends": [
+      "boost-headers",
+      "json"
+    ],
+    "install": [
+      "./*.h include/design-patterns-cpp14/",
+      "./*.hh include/design-patterns-cpp14/"
+    ],
+    "targets": {
+      "public": null,
+      "private": [
+        {
+          "library": "foo tests/foo.cpp"
+        },
+        {
+          "library": "fooA tests/fooA.cpp DEPENDS foo"
+        },
+        {
+          "library": "fooB tests/fooB.cpp DEPENDS foo"
+        },
+        {
+          "google_test": "factory_dynamic tests/test_factory_dynamic.cpp PTHREADS"
+        },
+        {
+          "google_test": "factory_static tests/test_factory_static.cpp PTHREADS"
+        },
+        {
+          "google_test": "memoize_dynamic tests/test_memoize_dynamic.cpp PTHREADS"
+        },
+        {
+          "google_test": "memoize_static tests/test_memoize_static.cpp PTHREADS"
+        },
+        {
+          "google_test": "factory_linking tests/test_factory_linking.cpp DEPENDS foo dl PTHREADS"
+        },
+        {
+          "google_test": "repository_static tests/test_repository_static.cpp PTHREADS"
+        },
+        {
+          "google_test": "repository_once_static tests/test_repository_once_static.cpp PTHREADS"
+        }
+      ]
+    }
+  },
   "scripts": {
     "ci": "curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash",
     "docker": "curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/docker.sh | bash",
