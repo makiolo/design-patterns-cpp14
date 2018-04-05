@@ -3,10 +3,11 @@
   "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
   "npm-mas-mas": {
-    "depends": [
-      "boost-headers",
-      "json"
-    ],
+    "dependencies": {
+      "boost-headers": "1.65.0.0",
+      "google-gmock": "0.0.1468494938.1354555194",
+      "json": "0.0.1514575489.676243933"
+    },
     "install": [
       "./*.h include/design-patterns-cpp14/",
       "./*.hh include/design-patterns-cpp14/"
@@ -48,8 +49,8 @@
     }
   },
   "scripts": {
-    "ci": "curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.sh | bash",
-    "docker": "curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/docker.sh | bash",
+	"ci": "curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/ci.sh | bash",
+	"docker": "curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/docker.sh | bash",
     "clean": "cmaki clean",
     "setup": "cmaki setup",
     "compile": "cmaki compile",
