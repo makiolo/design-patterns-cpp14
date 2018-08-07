@@ -98,12 +98,13 @@ TEST(MemoizeStaticTests, DISABLED_TestJSON)
 		std::ofstream out("example.json");
 		out << std::setw(4) << j3 << std::endl;
 
+		/*
 		if(exists("example.bin"))
 		{
-			std::basic_ifstream<std::uint8_t> file_bin("example.bin");
+			std::basic_ifstream<std::uint32_t> file_bin("example.bin");
 			file_bin.seekg(0, std::ios::end);
 			size_t len = file_bin.tellg();
-			std::uint8_t* buffer = new std::uint8_t[len];
+			std::uint32_t* buffer = new std::uint32_t[len];
 			file_bin.seekg(0, std::ios::beg);
 			file_bin.read(buffer, len);
 			file_bin.close();
@@ -123,14 +124,14 @@ TEST(MemoizeStaticTests, DISABLED_TestJSON)
 		std::cout << j3.dump(4) << std::endl;
 
 		std::ofstream o("example.bin");
-		// std::vector<std::uint8_t> v_cbor = json::to_cbor(j3);
 		std::vector<std::uint8_t> v_cbor = json::to_msgpack(j3);
 		size_t len = v_cbor.size();
 		std::cout << "write " << v_cbor.size() << " bytes (uint8)" << std::endl;
-		std::uint8_t* buffer = new std::uint8_t[len];
+		std::uint32_t* buffer = new std::uint32_t[len];
 		std::copy(v_cbor.begin(), v_cbor.end(), buffer);
 		o << buffer;
 		delete [] buffer;
+		*/
 	}
 }
 

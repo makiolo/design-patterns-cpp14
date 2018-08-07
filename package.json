@@ -49,8 +49,8 @@
     }
   },
   "scripts": {
-	"ci": "curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/ci.sh | bash",
-	"docker": "curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/docker.sh | bash",
+    "ci": "curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/ci.sh | bash",
+    "docker": "curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/docker.sh | bash",
     "clean": "cmaki clean",
     "setup": "cmaki setup",
     "compile": "cmaki compile",
@@ -73,7 +73,7 @@
   },
   "homepage": "https://github.com/makiolo/design-patterns-cpp14#readme",
   "devDependencies": {
-    "npm-mas-mas": "git+https://github.com/makiolo/npm-mas-mas.git",
-    "metacommon": "git+https://github.com/makiolo/metacommon.git"
+    "metacommon": "git+https://github.com/makiolo/metacommon.git",
+    "npm-mas-mas": "git+https://github.com/makiolo/npm-mas-mas.git"
   }
 }
