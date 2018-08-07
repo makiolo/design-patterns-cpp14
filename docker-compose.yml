@@ -24,7 +24,7 @@ services:
             dockerfile: ./docker/Dockerfile.windows-x64
         environment:
             - NPP_SERVER=http://servfactor/cpp
-        command: make install --unsafe-perm
+        command: npm install --unsafe-perm
         volumes:
             - .:/work
         links:
@@ -36,7 +36,7 @@ services:
             dockerfile: ./docker/Dockerfile.android-arm64
         environment:
             - NPP_SERVER=http://servfactor/cpp
-        command: make install --unsafe-perm
+        command: npm install --unsafe-perm
         volumes:
             - .:/work
         links:
