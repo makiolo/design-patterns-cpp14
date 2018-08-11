@@ -5,5 +5,6 @@ env:
     - TARGET=linux64 MODE=Debug
     - TARGET=linux64 MODE=Release
 script:
+    - npm install --save-dev https://github.com/makiolo/npm-mas-mas.git
     - MODE=$MODE make $TARGET
 
