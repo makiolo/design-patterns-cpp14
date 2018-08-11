@@ -20,7 +20,9 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(include/entt/src)
 install(DIRECTORY ${CONAN_LIB_DIRS_BOOST}/ DESTINATION ${CMAKE_BUILD_TYPE})
 
-add_definitions(-Wfatal-errors)
+# 
+# add_definitions(-Wfatal-errors)
+# 
 
 cmaki_library(foo tests/foo.cpp)
 cmaki_library(fooA tests/fooA.cpp DEPENDS foo)
@@ -33,4 +35,11 @@ cmaki_google_test(memoize_static tests/test_memoize_static.cpp PTHREADS)
 cmaki_google_test(factory_linking tests/test_factory_linking.cpp DEPENDS foo dl PTHREADS)
 cmaki_google_test(repository_static tests/test_repository_static.cpp PTHREADS)
 cmaki_google_test(repository_once_static tests/test_repository_once_static.cpp PTHREADS)
+
+# https://github.com/uilianries/cpack-example/blob/master/CMakeLists.txt
+# set(CPACK_PACKAGE_VERSION "1.0.0")
+# set(CPACK_PACKAGE_VERSION_MAJOR "1")
+# set(CPACK_PACKAGE_VERSION_MINOR "0")
+# set(CPACK_PACKAGE_VERSION_PATCH "0")
+# include(CPack)
 

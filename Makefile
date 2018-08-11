@@ -1,15 +1,6 @@
 MODE ?= Debug
 
-all: install
-
-install:
-	npm install --unsafe-perm
-
-test: install
-	npm test
-
-run: install
-	cd bin/${MODE} && LD_LIBRARY_PATH=`pwd` ./example
+all: clean prepare install test
 
 clean:
 	-@rm -Rf bin
@@ -23,13 +14,18 @@ clean:
 prepare:
 	npm install --save-dev https://github.com/makiolo/npm-mas-mas.git
 
+install:
+	npm install --unsafe-perm
+
+test: install
+	npm test
+
 linux64:
-	docker-compose run --rm linux64 make run
+	docker-compose run --rm -e MODE=${MODE} linux64 make
 
 windows64:
-	docker-compose run --rm windows64 make run
+	docker-compose run --rm -e MODE=${MODE} windows64 make
 
 android64:
-	docker-compose run --rm android64 make run
-
+	docker-compose run --rm -e MODE=${MODE} android64 make
 

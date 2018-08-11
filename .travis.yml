@@ -4,7 +4,6 @@ os: linux
 env:
     - TARGET=linux64 MODE=Debug
     - TARGET=linux64 MODE=Release
-    # - TARGET=windows64
-    # - TARGET=android64
 script:
-    - MODE=$MODE make clean prepare $TARGET
+    - MODE=$MODE make $TARGET
+
