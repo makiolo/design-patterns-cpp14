@@ -1,28 +1,10 @@
 project(design-patterns-cpp14 CXX)
-cmake_minimum_required(VERSION 3.8)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+cmake_minimum_required(VERSION 3.5)
 
 include("$ENV{CMAKI_PWD}/node_modules/npm-mas-mas/cmaki/cmaki.cmake")
-cmaki_find_package(google-gmock)
-cmaki_find_package(json)
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-	set(Boost_DEBUG 1)
-else()
-	set(Boost_DEBUG 0)
-endif()
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
+cmaki_setup()
+cmaki_find_package_boost()
 include_directories(include/entt/src)
-install(DIRECTORY ${CONAN_LIB_DIRS_BOOST}/ DESTINATION ${CMAKE_BUILD_TYPE})
-
-# 
-# add_definitions(-Wfatal-errors)
-# 
 
 cmaki_library(foo tests/foo.cpp)
 cmaki_library(fooA tests/fooA.cpp DEPENDS foo)
@@ -35,11 +17,4 @@ cmaki_google_test(memoize_static tests/test_memoize_static.cpp PTHREADS)
 cmaki_google_test(factory_linking tests/test_factory_linking.cpp DEPENDS foo dl PTHREADS)
 cmaki_google_test(repository_static tests/test_repository_static.cpp PTHREADS)
 cmaki_google_test(repository_once_static tests/test_repository_once_static.cpp PTHREADS)
-
-# https://github.com/uilianries/cpack-example/blob/master/CMakeLists.txt
-# set(CPACK_PACKAGE_VERSION "1.0.0")
-# set(CPACK_PACKAGE_VERSION_MAJOR "1")
-# set(CPACK_PACKAGE_VERSION_MINOR "0")
-# set(CPACK_PACKAGE_VERSION_PATCH "0")
-# include(CPack)
 
