@@ -1,7 +1,0 @@
-FROM dockcross/windows-x64
-ENV PYTHONUNBUFFERED 1
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt install -y nodejs
-RUN npm install -g npm
-WORKDIR /work
-
