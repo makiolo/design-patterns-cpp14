@@ -3,8 +3,9 @@
 #include <map>
 #include <functional>
 #include <metacommon/common.h>
-#include "../factory.h"
+#include "factory.h"
 #include <gmock/gmock.h>
+
 class RepositoryStaticTests : testing::Test {};
 
 using repo = dp14::repository<float, std::string>;

@@ -3,10 +3,7 @@
 #include <assert.h>
 #include <memoize.h>
 #include <gmock/gmock.h>
-// #include <json.hpp>
 #include <fstream>
-
-// using json = nlohmann::json;
 
 class MemoizeStaticTests : testing::Test {};
 
@@ -80,23 +77,4 @@ bool exists(const char *fileName)
 	std::ifstream infile(fileName);
 	return infile.good();
 }
-
-// TEST(MemoizeStaticTests, DISABLED_TestJSON)
-// {
-// 	json j3;
-// 	for(int i = 0; i < 2; ++i)
-// 	{
-// 		// default json
-// 		j3 = R"(
-// 		  {
-// 			"happy": true,
-// 			"happy2": false,
-// 			"pi": 3.141
-// 		  }
-// 		)"_json;
-// 		
-// 		std::ofstream out("example.json");
-// 		out << std::setw(4) << j3 << std::endl;
-// 	}
-// }
 

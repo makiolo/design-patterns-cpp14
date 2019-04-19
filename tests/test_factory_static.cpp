@@ -1,6 +1,6 @@
 #include <iostream>
 #include <assert.h>
-#include <factory.h>
+#include "factory.h"
 #include <gmock/gmock.h>
 #include <boost/poly_collection/base_collection.hpp>
 

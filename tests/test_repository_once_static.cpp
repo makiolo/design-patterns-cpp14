@@ -4,7 +4,7 @@
 #include <functional>
 #include <metacommon/common.h>
 #include <gmock/gmock.h>
-#include "../memoize.h"
+#include "memoize.h"
 
 class RepositoryOnceStaticTests : testing::Test {};
 

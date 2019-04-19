@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+
+    gcc8_debug:
+        command: ./docker_entrypoint.sh
+        volumes:
+            - gcc8_debug_data:/code
+        build:
+            context: .
+            args:
+                PACKAGE: design-patterns-cpp14
+                IMAGE: conanio/gcc8
+                MODE: Debug
+                COMPILER: gcc
+                COMPILER_VERSION: 8
+                COMPILER_LIBCXX: libstdc++11
+                CC: gcc-8
+                CXX: g++-8
+                CONAN_TOKEN: ${CONAN_TOKEN}
+
+    gcc8_release:
+        command: ./docker_entrypoint.sh
+        volumes:
+            - gcc8_release_data:/code
+        build:
+            context: .
+            args:
+                PACKAGE: design-patterns-cpp14
+                IMAGE: conanio/gcc8
+                MODE: Release
+                COMPILER: gcc
+                COMPILER_VERSION: 8
+                COMPILER_LIBCXX: libstdc++11
+                CC: gcc-8
+                CXX: g++-8
+                CONAN_TOKEN: ${CONAN_TOKEN}
+
+volumes:
+    gcc8_debug_data:
+    gcc8_release_data:
+

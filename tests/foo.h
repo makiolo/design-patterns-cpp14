@@ -2,7 +2,7 @@
 #define _FOO_H_
 
 #include <iostream>
-#include "../factory.h"
+#include "factory.h"
 
 #ifdef _WIN32
     #ifdef foo_EXPORTS

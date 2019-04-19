@@ -1,7 +1,8 @@
 #include <iostream>
 #include <assert.h>
-#include <factory.h>
+#include "factory.h"
 #include <gmock/gmock.h>
+
 class FactoryDynamicTests : testing::Test {};
 
 class Base
