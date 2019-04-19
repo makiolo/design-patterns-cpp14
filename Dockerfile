@@ -34,3 +34,4 @@ ADD . /code
 RUN ls -ltr
 RUN bash -c /code/docker_entrypoint.sh
 
+
