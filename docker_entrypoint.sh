@@ -6,8 +6,10 @@ export COMPILER="${COMPILER:-gcc}"
 export COMPILER_LIBCXX="${COMPILER_LIBCXX:-libstdc++11}"
 export COMPILER_VERSION="${COMPILER_VERSION:-7.3}"
 
-# mac
-export COMPILER=apple-clang COMPILER_VERSION=10.0 COMPILER_LIBCXX=libc++
+if [ "$(uname)" == "Darwin" ]; then
+	# mac
+	export COMPILER=apple-clang COMPILER_VERSION=10.0 COMPILER_LIBCXX=libc++
+fi
 
 # force recompile
 conan install . --build missing -s compiler=$COMPILER -s build_type=$MODE -s compiler.libcxx=$COMPILER_LIBCXX -s compiler.version=$COMPILER_VERSION
