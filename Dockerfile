@@ -32,6 +32,6 @@ RUN conan user -p $CONAN_TOKEN -r npm-mas-mas makiolo
 
 ADD . /code
 RUN ls -ltr
-RUN bash -c /code/docker_entrypoint.sh
+RUN bash -c /code/node_modules/npm-mas-mas/docker/entrypoint.sh
 
 
