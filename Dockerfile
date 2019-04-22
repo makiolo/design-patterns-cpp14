@@ -31,6 +31,5 @@ RUN conan remote add npm-mas-mas "https://api.bintray.com/conan/npm-mas-mas/test
 RUN conan user -p $CONAN_TOKEN -r npm-mas-mas makiolo
 
 COPY . /code
-RUN npm install
-RUN bash -c /code/node_modules/npm-mas-mas/docker/entrypoint.sh
+RUN bash -c /code/entrypoint.sh
 
