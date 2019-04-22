@@ -30,8 +30,7 @@ RUN conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/publ
 RUN conan remote add npm-mas-mas "https://api.bintray.com/conan/npm-mas-mas/testing"
 RUN conan user -p $CONAN_TOKEN -r npm-mas-mas makiolo
 
-ADD . /code
-RUN ls -ltr
+COPY . /code
+RUN npm install
 RUN bash -c /code/node_modules/npm-mas-mas/docker/entrypoint.sh
-
 
