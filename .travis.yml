@@ -2,5 +2,4 @@ language: c
 services: docker
 os: linux
 script:
-  - docker-compose build --no-cache --pull
-
+  - docker-compose up --build
