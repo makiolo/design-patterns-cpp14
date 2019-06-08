@@ -11,6 +11,6 @@ configuration:
 build: off
 install:
   - cmd: choco install curl
-  - cmd: curl -s https://raw.githubusercontent.com/makiolo/cmaki_scripts/master/ci.cmd > __ci.cmd
+  - cmd: curl -s https://raw.githubusercontent.com/makiolo/npm-mas-mas/master/cmaki_scripts/ci.cmd > __ci.cmd
   - cmd: call __ci.cmd
   - cmd: exit /b %errorlevel%

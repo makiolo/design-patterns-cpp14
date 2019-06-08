@@ -15,7 +15,7 @@ public:
 	explicit load_library(const std::string& libname)
 	{
 		_handle = LoadLibrary((libname + ".dll").c_str());
-		if (not _handle)
+		if (!_handle)
 		{
 			throw std::runtime_error("error loading library");
 		}
@@ -39,7 +39,7 @@ public:
 	explicit load_library(const std::string& libname)
 	{
 		_handle = dlopen(("lib" + libname + ".dylib").c_str(), RTLD_NOW); // RTLD_LAZY
-		if (not _handle)
+		if (!_handle)
 		{
 			fputs (dlerror(), stderr);
 			throw std::runtime_error("error loading library");
@@ -64,7 +64,7 @@ public:
 	explicit load_library(const std::string& libname)
 	{
 		_handle = dlopen(("lib" + libname + ".so").c_str(), RTLD_NOW); // RTLD_LAZY
-		if (not _handle)
+		if (!_handle)
 		{
 			fputs (dlerror(), stderr);
 			throw std::runtime_error("error loading library");
