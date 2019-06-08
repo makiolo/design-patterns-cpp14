@@ -1,6 +1,4 @@
 # Design patterns C++14
-[![npm version](https://badge.fury.io/js/design-patterns-cpp14.svg)](https://badge.fury.io/js/design-patterns-cpp14) [![state dependencies](https://david-dm.org/makiolo/design-patterns-cpp14.svg)](https://david-dm.org/makiolo/design-patterns-cpp14) [![state dev dependencies](https://david-dm.org/makiolo/design-patterns-cpp14/dev-status.svg)](https://david-dm.org/makiolo/design-patterns-cpp14?type=dev)
-
 gcc 4.9 / clang 3.6: [![Build Status](https://travis-ci.org/makiolo/design-patterns-cpp14.svg?branch=master)](https://travis-ci.org/makiolo/design-patterns-cpp14)
 
 MSVC 2015: [![Build status](https://ci.appveyor.com/api/projects/status/3ouxeirkgwi8nmyq?svg=true)](https://ci.appveyor.com/project/makiolo/design-patterns-cpp14)
