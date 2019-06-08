@@ -12,5 +12,5 @@ if [ "$NPP_CI" == "FALSE" ]; then
 fi
 
 conan create . npm-mas-mas/testing -s compiler=$COMPILER -s build_type=$MODE -s compiler.libcxx=$COMPILER_LIBCXX -s compiler.version=$COMPILER_VERSION -tf None
-conan upload '*' -r npm-mas-mas --all -c
 
+# conan upload '*' -r npm-mas-mas --all -c
