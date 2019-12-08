@@ -23,7 +23,7 @@ class NpmMasMas(ConanFile):
         self.run("git clone {}".format(self.url))
 
     def build(self):
-        self.run("cd {} && npm install && npm test".format(self.name))
+        self.run("cd {} && npm run setup && npm run compile && npm test".format(self.name))
 
     def package(self):
         self.copy("{}/include/*.h".format(self.name), dst=os.path.join('include', self.name), keep_path=False)

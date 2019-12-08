@@ -3,12 +3,11 @@
   "version": "1.0.23",
   "description": "Design patterns implemented in C++14",
   "scripts": {
-    "clean": "cmaki clean",
-    "setup": "cmaki setup",
-    "compile": "cmaki compile",
-    "install": "cmaki setup && cmaki compile",
-    "test": "cmaki test",
-    "create_package": "cmaki create_package"
+	  "clean": "cmaki clean",
+	  "setup": "cmaki setup",
+	  "compile": "cmaki compile",
+	  "install": "cmaki create_package",
+	  "test": "cmaki test"
   },
   "keywords": [
     "c++",
