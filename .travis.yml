@@ -1,4 +1,9 @@
 language: c
 services: docker
+envs:
+    - COMPILER=gcc8 MODE=debug
+    - COMPILER=gcc8 MODE=release
+    - COMPILER=clang50 MODE=debug
+    - COMPILER=clang50 MODE=release
 script:
-  - docker-compose up --build --abort-on-container-exit
+  - docker-compose up --build --abort-on-container-exit "${COMPILER}_${MODE}"
