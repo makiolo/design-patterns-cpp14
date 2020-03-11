@@ -28,3 +28,28 @@ services:
                 CXX: g++-8
                 CONAN_TOKEN: ${CONAN_TOKEN}
 
+    clang50_debug:
+        build:
+            context: .
+            args:
+                IMAGE: conanio/clang50
+                MODE: Debug
+                COMPILER: clang
+                COMPILER_VERSION: 5.0
+                COMPILER_LIBCXX: libstdc++11
+                CC: clang-5.0
+                CXX: clang++-5.0
+                CONAN_TOKEN: ${CONAN_TOKEN}
+
+    clang50_release:
+        build:
+            context: .
+            args:
+                IMAGE: conanio/clang50
+                MODE: Release
+                COMPILER: clang
+                COMPILER_VERSION: 5.0
+                COMPILER_LIBCXX: libstdc++11
+                CC: clang-5.0
+                CXX: clang++-5.0
+                CONAN_TOKEN: ${CONAN_TOKEN}
