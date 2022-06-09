@@ -36,7 +36,7 @@ To report an issue, use the [design-patterns-cpp14 issue tracker](https://github
 It's a header-only library. Only need an include.
 
 ### Compile tests
-You will need cmake (and a compiler).
+You will need cmake, npm and conan (and a compiler).
 ```bash
 $ git clone https://github.com/makiolo/design-patterns-cpp14.git
 $ cd design-patterns-cpp14
