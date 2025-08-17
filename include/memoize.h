@@ -1,6 +1,7 @@
 #ifndef _MEMOIZE_H_
 #define _MEMOIZE_H_
 
+#include <stdexcept>
 #include <metacommon/common.h>
 
 namespace dp14 {
@@ -8,6 +9,12 @@ namespace dp14 {
 template <typename T, typename U, typename... Args>
 class memoize_registrator;
 
+/**
+ * Memoize pattern implementation with caching and type registration
+ * 
+ * WARNING: This class is NOT thread-safe. External synchronization 
+ * is required for concurrent access.
+ */
 template <typename T, typename... Args>
 class memoize;
 
@@ -70,7 +77,7 @@ public:
 		if (it != _map_registrators.end())
 		{
 			std::cout << "Already registered key " << keyimpl << std::endl;
-			throw std::exception();
+			throw std::runtime_error("Key already registered in memoize");
 		}
 		else
 		{
@@ -90,7 +97,7 @@ public:
 		else
 		{
 			std::cout << "Already unregistered key " << keyimpl << std::endl;
-			throw std::exception();
+			throw std::runtime_error("Key already unregistered in memoize");
 		}
 	}
 
@@ -113,7 +120,8 @@ public:
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		auto obj = _get(keyimpl, key, std::forward<Args>(data)...);
-		_map_cache_shared.emplace(key, obj);
+		// Only add to shared cache if not already present to avoid unnecessary entries
+		_map_cache_shared.emplace(key, obj);  // emplace won't insert if key already exists
 		return obj;
 	}
 
@@ -123,7 +131,8 @@ public:
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
 		auto code = _get(keyimpl, key, std::forward<Args>(data)...);
-		_map_cache_shared.emplace(key, code);
+		// Only add to shared cache if not already present to avoid unnecessary entries
+		_map_cache_shared.emplace(key, code);  // emplace won't insert if key already exists
 		return code->get();
 	}
 	
@@ -132,11 +141,15 @@ public:
 	{
 		auto keyimpl = detail::memoize::get_hash(keyimpl_str);
 		key_cache key = get_base_hash(keyimpl, std::forward<Args>(data)...);
+		// Clear from both caches for consistency
+		_map_cache.erase(key);
 		_map_cache_shared.erase(key);
 	}
 	
 	void clear() const
 	{
+		// Clear both caches
+		_map_cache.clear();
 		_map_cache_shared.clear();
 	}
 	
@@ -165,7 +178,7 @@ protected:
 		if (itc == _map_registrators.end())
 		{
 			std::cout << "Can't found key in map: " << key << std::endl;
-			throw std::exception();
+			throw std::runtime_error("Key not found in memoize registry");
 		}
 
 		std::shared_ptr<T> new_product = (itc->second)(std::forward<Args>(data)...);
@@ -199,6 +212,7 @@ protected:
 			else
 			{
 				// remove expired dangled pointer
+				// Note: This modifies mutable _map_cache which is allowed in const methods
 				_map_cache.erase(key);
 			}
 		}
@@ -237,7 +251,12 @@ public:
 
 	~memoize_registrator()
 	{
-		_m.template unregister_type<U>();
+		try {
+			_m.template unregister_type<U>();
+		} catch (...) {
+			// Destructors should not throw exceptions
+			// Log error or handle silently
+		}
 	}
 
 protected:

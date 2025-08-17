@@ -6,6 +6,7 @@
 #define _FACTORY_H_
 
 #include <iostream>
+#include <stdexcept>
 #include <metacommon/common.h>
 
 namespace dp14 {
@@ -13,6 +14,12 @@ namespace dp14 {
 template <typename T, typename U, typename... Args>
 class factory_registrator;
 
+/**
+ * Factory pattern implementation with type registration
+ * 
+ * WARNING: This class is NOT thread-safe. External synchronization 
+ * is required for concurrent access.
+ */
 template <typename T, typename... Args>
 class factory;
 
@@ -64,7 +71,7 @@ public:
 		if (it != _map_registrators.end())
 		{
 			std::cout << "Already registered key " << keyimpl << std::endl;
-			throw std::exception();
+			throw std::runtime_error("Key already registered in factory");
 		}
 		else
 		{
@@ -84,7 +91,7 @@ public:
 		else
 		{
 			std::cout << "Already unregistered key " << keyimpl << std::endl;
-			throw std::exception();
+			throw std::runtime_error("Key already unregistered in factory");
 		}
 	}
 	
@@ -116,7 +123,7 @@ protected:
 		if (it == _map_registrators.end())
 		{
 			std::cout << "Can't found key in map: " << keyimpl << std::endl;
-			throw std::exception();
+			throw std::runtime_error("Key not found in factory registry");
 		}
 		return (it->second)(std::forward<Args>(data)...);
 	}
@@ -151,7 +158,12 @@ public:
 
 	~factory_registrator()
 	{
-		_f.template unregister_type<U>();
+		try {
+			_f.template unregister_type<U>();
+		} catch (...) {
+			// Destructors should not throw exceptions
+			// Log error or handle silently
+		}
 	}
 
 protected:
