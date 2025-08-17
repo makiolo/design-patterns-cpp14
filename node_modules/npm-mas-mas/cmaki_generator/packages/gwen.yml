@@ -1,0 +1,11 @@
+- gwen:
+    <<: *thirdparty_defaults
+    version: 0.0.0.0
+    version_manager: git
+    mode: dr
+    source: https://github.com/garrynewman/GWEN.git
+    targets:
+        - gwen:
+            info:
+                <<: *library_dynamic_exact
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+function npm-do { (PATH=$(npm bin):$PATH; eval $@;) }
+# set -x PATH ./node_modules/.bin $PATH

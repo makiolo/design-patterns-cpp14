@@ -1,0 +1,49 @@
+- intel-tbb:
+    <<: *thirdparty_defaults
+    version: 4.4.0.0
+    source: https://www.threadingbuildingblocks.org/sites/default/files/software_releases/source/tbb44_20150728oss_src.tgz
+    uncompress_strip: tbb44_20150728oss
+    build:
+        |
+            #!/bin/bash
+            source find.script
+            make info > info_.txt
+            tail -n +2 info_.txt > info.txt
+            source info.txt
+            make
+            code=$?
+            # install
+            cp -Rf include/ $intel_tbb_HOME
+            if [[ $BUILD_MODE == 'Debug' ]]
+            then
+                cp -Rf build/${tbb_build_prefix}_debug/*.so* $intel_tbb_HOME
+            else
+                cp -Rf build/${tbb_build_prefix}_release/*.so* $intel_tbb_HOME
+            fi
+            for i in $(find $intel_tbb_HOME -name "*.so"); do
+                name=$(basename $i)
+                echo rm $i
+                echo ln -sf $name.2 $i
+                rm $i
+                ln -sf $name.2 $i
+            done
+            exit $code
+
+    targets:
+        - tbb:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                \*-debug:
+                    definitions:
+                        - -DTBB_USE_DEBUG=1
+                default:
+                    definitions:
+                        - -DTBB_USE_DEBUG=0
+        - tbbmalloc:
+            info:
+                <<: *library_dynamic_exact
+        - tbbmalloc_proxy:
+            info:
+                <<: *library_dynamic_exact
+

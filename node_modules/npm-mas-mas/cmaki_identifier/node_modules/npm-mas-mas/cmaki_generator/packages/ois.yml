@@ -1,0 +1,19 @@
+- ois:
+    <<: *thirdparty_defaults
+    version: 1.3.0.0
+    mode: dr
+    source: http://downloads.sourceforge.net/project/wgois/Source%20Release/1.3/ois_v1-3.tar.gz
+    uncompress_strip: ois-v1-3
+    build:
+        |
+            #!/bin/bash
+            # depends: libxaw7-dev
+            source find.script
+            chmod +x bootstrap
+            ./bootstrap
+            ./configure --prefix=$ois_HOME && make -j $CORES && make -j $CORES install
+            exit $?
+    targets:
+        - OIS:
+            info:
+                <<: *library_dynamic_exact

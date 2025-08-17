@@ -1,0 +1,36 @@
+- freeimage:
+    <<: *thirdparty_defaults
+    version: 3.1.7.0
+    source: https://github.com/Kanma/FreeImage
+    cmake_target: null
+    post_install:
+        - ./lib/*.a lib/
+    targets:
+        - freeimage:
+            info:
+                <<: *library_static_exact
+        - jpeg:
+            info:
+                <<: *library_static_exact
+        - mng:
+            info:
+                <<: *library_static_exact
+        - openexr:
+            info:
+                <<: *library_static_exact
+        - openjpeg:
+            info:
+                <<: *library_static_exact
+        - png:
+            info:
+                <<: *library_static_exact
+        - rawlite:
+            info:
+                <<: *library_static_exact
+        - tiff:
+            info:
+                <<: *library_static_exact
+        - zlib:
+            info:
+                <<: *library_static_exact
+

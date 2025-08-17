@@ -1,0 +1,40 @@
+- freeimage:
+    <<: *thirdparty_defaults
+    version: 0.0.0.0
+    mode: dr
+    version_manager: git
+    cmake_target: null
+    post_install:
+        - ./*.h include RECURSIVE
+        - ./lib/*.a lib
+    mode: dr
+    source: https://github.com/Kanma/FreeImage.git
+    targets:
+        - freeimage:
+            info:
+                <<: *library_static_exact
+        # - zlib:
+        #     info:
+        #         <<: *library_static_exact
+        - tiff:
+            info:
+                <<: *library_static_exact
+        - rawlite:
+            info:
+                <<: *library_static_exact
+        - png:
+            info:
+                <<: *library_static_exact
+        - openjpeg:
+            info:
+                <<: *library_static_exact
+        - openexr:
+            info:
+                <<: *library_static_exact
+        - mng:
+            info:
+                <<: *library_static_exact
+        - jpeg:
+            info:
+                <<: *library_static_exact
+

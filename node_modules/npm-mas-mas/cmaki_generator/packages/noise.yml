@@ -1,0 +1,11 @@
+- noise:
+    <<: *thirdparty_defaults
+    version: 1.0.0.0
+    mode: dr
+    source: http://downloads.sourceforge.net/project/libnoise/libnoise%20sources/1.0.0/libnoisesrc-1.0.0.zip
+    uncompress_strip: noise
+    targets:
+        - noise:
+            info:
+                <<: *library_dynamic_exact
+

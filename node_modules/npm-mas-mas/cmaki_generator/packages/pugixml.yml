@@ -1,0 +1,11 @@
+- pugixml:
+    <<: *thirdparty_defaults
+    source: http://github.com/zeux/pugixml/releases/download/v1.8/pugixml-1.8.tar.gz
+    uncompress_strip: pugixml-1.8
+    cmake_definitions:
+        - BUILD_SHARED_LIBS=ON
+    targets:
+        - pugixml:
+            info:
+                <<: *library_dynamic_exact
+

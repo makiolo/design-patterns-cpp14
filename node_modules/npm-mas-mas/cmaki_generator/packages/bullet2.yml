@@ -1,0 +1,54 @@
+- bullet2:
+    <<: *thirdparty_defaults
+    version: 2.83.6.0
+    source: https://github.com/bulletphysics/bullet3/archive/2.83.6.tar.gz
+    uncompress_strip: bullet3-2.83.6
+    cmake_definitions:
+        - BUILD_SHARED_LIBS=ON
+    references: &bullet2_common_extra
+        default:
+            include:
+                - include/bullet
+    targets:
+        - LinearMath:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        - BulletCollision:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        - BulletDynamics:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        - BulletSoftBody:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        # optional targets
+        - BulletFileLoader:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        - ConvexDecomposition:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        - GIMPACTUtils:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+        - HACD:
+            info:
+                <<: *library_dynamic_exact
+            extra:
+                <<: *bullet2_common_extra
+

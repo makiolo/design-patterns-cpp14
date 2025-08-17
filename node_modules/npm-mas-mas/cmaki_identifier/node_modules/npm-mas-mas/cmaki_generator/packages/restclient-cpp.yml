@@ -1,0 +1,17 @@
+- restclient-cpp:
+    <<: *thirdparty_defaults
+    source: https://github.com/mrtazz/restclient-cpp
+    depends:
+        - haxx-libcurl
+    build:
+        |
+            #!/bin/bash
+            source $(pwd)/../haxx-libcurl/find.script
+            ./autogen.sh
+            CXXFLAGS=-I$haxx_libcurl_HOME/include ./configure --prefix=$SELFHOME
+            make install
+    targets:
+        - restclient-cpp:
+            info:
+                <<: *library_dynamic_exact
+

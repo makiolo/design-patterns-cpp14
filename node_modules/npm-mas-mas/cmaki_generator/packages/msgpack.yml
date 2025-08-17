@@ -1,0 +1,10 @@
+- msgpack:
+    <<: *thirdparty_defaults
+    version: 0.0.0.0
+    version_manager: git
+    source: https://github.com/msgpack/msgpack-c.git
+    targets:
+        - msgpackc:
+            info:
+                <<: *library_dynamic_exact
+

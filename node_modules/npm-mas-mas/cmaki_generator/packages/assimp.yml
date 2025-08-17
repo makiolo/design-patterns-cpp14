@@ -1,0 +1,13 @@
+- assimp:
+    <<: *thirdparty_defaults
+    version: 3.1.1.0
+    mode: dr
+    source: http://downloads.sourceforge.net/project/assimp/assimp-3.1/assimp-3.1.1.zip
+    uncompress_strip: assimp-3.1.1
+    cmake_definitions:
+        - BUILD_SHARED_LIBS=ON
+    targets:
+        - assimp:
+            info:
+                <<: *library_dynamic_exact
+

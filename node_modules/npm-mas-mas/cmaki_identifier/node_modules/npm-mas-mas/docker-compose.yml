@@ -1,0 +1,32 @@
+version: '3'
+services:
+    linux64:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.linux-x64
+        environment:
+            - NPP_SERVER=http://servfactor/cpp
+        command: make clean build
+        volumes:
+            - .:/work
+
+    windows64:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.windows-x64
+        environment:
+            - NPP_SERVER=http://servfactor/cpp
+        command: make clean build
+        volumes:
+            - .:/work
+
+    android64:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.android-arm64
+        environment:
+            - NPP_SERVER=http://servfactor/cpp
+        command: make clean build
+        volumes:
+            - .:/work
+

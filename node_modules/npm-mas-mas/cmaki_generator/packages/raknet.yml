@@ -1,0 +1,11 @@
+- raknet:
+    <<: *thirdparty_defaults
+    cmake_target: null
+    source: https://github.com/facebookarchive/RakNet.git
+    post_install:
+        - ./Source/*.h* include/raknet/
+    targets:
+        - RakNetDLL:
+            info:
+                <<: *library_dynamic_exact
+

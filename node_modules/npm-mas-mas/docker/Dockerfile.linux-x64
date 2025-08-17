@@ -1,0 +1,16 @@
+FROM dockcross/linux-x64
+ENV PYTHONUNBUFFERED 1
+RUN echo 'deb http://ftp.us.debian.org/debian testing main contrib non-free' > /etc/apt/sources.list.d/gcc.testing.list
+RUN apt-get update
+RUN apt-get install -y -t testing g++
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt install -y nodejs
+RUN npm install -g npm
+RUN apt install -y libgl1-mesa-dev
+RUN apt install -y libx11-dev
+RUN apt install -y python3-pip
+WORKDIR /work
+RUN pip3 install conan==1.6.1
+RUN pip3 install pyyaml==3.13
+RUN pip3 install requests==2.19.1
+

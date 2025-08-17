@@ -1,0 +1,21 @@
+- python:
+    <<: *thirdparty_defaults
+    source: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git
+    cmake_definitions:
+        - BUILD_SHARED=FALSE
+        - BUILD_STATIC=TRUE
+    targets:
+        - python3.5m:
+            info:
+                <<: *library_static_exact
+            extra:
+                default:
+                    include:
+                        - include/python3.5m
+                    system_depends:
+                        - dl
+                        - util
+        - python:
+            info:
+                <<: *executable_exact
+

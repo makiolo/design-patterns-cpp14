@@ -1,0 +1,16 @@
+- yamlcpp:
+    <<: *thirdparty_defaults
+    mode: dr
+    version: 0.0.0.0
+    version_manager: git
+    cmake_target: null
+    cmake_definitions:
+        - BUILD_SHARED_LIBS=ON
+    post_install:
+        - ./include/yaml-cpp/*.h include/yaml-cpp RECURSIVE
+    source: https://github.com/jbeder/yaml-cpp.git
+    targets:
+        - yaml-cpp:
+            info:
+                <<: *library_dynamic_exact
+
