@@ -42,21 +42,10 @@ class DesignPatternsCpp14Conan(ConanFile):
     
     # This is a header-only library
     package_type = "header-library"
-    no_copy_source = True
     
     def export(self):
-        """Export phase - download metacommon and include it"""
-        # Create metacommon directory in exports
-        metacommon_dir = os.path.join(self.export_folder, "include", "metacommon")
-        os.makedirs(metacommon_dir, exist_ok=True)
-        
-        # Download common.h
-        common_h_path = os.path.join(metacommon_dir, "common.h")
-        if not os.path.exists(common_h_path):
-            self.output.info("Downloading metacommon/common.h...")
-            download(self, 
-                    "https://raw.githubusercontent.com/makiolo/metacommon/master/common.h",
-                    common_h_path)
+        """Export phase - copy CMakeLists for metacommon download"""
+        pass
     
     def requirements(self):
         """Dependencies required by consumers of this package"""
@@ -73,9 +62,18 @@ class DesignPatternsCpp14Conan(ConanFile):
         cmake_layout(self)
     
     def source(self):
-        """Source step - not needed, CMakeLists.txt handles metacommon"""
-        # CMakeLists.txt will download metacommon during build if needed
-        pass
+        """Source step - download metacommon headers"""
+        # Create metacommon directory in source
+        metacommon_dir = os.path.join(self.source_folder, "include", "metacommon")
+        os.makedirs(metacommon_dir, exist_ok=True)
+        
+        # Download common.h from metacommon
+        common_h_path = os.path.join(metacommon_dir, "common.h")
+        if not os.path.exists(common_h_path):
+            self.output.info("Downloading metacommon/common.h...")
+            download(self, 
+                    "https://raw.githubusercontent.com/makiolo/metacommon/master/common.h",
+                    common_h_path)
     
     def build(self):
         """Build step - CMakeLists.txt will download metacommon if needed"""
@@ -89,11 +87,11 @@ class DesignPatternsCpp14Conan(ConanFile):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
              dst=os.path.join(self.package_folder, "include"), keep_path=True)
         
-        # Copy metacommon headers if they were downloaded by CMakeLists.txt
-        metacommon_path = os.path.join(self.source_folder, "include", "metacommon")
-        if os.path.exists(metacommon_path):
-            copy(self, "*", src=metacommon_path,
-                 dst=os.path.join(self.package_folder, "include", "metacommon"), keep_path=True)
+        # Copy metacommon headers if they exist
+        metacommon_src = os.path.join(self.source_folder, "include", "metacommon")
+        if os.path.exists(metacommon_src):
+            copy(self, "*.h", src=metacommon_src,
+                 dst=os.path.join(self.package_folder, "include", "metacommon"), keep_path=False)
     
     def package_info(self):
         """Define what consumers of this package need to know"""

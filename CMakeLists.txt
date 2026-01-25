@@ -17,7 +17,7 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon/common.h")
     include(FetchContent)
     FetchContent_Declare(
         metacommon
-        GIT_REPOSITORY git@github.com:makiolo/metacommon.git
+        GIT_REPOSITORY https://github.com/makiolo/metacommon.git
         GIT_TAG master
         SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_deps/metacommon-src"
     )
