@@ -1,0 +1,64 @@
+name: Build Consumer Example with GitHub Packages
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install CMake and Conan
+        run: |
+          pip install cmake 'conan>=2.0.0,<3.0.0'
+          cmake --version
+          conan --version
+      
+      - name: Configure Conan remote for GitHub Packages
+        run: |
+          mkdir -p ~/.conan2
+          conan remote add github \
+            "https://maven.pkg.github.com/makiolo/design-patterns-cpp14/conan" \
+            -f --insecure
+          conan remote login github github-actions -p ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Install Conan dependencies
+        working-directory: examples/consumer_project
+        run: |
+          mkdir -p build
+          cd build
+          conan install .. --remote=github --build=missing
+      
+      - name: Configure CMake
+        working-directory: examples/consumer_project/build
+        run: |
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release
+      
+      - name: Build project
+        working-directory: examples/consumer_project/build
+        run: cmake --build . --config Release
+      
+      - name: Run example
+        working-directory: examples/consumer_project/build
+        run: ./example_app
+      
+      - name: Display success
+        run: |
+          echo "✅ Consumer example successfully built and ran!"
+          echo "Package was successfully consumed from GitHub Packages"

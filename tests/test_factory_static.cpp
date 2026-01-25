@@ -1,3 +1,9 @@
+// NOTE: This test is not compiled by default
+// It requires Boost poly_collection library which adds an external dependency
+// To enable this test, uncomment the line in CMakeLists.txt:
+//   add_pattern_test(factory_static tests/test_factory_static.cpp)
+// And install Boost: conan install . --requires=boost/1.86.0
+
 #include <iostream>
 #include <assert.h>
 #include "factory.h"

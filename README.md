@@ -30,18 +30,96 @@ The source for design-patterns-cpp14 is held at [design-patterns-cpp14](https://
 
 To report an issue, use the [design-patterns-cpp14 issue tracker](https://github.com/makiolo/design-patterns-cpp14/issues) at github.com.
 
-## Using design-patterns-cpp14
+## Using design-patterns-cpp14 (As a Consumer)
 
-### Compile design-patterns-cpp14
-It's a header-only library. Only need an include.
+### Quick Start with Conan (5 minutes)
 
-### Compile tests
-You will need cmake, npm and conan (and a compiler).
-```bash
-$ git clone https://github.com/makiolo/design-patterns-cpp14.git
-$ cd design-patterns-cpp14
-$ npm install
+**Prerequisites:** Conan 2.0+, CMake 3.15+
+
+#### 1. Create a `conanfile.txt` in your project:
+
+```ini
+[requires]
+design-patterns-cpp14/1.0.24
+
+[generators]
+CMakeDeps
+CMakeToolchain
 ```
+
+#### 2. Install dependencies:
+
+```bash
+mkdir build && cd build
+conan install .. --remote=github
+```
+
+#### 3. Configure and build:
+
+```bash
+cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+cmake --build .
+```
+
+#### 4. Use in your C++ code:
+
+```cpp
+#include <dp14/factory.h>
+#include <dp14/memoize.h>
+
+// Your code here...
+```
+
+### Installation Methods
+
+#### Option 1: Using Conan (Recommended)
+
+**One-time setup:**
+```bash
+conan remote add github "https://maven.pkg.github.com/makiolo/design-patterns-cpp14/conan"
+conan remote login github YOUR_USERNAME -p YOUR_TOKEN
+```
+
+**In your project:** Create `conanfile.txt` as shown above.
+
+**See [docs/GITHUB_PACKAGES_SETUP.md](docs/GITHUB_PACKAGES_SETUP.md) for complete setup with screenshots**
+
+#### Option 2: Copy Headers Directly
+
+For simple projects, just copy the `include/` folder to your project and add it to your CMake:
+
+```cmake
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+```
+
+#### Option 3: Build from Source
+
+Clone and create Conan package locally:
+
+```bash
+git clone https://github.com/makiolo/design-patterns-cpp14.git
+cd design-patterns-cpp14
+conan create . --build=missing
+```
+
+### What You Get
+
+This is a **header-only library** with:
+
+- ✅ **Factory pattern**: Create objects of different types dynamically
+- ✅ **Memoize pattern**: Cache objects to avoid recreating them
+- ✅ **Zero external dependencies**: Uses only C++ standard library
+- ✅ **C++14 compatible**: Works with gcc 4.9+, clang 3.6+, MSVC 2015+
+- ✅ **Cross-platform**: Linux, macOS, Windows
+
+### Documentation for Consumers
+
+| What you need | Link |
+|---|---|
+| **Quick start (5 min)** | [docs/GITHUB_PACKAGES_SETUP.md](docs/GITHUB_PACKAGES_SETUP.md) |
+| **Complete usage guide** | [docs/GITHUB_PACKAGES.md](docs/GITHUB_PACKAGES.md) |
+| **All distribution options** | [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) |
+| **Example project** | [examples/consumer_project/](examples/consumer_project/) |
 ### Naming implementations
 * *option 1*: use DEFINE_KEY(classname or anything) within the class
 * *option 2*: use DEFINE_HASH(classname well qualified) outside of class
