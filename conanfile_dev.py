@@ -50,7 +50,7 @@ class DesignPatternsDevConan(ConanFile):
             self.output.info("Downloading metacommon/common.h...")
             download(self, 
                     "https://raw.githubusercontent.com/makiolo/metacommon/master/common.h",
-                    common_h_path, retries=3)
+                    common_h_path)
     
     def requirements(self):
         # No external dependencies - both this library and metacommon are header-only
