@@ -26,3 +26,11 @@
 *.exe
 *.out
 *.app
+
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Build directories
+build/
+gcc/
