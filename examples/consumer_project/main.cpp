@@ -7,7 +7,7 @@
 // Simple example using factory pattern from design-patterns-cpp14
 class Shape {
 public:
-    using Factory = dp14::factory<Shape, std::string>;
+    using factory = dp14::factory<Shape, std::string>;
     
     virtual ~Shape() = default;
     virtual void draw() const = 0;
@@ -32,24 +32,12 @@ public:
 };
 
 // Register implementations
-namespace {
-    // Register Circle type with the factory
-    struct CircleRegistrator {
-        CircleRegistrator() {
-            Shape::Factory::instance().register_type<Circle>(
-                []() { return std::make_unique<Circle>(); }
-            );
-        }
-    } circle_registrator;
-    
-    // Register Square type with the factory
-    struct SquareRegistrator {
-        SquareRegistrator() {
-            Shape::Factory::instance().register_type<Square>(
-                []() { return std::make_unique<Square>(); }
-            );
-        }
-    } square_registrator;
+namespace regCircle {
+    Shape::factory::registrator<Circle> reg;
+}
+
+namespace regSquare {
+    Shape::factory::registrator<Square> reg;
 }
 
 // Example using memoize pattern
@@ -70,8 +58,8 @@ int main() {
     
     // Factory Pattern Example
     std::cout << "Factory Pattern Example:" << std::endl;
-    auto circle = Shape::Factory::instance().create(Circle::KEY());
-    auto square = Shape::Factory::instance().create(Square::KEY());
+    auto circle = Shape::factory::instance().create(Circle::KEY());
+    auto square = Shape::factory::instance().create(Square::KEY());
     
     if (circle) circle->draw();
     if (square) square->draw();
