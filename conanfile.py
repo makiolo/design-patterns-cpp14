@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.files import copy
+from conan.tools.files import copy, get
 from conan.tools.cmake import cmake_layout
 import os
 
@@ -44,9 +44,9 @@ class DesignPatternsCpp14Conan(ConanFile):
     
     def requirements(self):
         """Dependencies required by consumers of this package"""
-        # metacommon is needed for the factory and memoize patterns
-        # Use the git repository directly as it's not in ConanCenter
-        self.requires("metacommon/0.4.8", force=True)
+        # No external dependencies - both this library and metacommon are header-only
+        # metacommon is downloaded during source() step
+        pass
     
     def build_requirements(self):
         """Dependencies needed only for building and testing this package"""
@@ -57,9 +57,11 @@ class DesignPatternsCpp14Conan(ConanFile):
         cmake_layout(self)
     
     def source(self):
-        """Download or clone source code if needed"""
-        # Source is already present in the recipe directory
-        pass
+        """Download metacommon from GitHub"""
+        # Download metacommon header-only library from GitHub
+        # It's a separate repository but header-only, so we include it in the package
+        get(self, "https://github.com/makiolo/metacommon/archive/refs/heads/master.zip",
+            destination=self.source_folder, strip_root=True)
     
     def build(self):
         """Build step (not needed for header-only libraries)"""
@@ -68,7 +70,11 @@ class DesignPatternsCpp14Conan(ConanFile):
     
     def package(self):
         """Copy header files to package"""
+        # Copy this library's headers
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
+             dst=os.path.join(self.package_folder, "include"), keep_path=True)
+        # Copy metacommon headers (they are also in include/ after extraction)
+        copy(self, "**/*.h", src=os.path.join(self.source_folder, "include"),
              dst=os.path.join(self.package_folder, "include"), keep_path=True)
     
     def package_info(self):

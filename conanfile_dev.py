@@ -1,6 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import cmake_layout, CMake
-from conan.tools.files import copy
+from conan.tools.files import copy, get
 import os
 
 
@@ -39,9 +39,9 @@ class DesignPatternsDevConan(ConanFile):
     no_copy_source = True
     
     def requirements(self):
-        # metacommon is needed for the factory and memoize patterns
-        # Use the git repository directly as it's not in ConanCenter
-        self.requires("metacommon/0.4.8", force=True)
+        # No external dependencies - both this library and metacommon are header-only
+        # metacommon is downloaded during source() step
+        pass
     
     def build_requirements(self):
         self.test_requires("gtest/1.14.0")
@@ -49,8 +49,18 @@ class DesignPatternsDevConan(ConanFile):
     def layout(self):
         cmake_layout(self)
     
+    def source(self):
+        """Download metacommon from GitHub"""
+        # Download metacommon header-only library from GitHub
+        get(self, "https://github.com/makiolo/metacommon/archive/refs/heads/master.zip",
+            destination=self.source_folder, strip_root=True)
+    
     def package(self):
+        # Copy this library's headers
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
+             dst=os.path.join(self.package_folder, "include"), keep_path=True)
+        # Copy metacommon headers (they are also in include/ after extraction)
+        copy(self, "**/*.h", src=os.path.join(self.source_folder, "include"),
              dst=os.path.join(self.package_folder, "include"), keep_path=True)
     
     def package_info(self):
