@@ -56,12 +56,14 @@ class DesignPatternsDevConan(ConanFile):
             destination=self.source_folder, strip_root=True)
     
     def package(self):
-        # Copy this library's headers
+        # Copy this library's headers preserving directory structure
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
              dst=os.path.join(self.package_folder, "include"), keep_path=True)
-        # Copy metacommon headers (they are also in include/ after extraction)
-        copy(self, "**/*.h", src=os.path.join(self.source_folder, "include"),
-             dst=os.path.join(self.package_folder, "include"), keep_path=True)
+        
+        # Copy metacommon headers preserving the metacommon/ subdirectory structure
+        # This is important because factory.h uses #include <metacommon/common.h>
+        copy(self, "*", src=os.path.join(self.source_folder, "include", "metacommon"),
+             dst=os.path.join(self.package_folder, "include", "metacommon"), keep_path=True)
     
     def package_info(self):
         self.cpp_info.bindirs = []
