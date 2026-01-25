@@ -24,6 +24,9 @@ jobs:
           cmake --version
           conan --version
       
+      - name: Detect Conan default profile
+        run: conan profile detect --force
+      
       - name: Install Conan dependencies (using git repository)
         working-directory: examples/consumer_project
         run: |
