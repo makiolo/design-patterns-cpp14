@@ -1,44 +1,42 @@
 # Quick Setup - 5 Minutes
 
-## Choose Your Installation Method
+## Installation: Clone and Create
 
-### ⭐ Easiest: Use Git URL (Recommended)
+### Step 1: Clone the repository
 
-Add to your `conanfile.txt`:
+```bash
+git clone https://github.com/makiolo/design-patterns-cpp14.git
+cd design-patterns-cpp14
+```
+
+### Step 2: Create the Conan package
+
+```bash
+conan create .
+```
+
+This creates the package in your local Conan cache.
+
+### Step 3: Use in your project
+
+Create `conanfile.txt` in your project:
 
 ```ini
 [requires]
-design-patterns-cpp14/1.0.24@
+design-patterns-cpp14/1.0.24
 
 [generators]
 CMakeDeps
 CMakeToolchain
 ```
 
-Then:
+### Step 4: Install dependencies
+
 ```bash
 mkdir build && cd build
 conan install .. --build=missing
 cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
 cmake --build .
-```
-
-**That's it!** No authentication needed, no server setup. Conan handles everything.
-
----
-
-### Alternative: Clone and Create
-
-```bash
-git clone https://github.com/makiolo/design-patterns-cpp14.git
-cd design-patterns-cpp14
-conan create .
-```
-
-Then in your project:
-```ini
-[requires]
-design-patterns-cpp14/1.0.24
 ```
 
 ---

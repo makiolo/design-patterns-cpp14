@@ -32,25 +32,32 @@ To report an issue, use the [design-patterns-cpp14 issue tracker](https://github
 
 ## Using design-patterns-cpp14 (As a Consumer)
 
-### Quick Start with Conan (Choose Your Method)
+### Quick Start with Conan
 
 **Prerequisites:** Conan 2.0+, CMake 3.15+
 
-#### Method 1: Direct from Git (Recommended)
+#### Method 1: Clone + Create (Recommended)
 
-Conan can pull recipes directly from git! Simplest for users.
+**Step 1: Clone and create the package**
+```bash
+git clone https://github.com/makiolo/design-patterns-cpp14.git
+cd design-patterns-cpp14
+conan create .
+```
 
-**In your `conanfile.txt`:**
+**Step 2: Use in your project**
+
+Create `conanfile.txt`:
 ```ini
 [requires]
-design-patterns-cpp14/1.0.24@
+design-patterns-cpp14/1.0.24
 
 [generators]
 CMakeDeps
 CMakeToolchain
 ```
 
-**Build:**
+**Step 3: Install and build**
 ```bash
 mkdir build && cd build
 conan install .. --build=missing
@@ -58,21 +65,7 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
 cmake --build .
 ```
 
-#### Method 2: Clone and Create
-
-```bash
-git clone https://github.com/makiolo/design-patterns-cpp14.git
-cd design-patterns-cpp14
-conan create .
-```
-
-Then in your project's `conanfile.txt`:
-```ini
-[requires]
-design-patterns-cpp14/1.0.24
-```
-
-#### Method 3: From GitHub Releases
+#### Method 2: Download from GitHub Releases
 
 Download source from [Releases page](https://github.com/makiolo/design-patterns-cpp14/releases):
 
@@ -82,13 +75,14 @@ cd design-patterns-cpp14-1.0.24
 conan create .
 ```
 
-### Installation Methods
+Then use in your project as shown above.
 
-| Method | Command | Best For |
-|--------|---------|----------|
-| **Git URL (Recommended)** | Use `design-patterns-cpp14/1.0.24@` in conanfile | Most users |
-| **Clone + Create** | `git clone` + `conan create .` | Development/control |
-| **Releases Download** | Download from `/releases` | Version pinning |
+### Installation Methods Comparison
+
+| Method | Steps | Best For |
+|--------|-------|----------|
+| **Clone + Create** | 1. Clone, 2. `conan create .`, 3. Use | Most users |
+| **Releases Download** | 1. Download tar, 2. `conan create .`, 3. Use | Version pinning |
 
 ### What You Get
 

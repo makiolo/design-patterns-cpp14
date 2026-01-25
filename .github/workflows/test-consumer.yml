@@ -27,12 +27,15 @@ jobs:
       - name: Detect Conan default profile
         run: conan profile detect --force
       
-      - name: Install Conan dependencies (using git repository)
+      - name: Create Conan package from current repository
+        run: |
+          conan create . --build=missing
+      
+      - name: Install Conan dependencies (using local cache)
         working-directory: examples/consumer_project
         run: |
           mkdir -p build
           cd build
-          # Install from local conanfile which uses git URL
           conan install .. --build=missing
       
       - name: Configure CMake
