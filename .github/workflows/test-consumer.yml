@@ -1,4 +1,4 @@
-name: Build Consumer Example with GitHub Packages
+name: Test Consumer Example
 
 on:
   push:
@@ -8,10 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      packages: read
     
     steps:
       - name: Checkout repository
@@ -28,20 +24,13 @@ jobs:
           cmake --version
           conan --version
       
-      - name: Configure Conan remote for GitHub Packages
-        run: |
-          mkdir -p ~/.conan2
-          conan remote add github \
-            "https://maven.pkg.github.com/makiolo/design-patterns-cpp14/conan" \
-            -f --insecure
-          conan remote login github github-actions -p ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Install Conan dependencies
+      - name: Install Conan dependencies (using git repository)
         working-directory: examples/consumer_project
         run: |
           mkdir -p build
           cd build
-          conan install .. --remote=github --build=missing
+          # Install from local conanfile which uses git URL
+          conan install .. --build=missing
       
       - name: Configure CMake
         working-directory: examples/consumer_project/build
@@ -61,4 +50,4 @@ jobs:
       - name: Display success
         run: |
           echo "✅ Consumer example successfully built and ran!"
-          echo "Package was successfully consumed from GitHub Packages"
+          echo "Package was successfully consumed from git repository"
