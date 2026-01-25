@@ -58,10 +58,9 @@ class DesignPatternsCpp14Conan(ConanFile):
     
     def source(self):
         """Download metacommon from GitHub"""
-        # Download metacommon header-only library from GitHub
-        # It's a separate repository but header-only, so we include it in the package
+        # Download metacommon header-only library from GitHub into a subdirectory
         get(self, "https://github.com/makiolo/metacommon/archive/refs/heads/master.zip",
-            destination=self.source_folder, strip_root=True)
+            destination=os.path.join(self.source_folder, "metacommon_src"), strip_root=True)
     
     def build(self):
         """Build step (not needed for header-only libraries)"""
@@ -74,10 +73,14 @@ class DesignPatternsCpp14Conan(ConanFile):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
              dst=os.path.join(self.package_folder, "include"), keep_path=True)
         
-        # Copy metacommon headers preserving the metacommon/ subdirectory structure
-        # This is important because factory.h uses #include <metacommon/common.h>
-        copy(self, "*", src=os.path.join(self.source_folder, "include", "metacommon"),
-             dst=os.path.join(self.package_folder, "include", "metacommon"), keep_path=True)
+        # Copy metacommon headers from the downloaded source
+        # The structure should be: metacommon_src/include/metacommon/
+        metacommon_include = os.path.join(self.source_folder, "metacommon_src", "include")
+        if os.path.exists(metacommon_include):
+            # Copy everything from metacommon_src/include to package include
+            # This preserves the metacommon/ subdirectory
+            copy(self, "*", src=metacommon_include,
+                 dst=os.path.join(self.package_folder, "include"), keep_path=True)
     
     def package_info(self):
         """Define what consumers of this package need to know"""
