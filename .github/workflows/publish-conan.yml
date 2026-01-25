@@ -34,19 +34,6 @@ jobs:
           pip install conan==2.0.0 || pip install 'conan>=2.0.0,<3.0.0'
           conan --version
       
-      - name: Configure Conan credentials for GitHub Packages
-        run: |
-          # Create Conan home if it doesn't exist
-          mkdir -p ~/.conan2
-          
-          # Add GitHub Packages remote
-          conan remote add github \
-            "https://maven.pkg.github.com/${{ github.repository }}/conan" \
-            -f --insecure
-          
-          # Store credentials
-          conan remote login github ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-      
       - name: Extract version from tag
         id: version
         run: |
@@ -55,24 +42,46 @@ jobs:
             VERSION="${VERSION#v}"  # Remove 'v' prefix
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           else
-            # Use current version from conanfile.py
-            VERSION=$(grep -oP '^\s*version\s*=\s*"\K[^"]+' conanfile.py)
+            # Use current version from VERSION file
+            VERSION=$(cat VERSION)
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           fi
+          echo "Publishing version: $VERSION"
+      
+      - name: Configure Conan for GitHub Packages
+        run: |
+          # Setup Conan home directory
+          mkdir -p ~/.conan2
+          
+          # Add GitHub Packages as remote using Artifactory API
+          # GitHub Packages Maven repository endpoint
+          REMOTE_URL="https://maven.pkg.github.com/makiolo/design-patterns-cpp14/conan"
+          
+          conan remote remove github || true
+          conan remote add github "$REMOTE_URL" -f
+          
+          # Setup credentials for authentication
+          conan remote login github "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}" || true
       
       - name: Create Conan package
         run: |
-          echo "Creating Conan package version ${{ steps.version.outputs.version }}..."
+          echo "Creating Conan package for design-patterns-cpp14/${{ steps.version.outputs.version }}"
           conan create . \
-            --user=${{ env.CONAN_USER }} \
-            --channel=${{ env.CONAN_CHANNEL }}
+            --build=missing \
+            -c tools.cmake.cmake_program:program="cmake"
       
       - name: Upload to GitHub Packages
         run: |
-          echo "Uploading to GitHub Packages..."
-          conan upload "${{ env.CONAN_PACKAGE_NAME }}/*" \
+          echo "Uploading design-patterns-cpp14/${{ steps.version.outputs.version }} to GitHub Packages..."
+          
+          # Export to upload
+          conan export . \
+            -c tools.cmake.cmake_program:program="cmake"
+          
+          # Upload package
+          conan upload "design-patterns-cpp14/${{ steps.version.outputs.version }}" \
             --remote=github \
-            --confirm
+            --confirm -c
       
       - name: Create Release Notes
         if: startsWith(github.ref, 'refs/tags/')

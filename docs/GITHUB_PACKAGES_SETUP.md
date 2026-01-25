@@ -162,20 +162,17 @@ All options:     docs/DISTRIBUTION.md
 ❓ TROUBLESHOOTING
 ─────────────────────────────────────────────────────────────────────────────
 
-Problem: "401 Unauthorized"
-Solution: 
-  • Check your token is correct
-  • Ensure it has 'read:packages' scope
-  • Try re-login: conan remote login github USERNAME -p TOKEN
+Having issues? See the complete troubleshooting guide:
 
-Problem: "Package not found"
-Solution:
-  • Verify version: conan search "design-patterns-cpp14/*" --remote=github
-  • Check remote: conan remote list
+👉 docs/GITHUB_PACKAGES_TROUBLESHOOTING.md
 
-Problem: "Certificate verify failed"
-Solution:
-  • Add --insecure flag: conan install .. --remote=github --insecure
+This covers:
+  • "maven package conan.v2 does not exist" 
+  • "401 Unauthorized" errors
+  • "Package not found" issues
+  • Certificate/SSL problems
+  • How to debug with detailed logs
+  • Step-by-step recovery guide
 
 ═════════════════════════════════════════════════════════════════════════════
 

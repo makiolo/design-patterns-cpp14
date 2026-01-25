@@ -118,6 +118,7 @@ This is a **header-only library** with:
 |---|---|
 | **Quick start (5 min)** | [docs/GITHUB_PACKAGES_SETUP.md](docs/GITHUB_PACKAGES_SETUP.md) |
 | **Complete usage guide** | [docs/GITHUB_PACKAGES.md](docs/GITHUB_PACKAGES.md) |
+| **Having issues?** | [docs/GITHUB_PACKAGES_TROUBLESHOOTING.md](docs/GITHUB_PACKAGES_TROUBLESHOOTING.md) |
 | **All distribution options** | [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) |
 | **Example project** | [examples/consumer_project/](examples/consumer_project/) |
 ### Naming implementations
