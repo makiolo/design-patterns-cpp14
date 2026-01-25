@@ -10,6 +10,25 @@ if(EXISTS "${CMAKE_BINARY_DIR}/conan_toolchain.cmake")
     include("${CMAKE_BINARY_DIR}/conan_toolchain.cmake")
 endif()
 
+# Ensure metacommon headers are available
+# If not found, download them
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon/common.h")
+    message(STATUS "Downloading metacommon headers...")
+    include(FetchContent)
+    FetchContent_Declare(
+        metacommon
+        URL https://github.com/makiolo/metacommon/archive/refs/heads/master.zip
+        SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon"
+    )
+    FetchContent_GetProperties(metacommon)
+    if(NOT metacommon_POPULATED)
+        FetchContent_Populate(metacommon)
+        # Copy headers from the fetched source
+        file(COPY "${metacommon_SOURCE_DIR}/include/metacommon/" 
+             DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon/")
+    endif()
+endif()
+
 # Find dependencies (GTest only needed for tests)
 find_package(GTest REQUIRED CONFIG)
 

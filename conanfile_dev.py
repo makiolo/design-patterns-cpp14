@@ -50,24 +50,20 @@ class DesignPatternsDevConan(ConanFile):
         cmake_layout(self)
     
     def source(self):
-        """Download metacommon from GitHub"""
-        # Download metacommon header-only library from GitHub into a subdirectory
-        get(self, "https://github.com/makiolo/metacommon/archive/refs/heads/master.zip",
-            destination=os.path.join(self.source_folder, "metacommon_src"), strip_root=True)
+        """Source step - not needed, CMakeLists.txt handles metacommon"""
+        # CMakeLists.txt will download metacommon during build if needed
+        pass
     
     def package(self):
-        # Copy this library's headers preserving directory structure
+        # Copy this library's headers
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
              dst=os.path.join(self.package_folder, "include"), keep_path=True)
         
-        # Copy metacommon headers from the downloaded source
-        # The structure should be: metacommon_src/include/metacommon/
-        metacommon_include = os.path.join(self.source_folder, "metacommon_src", "include")
-        if os.path.exists(metacommon_include):
-            # Copy everything from metacommon_src/include to package include
-            # This preserves the metacommon/ subdirectory
-            copy(self, "*", src=metacommon_include,
-                 dst=os.path.join(self.package_folder, "include"), keep_path=True)
+        # Copy metacommon headers if they were downloaded by CMakeLists.txt
+        metacommon_path = os.path.join(self.source_folder, "include", "metacommon")
+        if os.path.exists(metacommon_path):
+            copy(self, "*", src=metacommon_path,
+                 dst=os.path.join(self.package_folder, "include", "metacommon"), keep_path=True)
     
     def package_info(self):
         self.cpp_info.bindirs = []
