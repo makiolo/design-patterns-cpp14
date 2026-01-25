@@ -32,75 +32,63 @@ To report an issue, use the [design-patterns-cpp14 issue tracker](https://github
 
 ## Using design-patterns-cpp14 (As a Consumer)
 
-### Quick Start with Conan (5 minutes)
+### Quick Start with Conan (Choose Your Method)
 
 **Prerequisites:** Conan 2.0+, CMake 3.15+
 
-#### 1. Create a `conanfile.txt` in your project:
+#### Method 1: Direct from Git (Recommended)
 
+Conan can pull recipes directly from git! Simplest for users.
+
+**In your `conanfile.txt`:**
 ```ini
 [requires]
-design-patterns-cpp14/1.0.24
+design-patterns-cpp14/1.0.24@
 
 [generators]
 CMakeDeps
 CMakeToolchain
 ```
 
-#### 2. Install dependencies:
-
+**Build:**
 ```bash
 mkdir build && cd build
-conan install .. --remote=github
-```
-
-#### 3. Configure and build:
-
-```bash
+conan install .. --build=missing
 cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
 cmake --build .
 ```
 
-#### 4. Use in your C++ code:
-
-```cpp
-#include <dp14/factory.h>
-#include <dp14/memoize.h>
-
-// Your code here...
-```
-
-### Installation Methods
-
-#### Option 1: Using Conan (Recommended)
-
-**One-time setup:**
-```bash
-conan remote add github "https://maven.pkg.github.com/makiolo/design-patterns-cpp14/conan"
-conan remote login github YOUR_USERNAME -p YOUR_TOKEN
-```
-
-**In your project:** Create `conanfile.txt` as shown above.
-
-**See [docs/GITHUB_PACKAGES_SETUP.md](docs/GITHUB_PACKAGES_SETUP.md) for complete setup with screenshots**
-
-#### Option 2: Copy Headers Directly
-
-For simple projects, just copy the `include/` folder to your project and add it to your CMake:
-
-```cmake
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-```
-
-#### Option 3: Build from Source
-
-Clone and create Conan package locally:
+#### Method 2: Clone and Create
 
 ```bash
 git clone https://github.com/makiolo/design-patterns-cpp14.git
 cd design-patterns-cpp14
-conan create . --build=missing
+conan create .
 ```
+
+Then in your project's `conanfile.txt`:
+```ini
+[requires]
+design-patterns-cpp14/1.0.24
+```
+
+#### Method 3: From GitHub Releases
+
+Download source from [Releases page](https://github.com/makiolo/design-patterns-cpp14/releases):
+
+```bash
+tar -xzf design-patterns-cpp14-1.0.24.tar.gz
+cd design-patterns-cpp14-1.0.24
+conan create .
+```
+
+### Installation Methods
+
+| Method | Command | Best For |
+|--------|---------|----------|
+| **Git URL (Recommended)** | Use `design-patterns-cpp14/1.0.24@` in conanfile | Most users |
+| **Clone + Create** | `git clone` + `conan create .` | Development/control |
+| **Releases Download** | Download from `/releases` | Version pinning |
 
 ### What You Get
 
@@ -116,10 +104,10 @@ This is a **header-only library** with:
 
 | What you need | Link |
 |---|---|
-| **Quick start (5 min)** | [docs/GITHUB_PACKAGES_SETUP.md](docs/GITHUB_PACKAGES_SETUP.md) |
+| **Quick setup (5 min)** | [docs/QUICK_SETUP.md](docs/QUICK_SETUP.md) |
 | **Complete usage guide** | [docs/GITHUB_PACKAGES.md](docs/GITHUB_PACKAGES.md) |
+| **All installation options** | [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) |
 | **Having issues?** | [docs/GITHUB_PACKAGES_TROUBLESHOOTING.md](docs/GITHUB_PACKAGES_TROUBLESHOOTING.md) |
-| **All distribution options** | [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) |
 | **Example project** | [examples/consumer_project/](examples/consumer_project/) |
 ### Naming implementations
 * *option 1*: use DEFINE_KEY(classname or anything) within the class
