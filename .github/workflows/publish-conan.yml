@@ -1,0 +1,161 @@
+name: Publish Conan Package to GitHub Packages
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags like v1.0.24
+  workflow_dispatch:  # Allow manual trigger
+
+env:
+  CONAN_USER: makiolo
+  CONAN_CHANNEL: stable
+  REGISTRY_URL: github.com
+  CONAN_PACKAGE_NAME: design-patterns-cpp14
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install Conan
+        run: |
+          pip install conan==2.0.0 || pip install 'conan>=2.0.0,<3.0.0'
+          conan --version
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${{ github.ref_name }}"
+            VERSION="${VERSION#v}"  # Remove 'v' prefix
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            # Use current version from VERSION file
+            VERSION=$(cat VERSION)
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          fi
+          echo "Publishing version: $VERSION"
+      
+      - name: Configure Conan for GitHub Packages
+        run: |
+          # Setup Conan home directory
+          mkdir -p ~/.conan2
+          
+          # Add GitHub Packages as remote using Artifactory API
+          # GitHub Packages Maven repository endpoint
+          REMOTE_URL="https://maven.pkg.github.com/makiolo/design-patterns-cpp14/conan"
+          
+          conan remote remove github || true
+          conan remote add github "$REMOTE_URL" -f
+          
+          # Setup credentials for authentication
+          conan remote login github "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}" || true
+      
+      - name: Create Conan package
+        run: |
+          echo "Creating Conan package for design-patterns-cpp14/${{ steps.version.outputs.version }}"
+          conan create . \
+            --build=missing \
+            -c tools.cmake.cmake_program:program="cmake"
+      
+      - name: Upload to GitHub Packages
+        run: |
+          echo "Uploading design-patterns-cpp14/${{ steps.version.outputs.version }} to GitHub Packages..."
+          
+          # Export to upload
+          conan export . \
+            -c tools.cmake.cmake_program:program="cmake"
+          
+          # Upload package
+          conan upload "design-patterns-cpp14/${{ steps.version.outputs.version }}" \
+            --remote=github \
+            --confirm -c
+      
+      - name: Create Release Notes
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          body: |
+            # Conan Package Published
+            
+            Version: `${{ steps.version.outputs.version }}`
+            
+            ## Installation
+            
+            ```bash
+            # Configure GitHub Packages remote
+            conan remote add github https://maven.pkg.github.com/${{ github.repository }}/conan
+            conan remote login github USERNAME -p TOKEN
+            
+            # Install
+            conan install --requires="design-patterns-cpp14/${{ steps.version.outputs.version }}@makiolo/stable"
+            ```
+            
+            See [README.md](README.md) for more information.
+          draft: false
+          prerelease: false
+
+  test-consumption:
+    runs-on: ubuntu-latest
+    needs: publish
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install Conan
+        run: |
+          pip install 'conan>=2.0.0,<3.0.0'
+      
+      - name: Configure Conan for GitHub Packages
+        run: |
+          mkdir -p ~/.conan2
+          conan remote add github \
+            "https://maven.pkg.github.com/${{ github.repository }}/conan" \
+            -f --insecure
+          conan remote login github ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep -oP '^\s*version\s*=\s*"\K[^"]+' conanfile.py)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Test consumption
+        run: |
+          mkdir -p /tmp/test_project
+          cd /tmp/test_project
+          
+          cat > conanfile.txt << 'EOF'
+          [requires]
+          design-patterns-cpp14/${{ steps.version.outputs.version }}@makiolo/stable
+          
+          [generators]
+          CMakeDeps
+          CMakeToolchain
+          EOF
+          
+          echo "Installing package from GitHub Packages..."
+          conan install . --remote=github

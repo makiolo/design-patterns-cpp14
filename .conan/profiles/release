@@ -1,0 +1,14 @@
+# Release profile
+[settings]
+os=Linux
+arch=x86_64
+compiler=gcc
+compiler.version=11
+compiler.libcxx=libstdc++11
+build_type=Release
+
+[options]
+
+[buildenv]
+
+[runenv]

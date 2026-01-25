@@ -1,0 +1,6 @@
+[requires]
+design-patterns-cpp14/1.0.24@makiolo/stable
+
+[generators]
+CMakeDeps
+CMakeToolchain
