@@ -17,15 +17,19 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon/common.h")
     include(FetchContent)
     FetchContent_Declare(
         metacommon
-        URL https://github.com/makiolo/metacommon/archive/refs/heads/master.zip
-        SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon"
+        GIT_REPOSITORY git@github.com:makiolo/metacommon.git
+        GIT_TAG master
+        SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_deps/metacommon-src"
     )
     FetchContent_GetProperties(metacommon)
     if(NOT metacommon_POPULATED)
         FetchContent_Populate(metacommon)
-        # Copy headers from the fetched source
-        file(COPY "${metacommon_SOURCE_DIR}/include/metacommon/" 
+        # Create include/metacommon directory if it doesn't exist
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon")
+        # Copy common.h from metacommon root to include/metacommon/
+        file(COPY "${metacommon_SOURCE_DIR}/common.h" 
              DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/include/metacommon/")
+        message(STATUS "Metacommon headers downloaded successfully")
     endif()
 endif()
 
