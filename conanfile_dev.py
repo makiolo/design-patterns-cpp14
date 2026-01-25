@@ -39,8 +39,9 @@ class DesignPatternsDevConan(ConanFile):
     no_copy_source = True
     
     def requirements(self):
-        # No external dependencies - this is a header-only library
-        pass
+        # metacommon is needed for the factory and memoize patterns
+        # Use the git repository directly as it's not in ConanCenter
+        self.requires("metacommon/0.4.8", force=True)
     
     def build_requirements(self):
         self.test_requires("gtest/1.14.0")

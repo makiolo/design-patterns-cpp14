@@ -44,8 +44,9 @@ class DesignPatternsCpp14Conan(ConanFile):
     
     def requirements(self):
         """Dependencies required by consumers of this package"""
-        # No external dependencies - this is a header-only library
-        pass
+        # metacommon is needed for the factory and memoize patterns
+        # Use the git repository directly as it's not in ConanCenter
+        self.requires("metacommon/0.4.8", force=True)
     
     def build_requirements(self):
         """Dependencies needed only for building and testing this package"""

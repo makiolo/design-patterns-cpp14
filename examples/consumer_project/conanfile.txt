@@ -1,5 +1,6 @@
 [requires]
 design-patterns-cpp14/1.0.24
+metacommon/0.4.8
 
 [generators]
 CMakeDeps
