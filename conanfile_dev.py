@@ -23,6 +23,9 @@ class DesignPatternsDevConan(ConanFile):
     description = "Header-only library with common design patterns implemented in C++11/14"
     topics = ("design-patterns", "header-only", "c++14", "factory", "memoize")
     
+    # Export the VERSION file with the recipe
+    exports_sources = "VERSION", "include/*", "CMakeLists.txt", "tests/*"
+    
     settings = "os", "compiler", "build_type", "arch"
     options = {}
     default_options = {}
