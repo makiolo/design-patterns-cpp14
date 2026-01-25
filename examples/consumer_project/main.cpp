@@ -1,4 +1,6 @@
 #include <iostream>
+#include <memory>
+#include <functional>
 #include <factory.h>
 #include <memoize.h>
 
@@ -31,21 +33,34 @@ public:
 
 // Register implementations
 namespace {
-    Shape::Factory::registrator<Circle> circle_reg;
-    Shape::Factory::registrator<Square> square_reg;
+    // Register Circle type with the factory
+    struct CircleRegistrator {
+        CircleRegistrator() {
+            Shape::Factory::instance().register_type<Circle>(
+                []() { return std::make_unique<Circle>(); }
+            );
+        }
+    } circle_registrator;
+    
+    // Register Square type with the factory
+    struct SquareRegistrator {
+        SquareRegistrator() {
+            Shape::Factory::instance().register_type<Square>(
+                []() { return std::make_unique<Square>(); }
+            );
+        }
+    } square_registrator;
 }
 
 // Example using memoize pattern
 class ExpensiveComputation {
 public:
     static int fibonacci(int n) {
-        static auto fib = dp14::memoize<std::function<int(int)>>(
-            [](int x) -> int {
-                if (x <= 1) return x;
-                return fibonacci(x - 1) + fibonacci(x - 2);
-            }
-        );
-        return fib(n);
+        // Simple recursive fibonacci without memoization for this example
+        // The memoize pattern in the library is more advanced and requires
+        // a proper T::memoize type definition
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2);
     }
 };
 
