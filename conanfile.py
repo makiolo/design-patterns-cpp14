@@ -1,7 +1,9 @@
 from conan import ConanFile
-from conan.tools.files import copy, get
+from conan.tools.files import copy, get, download
 from conan.tools.cmake import cmake_layout
 import os
+import tempfile
+import shutil
 
 
 def _read_version():
@@ -41,6 +43,20 @@ class DesignPatternsCpp14Conan(ConanFile):
     # This is a header-only library
     package_type = "header-library"
     no_copy_source = True
+    
+    def export(self):
+        """Export phase - download metacommon and include it"""
+        # Create metacommon directory in exports
+        metacommon_dir = os.path.join(self.export_folder, "include", "metacommon")
+        os.makedirs(metacommon_dir, exist_ok=True)
+        
+        # Download common.h
+        common_h_path = os.path.join(metacommon_dir, "common.h")
+        if not os.path.exists(common_h_path):
+            self.output.info("Downloading metacommon/common.h...")
+            download(self, 
+                    "https://raw.githubusercontent.com/makiolo/metacommon/master/common.h",
+                    common_h_path, retries=3)
     
     def requirements(self):
         """Dependencies required by consumers of this package"""
