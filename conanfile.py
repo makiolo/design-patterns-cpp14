@@ -22,7 +22,7 @@ class DesignPatternsCpp14Conan(ConanFile):
     
     name = "design-patterns-cpp14"
     # Version is hardcoded for reliability; VERSION file is used in local development only
-    version = "1.0.24"
+    version = "1.0.25"
     license = "CC-BY-4.0"
     author = "Ricardo Marmolejo García"
     url = "https://github.com/makiolo/design-patterns-cpp14"
