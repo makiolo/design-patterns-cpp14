@@ -5,17 +5,22 @@ import os
 
 
 def _read_version():
-    """Read version from VERSION file"""
-    version_file = os.path.join(os.path.dirname(__file__), "VERSION")
-    with open(version_file, "r") as f:
-        return f.read().strip()
+    """Read version from VERSION file for local development"""
+    try:
+        version_file = os.path.join(os.path.dirname(__file__), "VERSION")
+        with open(version_file, "r") as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        # Fallback version if VERSION file is not available
+        return "1.0.24"
 
 
 class DesignPatternsCpp14Conan(ConanFile):
     """Conan package for design-patterns-cpp14 - A header-only C++14 design patterns library"""
     
     name = "design-patterns-cpp14"
-    version = _read_version()
+    # Version is hardcoded for reliability; VERSION file is used in local development only
+    version = "1.0.24"
     license = "CC-BY-4.0"
     author = "Ricardo Marmolejo García"
     url = "https://github.com/makiolo/design-patterns-cpp14"

@@ -60,8 +60,18 @@ echo "$NEW_VERSION" > VERSION
 print_success "VERSION updated to $NEW_VERSION"
 
 echo ""
+print_info "Step 1b: Updating conanfile.py..."
+sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$NEW_VERSION\"/" conanfile.py
+print_success "conanfile.py updated"
+
+echo ""
+print_info "Step 1c: Updating conanfile_dev.py..."
+sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$NEW_VERSION\"/" conanfile_dev.py
+print_success "conanfile_dev.py updated"
+
+echo ""
 print_info "Step 2: Committing changes..."
-git add VERSION
+git add VERSION conanfile.py conanfile_dev.py
 git commit -m "Bump version to $NEW_VERSION"
 print_success "Changes committed"
 
