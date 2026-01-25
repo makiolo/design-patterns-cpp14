@@ -7,7 +7,7 @@
 // Simple example using factory pattern from design-patterns-cpp14
 class Shape {
 public:
-    using factory = dp14::factory<Shape, std::string>;
+    using factory = dp14::factory<Shape>;
     
     virtual ~Shape() = default;
     virtual void draw() const = 0;
